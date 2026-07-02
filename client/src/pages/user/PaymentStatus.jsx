@@ -1,10 +1,10 @@
 import { useState } from "react";
-import { CheckCircle, Clock, Upload, X } from "lucide-react";
+import { CheckCircle, Clock, Copy, Upload, X } from "lucide-react";
 import { useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { baseUrl } from "../../../config/config";
 import { useApp } from "../../context/AppContext";
-
+import { toast } from "react-toastify";
 function PaymentStatus() {
   const { fetchUserProfile } = useApp();
   const navigate = useNavigate();
@@ -73,22 +73,35 @@ function PaymentStatus() {
         </div>
 
         {/* Amount */}
-        <div className="border rounded-lg p-4 bg-gray-50 mb-5">
+        <div className="border border-slate-300 p-4 bg-gray-50 mb-5">
           <p className="text-sm text-gray-500">Amount to Send</p>
           <p className="text-lg font-bold">${amount} USDT</p>
         </div>
 
         {/* Wallet */}
-        <div className="border rounded-lg p-4 bg-gray-50 mb-5">
+        <div className="border border-slate-300 p-4 bg-gray-50 mb-5">
           <p className="text-sm text-gray-500 mb-2">Wallet Address</p>
 
           <div className="flex justify-between items-center gap-2">
-            <p className="text-xs break-all text-gray-700">{walletAddress}</p>
+            <p className="text-xs break-all text-gray-700 flex-1">
+              {walletAddress}
+            </p>
+
+            <button
+              onClick={() => {
+                navigator.clipboard.writeText(walletAddress);
+                toast.success("Wallet address copied!");
+              }}
+              className="flex items-center gap-1 bg-blue-600 hover:bg-blue-700 text-white px-3 py-2 rounded-md transition cursor-pointer duration-300"
+            >
+              <Copy size={16} />
+              Copy
+            </button>
           </div>
         </div>
 
         {/* Upload */}
-        <div className="border rounded-lg p-4 mb-5">
+        <div className="border border-slate-300 p-4 bg-gray-50 mb-5">
           <p className="text-sm text-gray-500 mb-2">
             Upload Payment Screenshot
           </p>
@@ -146,7 +159,7 @@ function PaymentStatus() {
         {/* Back */}
         <button
           onClick={() => navigate("/dashboard")}
-          className="w-full mt-3 border py-3 rounded-lg hover:bg-gray-50 duration-300 cursor-pointer"
+          className="w-full mt-3 border border-slate-300 p-4 bg-gray-50  py-3 rounded-lg hover:bg-gray-50 duration-300 cursor-pointer"
         >
           Back to Dashboard
         </button>
