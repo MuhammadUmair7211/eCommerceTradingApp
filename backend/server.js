@@ -34,7 +34,7 @@ app.use("/api/orders", orderRoutes);
 
 // PAYMENT ROUTES
 app.use("/api/payments", paymentRoutes);
-app.use("/api/uploads", express.static("uploads"));
+app.use("/uploads", express.static("uploads"));
 
 // LEADER ROUTES
 app.use("/api/leader", leaderRoutes);
