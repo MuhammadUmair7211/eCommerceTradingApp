@@ -32,8 +32,6 @@ function AdminTeamPage() {
   }
 
   const filteredTeamMembers = admin.teamMembers.filter((member) => {
-    console.log(member);
-
     return (
       member.username?.toLowerCase().includes(search.toLowerCase()) ||
       member.phoneNumber?.includes(search) ||
@@ -94,11 +92,11 @@ function AdminTeamPage() {
           <p className="flex items-center gap-2">
             <Activity
               className={`w-4 h-4 ${
-                admin.isActive ? "text-green-400" : "text-red-400"
+                admin.isOnline ? "text-green-400" : "text-red-400"
               }`}
             />
 
-            {admin.isActive ? "Online" : "Offline"}
+            {admin.isOnline ? "Online" : "Offline"}
           </p>
 
           <p>

@@ -1,6 +1,5 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { CheckCircle, Clock, XCircle } from "lucide-react";
-import axios from "axios";
 import { baseUrl } from "../../../config/config";
 import { useApp } from "../../context/AppContext";
 

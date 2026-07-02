@@ -51,7 +51,6 @@ export default function Auth() {
 
   const handleLogin = async (e) => {
     e.preventDefault();
-
     try {
       const { data } = await axios.post(`${baseUrl}/auth/login`, {
         phoneNumber: formData.phoneNumber,

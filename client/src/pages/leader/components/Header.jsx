@@ -4,46 +4,17 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { baseUrl } from "../../../../config/config";
 import { toast } from "react-toastify";
+import { useApp } from "../../../context/AppContext";
 
-const Header = ({ addAdminModal, setAddAdminModal, users }) => {
+const Header = ({ addAdminModal, setAddAdminModal }) => {
+  const { allUsers, allPayments, allWithdrawals, allSupports, getLeaderData } =
+    useApp();
+
+  useEffect(() => {
+    getLeaderData();
+  }, []);
   const navigate = useNavigate();
-  const [payments, setPayments] = useState([]);
-  const [withdraws, setWithdraws] = useState([]);
-  const [supports, setSupports] = useState([]);
   const [menu, setMenu] = useState(false);
-
-  // FETCH SUPPORTS
-  const fetchSupports = async () => {
-    try {
-      const { data } = await axios.get(`${baseUrl}/support/all`);
-      setSupports(data.supports);
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  // FETCH PAYMENTS
-  const fetchAllPayments = async () => {
-    try {
-      const { data } = await axios.get(`${baseUrl}/payments/all-payments`);
-      setPayments(data?.payments || []);
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  // FETCH WITHDRAWALS
-  const fetchAllWithdraws = async () => {
-    try {
-      const { data } = await axios.get(
-        `${baseUrl}/withdrawals/all-withdrawals`,
-      );
-      setWithdraws(data.withdrawals || []);
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
   // handle leader logout
   const handleLogout = async () => {
     try {
@@ -69,14 +40,10 @@ const Header = ({ addAdminModal, setAddAdminModal, users }) => {
     }
   };
 
-  useEffect(() => {
-    fetchAllPayments();
-    fetchAllWithdraws();
-    fetchSupports();
-  }, []);
-
-  const pendingRecharges = payments.filter((p) => p.status === "pending");
-  const pendingWithdrawals = withdraws.filter((w) => w.status === "pending");
+  const pendingRecharges = allPayments.filter((p) => p.status === "pending");
+  const pendingWithdrawals = allWithdrawals.filter(
+    (w) => w.status === "pending",
+  );
 
   // NAV BUTTONS (ONE SOURCE ONLY)
   const navButtons = (
@@ -94,7 +61,7 @@ const Header = ({ addAdminModal, setAddAdminModal, users }) => {
         <Headset size={18} />
         Support
         <span className="absolute -top-2 -right-2 bg-purple-600 text-white text-xs w-5 h-5 flex items-center justify-center rounded-full ">
-          {supports?.length}
+          {allSupports?.length}
         </span>
       </button>
 
@@ -124,7 +91,7 @@ const Header = ({ addAdminModal, setAddAdminModal, users }) => {
       >
         Users
         <span className="absolute -top-2 -right-2 bg-orange-600 text-white text-xs w-5 h-5 flex items-center justify-center rounded-full">
-          {users.length}
+          {allUsers.length}
         </span>
       </button>
     </>

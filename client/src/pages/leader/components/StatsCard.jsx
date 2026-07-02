@@ -5,33 +5,36 @@ import {
   Users,
   Wallet,
 } from "lucide-react";
+import { useApp } from "../../../context/AppContext";
 
-function StatsCard({ admins, users }) {
-  const totalBalance = admins.reduce((total, admin) => {
+function StatsCard() {
+  const { allAdmins, allUsers } = useApp();
+
+  const totalBalance = allAdmins.reduce((total, admin) => {
     return (
       total +
-      admin.teamMembers.reduce(
-        (teamTotal, member) => teamTotal + member.balance,
+      (admin.teamMembers || []).reduce(
+        (teamTotal, member) => teamTotal + Number(member.balance || 0),
         0,
       )
     );
   }, 0);
 
-  const totalCommission = admins.reduce((total, admin) => {
+  const totalCommission = allAdmins.reduce((total, admin) => {
     return (
       total +
-      admin.teamMembers.reduce(
-        (teamTotal, member) => teamTotal + member.commission,
+      admin.teamMembers?.reduce(
+        (teamTotal, member) => teamTotal + Number(member.commission),
         0,
       )
     );
   }, 0);
 
-  const totalOrders = admins.reduce((total, admin) => {
+  const totalOrders = allAdmins.reduce((total, admin) => {
     return (
       total +
-      admin.teamMembers.reduce(
-        (teamTotal, member) => teamTotal + member.totalOrders,
+      admin.teamMembers?.reduce(
+        (teamTotal, member) => teamTotal + Number(member.totalOrders),
         0,
       )
     );
@@ -40,12 +43,12 @@ function StatsCard({ admins, users }) {
   const dashboardData = [
     {
       name: "Total Users",
-      value: users?.length,
+      value: allUsers?.length,
       icon: <Users className="text-blue-400" />,
     },
     {
       name: "Admins",
-      value: admins?.length,
+      value: allAdmins?.length,
       icon: <Shield className="text-green-400" />,
     },
     {

@@ -6,8 +6,6 @@ import { toast } from "react-toastify";
 import { baseUrl } from "../../../config/config";
 function WithdrawalForm() {
   const [userData, setUserData] = useState(null);
-
-  console.log(userData?.user);
   const navigate = useNavigate();
   const fetchUserProfile = async () => {
     const token = localStorage.getItem("token");

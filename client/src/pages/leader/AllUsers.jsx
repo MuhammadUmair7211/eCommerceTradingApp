@@ -1,36 +1,19 @@
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
 import { baseUrl } from "../../../config/config";
+import { useApp } from "../../context/AppContext";
 function AllUsers() {
+  const { allUsers, loading } = useApp();
   const [selectedUser, setSelectedUser] = useState(null);
   const [formData, setFormData] = useState({});
-  const [users, setUsers] = useState([]);
-  const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 6;
 
-  // fetch all users
-  const fetchUsers = async () => {
-    try {
-      const { data } = await axios.get(`${baseUrl}/users/all-users`);
-
-      setUsers(data.users || []);
-    } catch (error) {
-      console.log(error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    fetchUsers();
-  }, []);
-
   // 🔍 SEARCH FILTER
   const filteredUsers = useMemo(() => {
-    return users.filter((u) => {
+    return allUsers.filter((u) => {
       const q = search.toLowerCase();
 
       return (
@@ -40,7 +23,7 @@ function AllUsers() {
         u.myInvitationCode?.toLowerCase().includes(q)
       );
     });
-  }, [users, search]);
+  }, [allUsers, search]);
   const totalPages = Math.ceil(filteredUsers.length / itemsPerPage);
 
   const paginatedUsers = filteredUsers.slice(

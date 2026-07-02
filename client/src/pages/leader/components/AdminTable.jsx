@@ -4,14 +4,16 @@ import { useState } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
 import { baseUrl } from "../../../../config/config";
+import { useApp } from "../../../context/AppContext";
 
-const AdminTable = ({ admins, fetchAdmins, loading }) => {
+const AdminTable = () => {
+  const { allAdmins, loading } = useApp();
   const navigate = useNavigate();
   const [search, setSearch] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const adminsPerPage = 6;
 
-  const filteredAdmins = admins.filter((admin) => {
+  const filteredAdmins = allAdmins.filter((admin) => {
     const q = search.toLowerCase();
 
     return (
@@ -148,16 +150,16 @@ const AdminTable = ({ admins, fetchAdmins, loading }) => {
                     <div className="flex items-center gap-2">
                       <span
                         className={`w-2.5 h-2.5 rounded-full ${
-                          admin.isLogin ? "bg-green-400" : "bg-red-400"
+                          admin.isOnline ? "bg-green-400" : "bg-red-400"
                         }`}
                       />
 
                       <span
                         className={`font-medium ${
-                          admin?.isLogin ? "text-green-400" : "text-red-400"
+                          admin?.isOnline ? "text-green-400" : "text-red-400"
                         }`}
                       >
-                        {admin.isLogin ? "Online" : "Offline"}
+                        {admin.isOnline ? "Online" : "Offline"}
                       </span>
                     </div>
                   </td>

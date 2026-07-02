@@ -3,8 +3,10 @@ import { CheckCircle, Clock, Upload, X } from "lucide-react";
 import { useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { baseUrl } from "../../../config/config";
+import { useApp } from "../../context/AppContext";
 
 function PaymentStatus() {
+  const { fetchUserProfile } = useApp();
   const navigate = useNavigate();
   const location = useLocation();
   const amount = location.state?.amount;
@@ -29,13 +31,16 @@ function PaymentStatus() {
     formData.append("screenshot", screenshotFile); // IMPORTANT: actual file, not blob
 
     try {
-      await axios.post(`${baseUrl}/payments`, formData, {
+      const { data } = await axios.post(`${baseUrl}/payments`, formData, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
       });
-
-      navigate("/recharge-history");
+      console.log(data);
+      if (data.success) {
+        await fetchUserProfile();
+        navigate("/recharge-history");
+      }
     } catch (error) {
       if (error.response) {
         console.log("Backend Error:", error.response.data);

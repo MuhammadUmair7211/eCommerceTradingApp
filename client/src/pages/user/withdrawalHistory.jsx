@@ -1,9 +1,13 @@
 import { CheckCircle, Clock, XCircle } from "lucide-react";
 import { useApp } from "../../context/AppContext";
+import { useEffect } from "react";
 
 function WithdrawalHistory() {
-  const { withdrawals } = useApp();
+  const { withdrawals, fetchUserProfile } = useApp();
 
+  useEffect(() => {
+    fetchUserProfile();
+  }, []);
   const statusUI = {
     pending: (
       <span className="flex items-center gap-1 bg-yellow-100 text-yellow-700 px-3 py-1 rounded-full text-xs font-medium">

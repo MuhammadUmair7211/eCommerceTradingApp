@@ -1,29 +1,8 @@
-import axios from "axios";
 import { CalendarDays, Fingerprint, ShieldCheck, User } from "lucide-react";
-import { useEffect, useState } from "react";
-import { baseUrl } from "../../../../config/config";
+import { useApp } from "../../../context/AppContext";
 
 const LeaderCard = () => {
-  const [leader, setLeader] = useState(null);
-
-  useEffect(() => {
-    const getLeaderData = async () => {
-      try {
-        const token = localStorage.getItem("leaderToken");
-        const { data } = await axios.get(`${baseUrl}/leader/get-leader`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-        console.log(data);
-        setLeader(data.leader);
-      } catch (error) {
-        console.log("Error fetching leader:", error);
-      }
-    };
-    getLeaderData();
-  }, []);
-
+  const { leader } = useApp();
   const leaderData = [
     {
       name: "Username",
