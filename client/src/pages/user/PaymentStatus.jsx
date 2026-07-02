@@ -92,7 +92,7 @@ function PaymentStatus() {
                 navigator.clipboard.writeText(walletAddress);
                 toast.success("Wallet address copied!");
               }}
-              className="flex items-center gap-1 bg-blue-600 hover:bg-blue-700 text-white px-3 py-2 rounded-md transition cursor-pointer duration-300"
+              className="flex items-center gap-1 bg-blue-600 hover:bg-blue-700 text-white px-3 py-2 transition cursor-pointer duration-300"
             >
               <Copy size={16} />
               Copy
@@ -106,7 +106,7 @@ function PaymentStatus() {
             Upload Payment Screenshot
           </p>
 
-          <label className="flex items-center justify-center gap-2 border border-dashed p-3 rounded-lg cursor-pointer hover:bg-gray-50">
+          <label className="flex items-center justify-center gap-2 border border-dashed p-3 border-slate-300 cursor-pointer hover:bg-gray-50">
             <Upload size={18} />
             Upload Image
             <input
@@ -150,7 +150,7 @@ function PaymentStatus() {
         <button
           onClick={submitPayment}
           disabled={!screenshot}
-          className="w-full bg-blue-600 hover:bg-blue-700 cursor-pointer text-white py-3 duration-300 rounded-lg font-semibold flex items-center justify-center gap-2 disabled:bg-blue-300 disabled:cursor-not-allowed"
+          className="w-full bg-blue-600 hover:bg-blue-700 cursor-pointer text-white py-3 duration-300 font-semibold flex items-center justify-center gap-2 disabled:bg-blue-300 disabled:cursor-not-allowed"
         >
           <CheckCircle size={18} />
           Submit Payment Proof
