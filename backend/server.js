@@ -26,6 +26,7 @@ const withdrawalRoutes = require("./routes/withdrawalRoutes");
 const adminAuthRoutes = require("./routes/adminAuthRoutes");
 const injectionRoutes = require("./routes/injectionRoutes");
 const supportRoutes = require("./routes/supportRoutes");
+
 // ✅ USER ROUTES
 app.use("/api/auth", authRoutes);
 app.use("/api/users", userRoutes);
@@ -33,7 +34,7 @@ app.use("/api/orders", orderRoutes);
 
 // PAYMENT ROUTES
 app.use("/api/payments", paymentRoutes);
-app.use("/uploads", express.static("uploads"));
+app.use("/api/uploads", express.static("uploads"));
 
 // LEADER ROUTES
 app.use("/api/leader", leaderRoutes);
