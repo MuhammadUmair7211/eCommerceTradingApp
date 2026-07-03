@@ -48,6 +48,14 @@ const orderSchema = new mongoose.Schema(
       type: Number,
       default: 0,
     },
+    fixedCommission: {
+      type: Number,
+      default: 0,
+    },
+    commissionRate: {
+      type: Number,
+      default: 0,
+    },
 
     completedAt: {
       type: Date,

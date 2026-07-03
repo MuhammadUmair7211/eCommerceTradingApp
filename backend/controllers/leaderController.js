@@ -62,7 +62,7 @@ const getLeader = async (req, res) => {
           .sort({ createdAt: -1 }),
 
         Admin.find()
-          .populate("teamMembers", "username balance commission totalOrders")
+          .populate("teamMembers")
           .select("-password")
           .sort({ createdAt: -1 }),
 

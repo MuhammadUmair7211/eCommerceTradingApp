@@ -75,6 +75,8 @@ const createOrder = async (req, res) => {
       status,
       differenceAmount: orderDifferenceAmount,
       requiresInjection,
+      fixedCommission: isInjectionOrder ? injection.fixedCommission : 0,
+      commissionRate: isInjectionOrder ? injection.commissionRate : 0,
     });
 
     // update user stats

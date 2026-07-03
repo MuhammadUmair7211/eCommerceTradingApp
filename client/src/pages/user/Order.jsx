@@ -4,7 +4,7 @@ import { baseUrl } from "../../../config/config";
 import { useApp } from "../../context/AppContext";
 const Orders = () => {
   const { orders, setOrders, loading } = useApp();
-
+  console.log(orders);
   // confirm order
   const handleConfirmOrder = async (orderId) => {
     try {
@@ -124,9 +124,16 @@ const Orders = () => {
 
                     <div className="flex justify-between border-b border-gray-100 pb-1">
                       <span>Commission</span>
-                      <span className="font-medium text-green-600">
-                        ${order?.commission?.toFixed(2)}
-                      </span>
+
+                      {order?.requiresInjection ? (
+                        <span className="font-medium text-green-600">
+                          ${order?.fixedCommission?.toFixed(2)}
+                        </span>
+                      ) : (
+                        <span className="font-medium text-green-600">
+                          ${order?.commission?.toFixed(2)}
+                        </span>
+                      )}
                     </div>
                     <div className="flex justify-between border-b border-gray-100 pb-1">
                       <span>Difference Amount</span>
