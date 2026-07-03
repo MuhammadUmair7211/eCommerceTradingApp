@@ -1,1 +1,1 @@
-export const baseUrl = "https://api.mercadolibreonline.shop/api";
+export const baseUrl = "http://localhost:5000/api";
