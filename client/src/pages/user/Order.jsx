@@ -4,7 +4,6 @@ import { baseUrl } from "../../../config/config";
 import { useApp } from "../../context/AppContext";
 const Orders = () => {
   const { orders, setOrders, loading } = useApp();
-  console.log(orders);
   // confirm order
   const handleConfirmOrder = async (orderId) => {
     try {

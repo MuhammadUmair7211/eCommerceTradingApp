@@ -11,7 +11,6 @@ import { useState } from "react";
 function AdminTeamPage() {
   const location = useLocation();
   const admin = location.state?.admin;
-console.log(admin);
 
   const [search, setSearch] = useState("");
 

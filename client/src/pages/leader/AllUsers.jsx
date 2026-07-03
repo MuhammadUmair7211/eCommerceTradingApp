@@ -4,7 +4,7 @@ import { toast } from "react-toastify";
 import { baseUrl } from "../../../config/config";
 import { useApp } from "../../context/AppContext";
 function AllUsers() {
-  const { allUsers, loading } = useApp();
+  const { allUsers, loading, fetchUserProfile } = useApp();
   const [selectedUser, setSelectedUser] = useState(null);
   const [formData, setFormData] = useState({});
   const [search, setSearch] = useState("");
@@ -45,7 +45,7 @@ function AllUsers() {
 
       if (data.success) {
         toast.success(data.message);
-        fetchUsers();
+        await fetchUserProfile();
         setSelectedUser(null);
       }
     } catch (error) {
@@ -113,7 +113,7 @@ function AllUsers() {
                     <div className="mt-2 text-sm">
                       💰 Balance:{" "}
                       <span className="text-green-600 font-semibold">
-                        ${u.balance || 0}
+                        ${u?.balance?.toFixed(2) || 0}
                       </span>
                     </div>
                   </div>
@@ -149,7 +149,7 @@ function AllUsers() {
                     <div>
                       💰 Balance:
                       <span className="font-semibold text-green-600 ml-1">
-                        ${u.balance || 0}
+                        ${u.balance.toFixed(2) || 0}
                       </span>
                     </div>
 
@@ -229,7 +229,7 @@ function AllUsers() {
         )}
       </div>
       {selectedUser && formData && (
-        <div className="fixed inset-0 z-9999 flex items-center justify-center">
+        <div className="fixed inset-0 z-999 flex items-center justify-center">
           {/* BACKDROP */}
           <div
             className="absolute inset-0 bg-black/70 backdrop-blur-sm"
