@@ -66,7 +66,6 @@ const AppProvider = ({ children }) => {
           Authorization: `Bearer ${token}`,
         },
       });
-
       setLeader(data.leader);
       setAllAdmins(data.admins);
       setAllUsers(data.users);
