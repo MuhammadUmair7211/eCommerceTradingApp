@@ -226,6 +226,27 @@ const Navbar = () => {
               )}
             </NavLink>
           ))}
+          <div className="block md:hidden absolute left-4 -top-10 transform -translate-y-1/2">
+            {" "}
+            <button
+              onClick={() => {
+                console.log("Refreshing user profile...");
+                fetchUserProfile();
+              }}
+              className="group flex items-center justify-center w-10 h-10 rounded-full 
+             bg-slate-800 hover:bg-slate-600
+             border border-white/10 hover:border-white/30
+             shadow-sm hover:shadow-md
+             transition-all duration-300 ease-out
+             active:scale-95 cursor-pointer"
+              title="Refresh data"
+            >
+              <RefreshCcw
+                size={18}
+                className="text-blue-300 group-hover:text-slate-300 group-hover:rotate-180 transition-all duration-500"
+              />
+            </button>
+          </div>
         </div>
       </div>
     </>
