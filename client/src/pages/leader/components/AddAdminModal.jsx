@@ -4,7 +4,7 @@ import axios from "axios";
 import { toast } from "react-toastify";
 import { baseUrl } from "../../../../config/config";
 
-function AddAdminModal({ setAdminModal, fetchAdmins }) {
+function AddAdminModal({ setAdminModal }) {
   const [formData, setFormData] = useState({
     username: "",
     profileCode: "",
@@ -55,7 +55,6 @@ function AddAdminModal({ setAdminModal, fetchAdmins }) {
       if (data.success) {
         setAdminModal(false);
         toast.success(data.message);
-        fetchAdmins();
       }
     } catch (error) {
       console.log(error.response?.data);
