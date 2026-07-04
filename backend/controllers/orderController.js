@@ -224,7 +224,7 @@ const updateOrderStatus = async (req, res) => {
           const user = await User.findById(order.userId);
 
           if (user) {
-            user.commission += order.commission || 0;
+            user.commission += order.fixedCommission || 0;
             user.completedOrders += 1;
             user.balance += order.commission || 0;
             user.undone -= 1;

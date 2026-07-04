@@ -10,7 +10,6 @@ const Orders = () => {
       const { data } = await axios.patch(`${baseUrl}/orders/${orderId}`, {
         status: "completed",
       });
-
       if (data.success) {
         toast.success("Order completed successfully");
         setOrders((prev) =>
