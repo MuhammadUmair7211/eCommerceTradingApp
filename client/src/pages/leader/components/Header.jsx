@@ -1,5 +1,5 @@
 import axios from "axios";
-import { Headset, Menu, Plus, X } from "lucide-react";
+import { Headset, Menu, Plus, RefreshCcw, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { baseUrl } from "../../../../config/config";
@@ -50,9 +50,18 @@ const Header = ({ addAdminModal, setAddAdminModal }) => {
     <>
       <button
         onClick={getLeaderData}
-        className="flex items-center gap-2 px-4 py-2 bg-purple-600 text-white hover:bg-purple-700 active:scale-95 shadow-sm cursor-pointer duration-300"
+        className="group flex items-center justify-center w-10 h-10 rounded-full 
+             bg-white/10 hover:bg-white/20 
+             border border-white/10 hover:border-white/30
+             shadow-sm hover:shadow-md
+             transition-all duration-300 ease-out
+             active:scale-95 cursor-pointer"
+        title="Refresh data"
       >
-        🔄 Refresh
+        <RefreshCcw
+          size={18}
+          className="text-gray-300 group-hover:text-slate-300 group-hover:rotate-180 transition-all duration-500"
+        />
       </button>
       <button
         onClick={() => navigate("/leader-dashboard/support")}
@@ -117,7 +126,7 @@ const Header = ({ addAdminModal, setAddAdminModal }) => {
 
           <button
             onClick={() => setAddAdminModal(!addAdminModal)}
-            className="flex items-center gap-2 border bg-blue-600 hover:bg-blue-500 text-white px-4 py-2 duration-300 cursor-pointer"
+            className="flex items-center gap-2 border border-blue-200 bg-blue-600 hover:bg-blue-500 text-white px-4 py-2 duration-300 cursor-pointer"
           >
             <Plus size={18} />
             Add Admin
@@ -150,7 +159,7 @@ const Header = ({ addAdminModal, setAddAdminModal }) => {
               setAddAdminModal(true);
               setMenu(false);
             }}
-            className="border bg-blue-600 text-white px-4 py-2"
+            className="border border-blue-200 bg-blue-600 hover:bg-blue-500 text-white px-4 py-2 duration-300 cursor-pointer"
           >
             Add Admin
           </button>

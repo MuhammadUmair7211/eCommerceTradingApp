@@ -5,6 +5,7 @@ import {
   Headset,
   House,
   Menu,
+  RefreshCcw,
   ShoppingBag,
   User,
   X,
@@ -12,8 +13,10 @@ import {
 import axios from "axios";
 import { toast } from "react-toastify";
 import { baseUrl } from "../../../config/config";
+import { useApp } from "../../context/AppContext";
 
 const Navbar = () => {
+  const { fetchUserProfile } = useApp();
   const navigate = useNavigate();
   const [currentTime, setCurrentTime] = useState(new Date());
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -38,7 +41,6 @@ const Navbar = () => {
           },
         },
       );
-      console.log(data);
       if (data.success) {
         navigate("/", { replace: true });
         localStorage.removeItem("token");
@@ -108,7 +110,24 @@ const Navbar = () => {
                 {currentTime.toLocaleTimeString()}
               </p>
             </div>
-
+            <button
+              onClick={() => {
+                console.log("Refreshing user profile...");
+                fetchUserProfile();
+              }}
+              className="group flex items-center justify-center w-10 h-10 rounded-full 
+             bg-slate-800 hover:bg-slate-600
+             border border-white/10 hover:border-white/30
+             shadow-sm hover:shadow-md
+             transition-all duration-300 ease-out
+             active:scale-95 cursor-pointer"
+              title="Refresh data"
+            >
+              <RefreshCcw
+                size={18}
+                className="text-blue-300 group-hover:text-slate-300 group-hover:rotate-180 transition-all duration-500"
+              />
+            </button>
             <button
               onClick={handleSignOut}
               className="bg-[#2B3374] hover:bg-[#4c5281] text-white px-4 py-2 text-sm transition cursor-pointer"

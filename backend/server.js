@@ -46,8 +46,8 @@ app.use("/api/users", userRoutes);
 app.use("/api/orders", orderRoutes);
 
 // PAYMENT ROUTES
-app.use("/api/payments", paymentRoutes);
 app.use("/uploads", express.static("uploads"));
+app.use("/api/payments", paymentRoutes);
 
 // LEADER ROUTES
 app.use("/api/leader", leaderRoutes);
