@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { CheckCircle, Clock, XCircle } from "lucide-react";
-import { baseUrl } from "../../../config/config";
+import { baseUrl, imageUrl } from "../../../config/config";
 import { useApp } from "../../context/AppContext";
 
 function RechargeHistory() {
@@ -40,75 +40,75 @@ function RechargeHistory() {
           </div>
         ) : (
           <div className="space-y-4">
-            {recharges.map((p) => (
-              <div
-                key={p._id}
-                className="bg-white shadow-lg p-5 flex flex-col md:flex-row md:items-center md:justify-between gap-4 hover:shadow-lg transition"
-              >
-                {/* LEFT */}
-                <div className="space-y-1">
-                  <p className="font-semibold text-gray-800">
-                    {p.transactionId}
-                  </p>
+            {recharges.map((p) => {
+              return (
+                <div
+                  key={p._id}
+                  className="bg-white shadow-lg p-5 flex flex-col md:flex-row md:items-center md:justify-between gap-4 hover:shadow-lg transition"
+                >
+                  {/* LEFT */}
+                  <div className="space-y-1">
+                    <p className="font-semibold text-gray-800">
+                      {p.transactionId}
+                    </p>
 
-                  <p className="text-sm text-gray-600">
-                    Amount:{" "}
-                    <span className="font-semibold text-black">
-                      ${p.amount} USDT
-                    </span>
-                  </p>
+                    <p className="text-sm text-gray-600">
+                      Amount:{" "}
+                      <span className="font-semibold text-black">
+                        ${p.amount} USDT
+                      </span>
+                    </p>
 
-                  {/* WALLET ADDRESS */}
-                  <div className="text-xs text-gray-500 flex items-center gap-2">
-                    <span className="font-medium text-gray-700">Wallet:</span>
+                    {/* WALLET ADDRESS */}
+                    <div className="text-xs text-gray-500 flex items-center gap-2">
+                      <span className="font-medium text-gray-700">Wallet:</span>
 
-                    <span className="break-all">
-                      {p.walletAddress || "N/A"}
-                    </span>
+                      <span className="break-all">
+                        {p.walletAddress || "N/A"}
+                      </span>
+                    </div>
+
+                    <p className="text-xs text-gray-400">
+                      {new Date(p.createdAt).toLocaleString()}
+                    </p>
                   </div>
 
-                  <p className="text-xs text-gray-400">
-                    {new Date(p.createdAt).toLocaleString()}
-                  </p>
+                  {/* IMAGE */}
+                  {p.screenshot && (
+                    <img
+                      src={`${imageUrl}/${p.screenshot}`}
+                      onClick={() =>
+                        setSelectedImage(`${imageUrl}/${p.screenshot}`)
+                      }
+                      className="w-30 h-20 object-cover border border-gray-300 hover:scale-105 duration-300 cursor-pointer"
+                    />
+                  )}
+
+                  {/* RIGHT */}
+                  <div className="flex flex-col items-end gap-2">
+                    {statusUI[p.status] || statusUI.pending}
+
+                    {p.status === "pending" && (
+                      <p className="text-xs text-yellow-600">
+                        Waiting for transaction approval
+                      </p>
+                    )}
+
+                    {p.status === "approved" && (
+                      <p className="text-xs text-green-600">
+                        Recharge has been approved
+                      </p>
+                    )}
+
+                    {p.status === "rejected" && (
+                      <p className="text-xs text-red-600">
+                        Withdrawal request was rejected
+                      </p>
+                    )}
+                  </div>
                 </div>
-
-                {/* IMAGE */}
-                {p.screenshot && (
-                  <img
-                    src={`${baseUrl.replace("/api", "")}/${p.screenshot}`}
-                    onClick={() =>
-                      setSelectedImage(
-                        `${baseUrl.replace("/api", "")}/${p.screenshot}`,
-                      )
-                    }
-                    className="w-30 h-20 object-cover border border-gray-300 hover:scale-105 duration-300 cursor-pointer"
-                  />
-                )}
-
-                {/* RIGHT */}
-                <div className="flex flex-col items-end gap-2">
-                  {statusUI[p.status] || statusUI.pending}
-
-                  {p.status === "pending" && (
-                    <p className="text-xs text-yellow-600">
-                      Waiting for transaction approval
-                    </p>
-                  )}
-
-                  {p.status === "approved" && (
-                    <p className="text-xs text-green-600">
-                      Recharge has been approved
-                    </p>
-                  )}
-
-                  {p.status === "rejected" && (
-                    <p className="text-xs text-red-600">
-                      Withdrawal request was rejected
-                    </p>
-                  )}
-                </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         )}
       </div>

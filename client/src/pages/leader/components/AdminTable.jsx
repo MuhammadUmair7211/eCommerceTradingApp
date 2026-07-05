@@ -8,7 +8,6 @@ import { useApp } from "../../../context/AppContext";
 
 const AdminTable = () => {
   const { allAdmins, loading } = useApp();
-  console.log(allAdmins);
   
   const navigate = useNavigate();
   const [search, setSearch] = useState("");

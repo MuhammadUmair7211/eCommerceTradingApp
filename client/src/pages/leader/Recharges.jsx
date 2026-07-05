@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
 import { CheckCircle, Clock, XCircle } from "lucide-react";
-import { baseUrl } from "../../../config/config";
+import { baseUrl, imageUrl } from "../../../config/config";
 
 function Recharges() {
   const [payments, setPayments] = useState([]);
@@ -133,11 +133,9 @@ function Recharges() {
                   <td className="p-3">
                     {p.screenshot ? (
                       <img
-                        src={`${baseUrl.replace("/api", "")}/${p.screenshot}`}
+                        src={`${imageUrl}/${p.screenshot}`}
                         onClick={() =>
-                          setSelectedImage(
-                            `${baseUrl.replace("/api", "")}/${p.screenshot}`,
-                          )
+                          setSelectedImage(`${imageUrl}/${p.screenshot}`)
                         }
                         className="w-12 h-12 object-cover rounded cursor-pointer border border-slate-700 hover:scale-110 transition"
                       />
