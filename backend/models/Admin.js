@@ -39,7 +39,7 @@ const adminSchema = new mongoose.Schema(
       default: null,
     },
 
-    isLogin: {
+    isOnline: {
       type: Boolean,
       default: false,
     },

@@ -5,6 +5,7 @@ import { baseUrl } from "../../../config/config";
 import { useApp } from "../../context/AppContext";
 function AllUsers() {
   const { allUsers, loading, fetchUserProfile } = useApp();
+
   const [selectedUser, setSelectedUser] = useState(null);
   const [formData, setFormData] = useState({});
   const [search, setSearch] = useState("");
@@ -30,6 +31,7 @@ function AllUsers() {
     (currentPage - 1) * itemsPerPage,
     currentPage * itemsPerPage,
   );
+
   const handleFormSubmit = async (e, id) => {
     e.preventDefault();
     try {

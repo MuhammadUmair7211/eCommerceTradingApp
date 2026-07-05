@@ -8,7 +8,6 @@ import { baseUrl } from "../../../config/config";
 import { useApp } from "../../context/AppContext";
 export default function StartOrderButton() {
   const { user, setUser, fetchUserProfile } = useApp();
-  const userBalance = user?.balance;
   const [commissionArray, setCommissionArray] = useState([]);
   const [productCommission, setProductCommission] = useState(null);
   const [cycleLocked, setCycleLocked] = useState(false);
@@ -36,22 +35,17 @@ export default function StartOrderButton() {
   }, []);
 
   useEffect(() => {
-    if (cycleLocked || !user?.currentCycleOrders || !userBalance) return;
-
-    const pool = userBalance * 0.125;
-    const parts = Number(user.currentCycleOrders);
-
+    if (cycleLocked || !user?.currentCycleOrders || !user?.balance) return;
+    const pool = user?.balance * 0.125;
+    const parts = Number(user?.currentCycleOrders);
     const weights = Array.from({ length: parts }, () => Math.random());
     const sum = weights.reduce((a, b) => a + b, 0);
-
     const split = weights.map((w) => (w / sum) * pool);
-
     setCommissionArray(split);
     setCycleLocked(true);
-  }, [userBalance, cycleLocked]);
+  }, [user?.balance, cycleLocked, user?.currentCycleOrders]);
 
   const delay = (ms) => new Promise((res) => setTimeout(res, ms));
-
   // handle start
   const handleStartOrder = async () => {
     await fetchUserProfile();

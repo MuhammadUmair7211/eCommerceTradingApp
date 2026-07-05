@@ -41,7 +41,7 @@ const adminLogin = async (req, res) => {
     const browser = parser.getBrowser();
 
     admin.browser = `${browser.name || "Unknown"} ${browser.version || ""}`;
-    admin.isLogin = true;
+    admin.isOnline = true;
     admin.lastLogin = new Date();
 
     await admin.save();

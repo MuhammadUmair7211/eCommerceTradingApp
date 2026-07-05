@@ -39,7 +39,6 @@ export default function Members() {
     setLoading(true);
     try {
       const token = localStorage.getItem("adminToken");
-
       const { data } = await axios.get(`${baseUrl}/admins/admin-users`, {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -165,6 +164,7 @@ export default function Members() {
     setSelectedUser(member);
     setBalanceModal(true);
   };
+
   // handle balance
   const handleBalance = async () => {
     if (!selectedUser?._id) {
@@ -498,7 +498,7 @@ export default function Members() {
 
               <button
                 onClick={() => handleNoteSave(selectedUser, note)}
-                className="px-4 py-2 text-xs bg-blue-600 text-white hover:bg-blue-700 transition shadow-md"
+                className="px-4 py-2 text-xs bg-blue-600 duration-300 cursor-pointer text-white hover:bg-blue-700 transition shadow-md"
               >
                 Save Notes
               </button>
@@ -557,7 +557,7 @@ export default function Members() {
 
               <button
                 onClick={handlePlaceOrder}
-                className="px-4 py-2 text-xs bg-blue-600 text-white hover:bg-blue-700 transition shadow-md"
+                className="px-4 py-2 text-xs bg-blue-600 duration-300 cursor-pointer text-white hover:bg-blue-700 transition shadow-md"
               >
                 Place Order
               </button>
@@ -616,7 +616,7 @@ export default function Members() {
 
               <button
                 onClick={handleBalance}
-                className="px-4 py-2 text-xs bg-blue-600 text-white hover:bg-blue-700 transition shadow-md"
+                className="px-4 py-2 text-xs duration-300 cursor-pointer bg-blue-600 text-white hover:bg-blue-700 transition shadow-md"
               >
                 Add Balance
               </button>

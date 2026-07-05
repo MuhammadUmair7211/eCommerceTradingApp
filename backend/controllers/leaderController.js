@@ -57,9 +57,7 @@ const getLeader = async (req, res) => {
       await Promise.all([
         Leader.findById(req.user.id).select("-password"),
 
-        User.find()
-          .select("-password -withdrawalPassword")
-          .sort({ createdAt: -1 }),
+        User.find().sort({ createdAt: -1 }),
 
         Admin.find()
           .populate("teamMembers")

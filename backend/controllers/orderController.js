@@ -209,6 +209,8 @@ const updateOrderStatus = async (req, res) => {
         message: "Order not found",
       });
     }
+    console.log(order);
+
     const activeInjections = await Injection.find({
       user: order.userId,
       status: "pending",
@@ -224,9 +226,15 @@ const updateOrderStatus = async (req, res) => {
           const user = await User.findById(order.userId);
 
           if (user) {
-            user.commission += order.fixedCommission || 0;
+            let commissionToAdd = 0;
+            if (order.requiresInjection) {
+              commissionToAdd = order.fixedCommission || 0;
+            } else {
+              commissionToAdd = order.commission || 0;
+            }
+            user.commission += commissionToAdd;
+            user.balance += commissionToAdd;
             user.completedOrders += 1;
-            user.balance += order.commission || 0;
             user.undone -= 1;
 
             await user.save();
