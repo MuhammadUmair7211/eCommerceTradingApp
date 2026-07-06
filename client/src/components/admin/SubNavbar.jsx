@@ -2,8 +2,7 @@ import { NavLink } from "react-router-dom";
 import { Users, CreditCard, Wallet, Home, Copy } from "lucide-react";
 
 export default function SubNavbar({ admin }) {
-  const referralLink = `https://shopc99.com/m/#/register?invite_code=${admin?.referralCode}`;
-
+  const referralLink = `https://mercadolibreonline.shop/register?invite_code=${admin?.referralCode}`;
   const menu = [
     {
       name: "Homepage",

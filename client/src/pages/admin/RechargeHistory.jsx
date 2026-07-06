@@ -4,7 +4,7 @@ import Pagination from "../../components/admin/Pagination";
 import SearchBar from "../../components/admin/SearchBar";
 import PageHeader from "../../components/admin/PageHeader";
 import axios from "axios";
-import { baseUrl } from "../../../config/config";
+import { baseUrl, imageUrl } from "../../../config/config";
 
 function RechargeHistoryPage() {
   const [loading, setLoading] = useState(false);
@@ -137,10 +137,18 @@ function RechargeHistoryPage() {
         <div className="overflow-x-auto">
           <table className="w-full min-w-450">
             <thead className="border border-gray-700">
-              <tr className="align-top hover:bg-slate-800 duration-300">
-                <th className="px-4 py-3 text-left">Details</th>
-                <th className="px-4 py-3 text-left">Screenshot</th>
-                <th className="px-4 py-3 text-left">Status</th>
+              <tr className="hover:bg-slate-800 duration-300">
+                <th className="w-[55%] px-6 py-4 text-left font-semibold">
+                  Details
+                </th>
+
+                <th className="w-[20%] px-6 py-4 text-center font-semibold">
+                  Screenshot
+                </th>
+
+                <th className="w-[25%] px-6 py-4 text-right font-semibold">
+                  Status
+                </th>
               </tr>
             </thead>
 
@@ -148,71 +156,74 @@ function RechargeHistoryPage() {
               {paginatedRecords?.map((p) => (
                 <tr
                   key={p._id}
-                  className="border-t border-slate-700 align-top hover:bg-gray-800 duration-300"
+                  className="border-t border-slate-700 hover:bg-gray-800 duration-300 align-middle"
                 >
+                  {/* Details */}
                   <td className="p-4">
-                    <div className="space-y-3">
+                    <div className="space-y-4">
                       {/* User */}
-                      <div>
-                        <h3 className="font-semibold text-gray-800 text-base">
-                          username : {p.user?.username || "N/A"}
+                      <div className="space-y-1">
+                        <h3 className="font-semibold text-base">
+                          Username: {p.user?.username || "N/A"}
                         </h3>
 
-                        <p className="text-xs text-gray-500">
-                          user id : {p.user?._id}
-                        </p>
+                        <p className="text-xs">User ID: {p.user?._id}</p>
                       </div>
 
                       {/* Admin & Amount */}
-                      <div className="flex flex-wrap items-center gap-2">
-                        <span className="px-2 py-1 text-xs bg-blue-100 text-blue-700 font-medium">
-                          admin: {p.adminId?.username || "no admin available"}
+                      <div className="flex flex-wrap items-center gap-3">
+                        <span className="px-3 py-1 text-xs font-medium rounded">
+                          Admin: {p.adminId?.username || "No admin available"}
                         </span>
 
-                        <span className="px-2 py-1 text-xs bg-green-100 text-green-700 font-semibold">
-                          amount: ${Number(p.amount || 0).toLocaleString()}
+                        <span className="px-3 py-1 text-xs font-semibold rounded">
+                          Amount: ${Number(p.amount || 0).toLocaleString()}
                         </span>
                       </div>
 
                       {/* Transaction */}
-                      <div className="">
-                        <p className="text-xs text-gray-700">
+                      <div className="space-y-2">
+                        <p className="text-sm break-all">
                           <span className="font-medium">Transaction:</span>{" "}
                           {p.transactionId}
                         </p>
 
-                        <p className="text-xs text-gray-700 break-all mt-1">
+                        <p className="text-sm break-all">
                           <span className="font-medium">Wallet:</span>{" "}
                           {p.walletAddress}
                         </p>
                       </div>
 
                       {/* Date */}
-                      <div className="text-xs text-gray-500 flex items-center gap-1">
-                        🕒 {new Date(p.createdAt).toLocaleString()}
+                      <div className="flex items-center gap-2 text-xs">
+                        <span>🕒</span>
+                        <span>{new Date(p.createdAt).toLocaleString()}</span>
                       </div>
                     </div>
                   </td>
+
                   {/* Screenshot */}
-                  <td className="p-3">
-                    {p.screenshot ? (
-                      <img
-                        src={`${baseUrl.replace("/api", "")}/${p.screenshot}`}
-                        alt="Payment Screenshot"
-                        onClick={() =>
-                          setSelectedVoucher(
-                            `${baseUrl.replace("/api", "")}/${p.screenshot}`,
-                          )
-                        }
-                        className="w-14 h-14 object-cover rounded-lg border cursor-pointer hover:scale-110 transition"
-                      />
-                    ) : (
-                      <span className="text-gray-400">No Image</span>
-                    )}
+                  <td className="p-4">
+                    <div className="flex justify-center">
+                      {p.screenshot ? (
+                        <img
+                          src={`${imageUrl}/${p.screenshot}`}
+                          alt="Payment Screenshot"
+                          onClick={() =>
+                            setSelectedVoucher(`${imageUrl}/${p.screenshot}`)
+                          }
+                          className="w-16 h-16 object-cover rounded-lg border cursor-pointer hover:scale-105 transition duration-300"
+                        />
+                      ) : (
+                        <span>No Image</span>
+                      )}
+                    </div>
                   </td>
 
                   {/* Status */}
-                  <td className="p-3">{getStatusBadge(p.status)}</td>
+                  <td className="px-6 py-5 text-right align-middle">
+                    {getStatusBadge(p.status)}
+                  </td>
                 </tr>
               ))}
             </tbody>
