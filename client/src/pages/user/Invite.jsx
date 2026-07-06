@@ -5,7 +5,7 @@ function Invite() {
   const { user } = useApp();
   const [copied, setCopied] = useState(false);
 
-  const inviteLink = `https://mercadolibreonline.shop/register${user?.myInvitationCode}`;
+  const inviteLink = `https://mercadolibreonline.shop/register?${user?.myInvitationCode}`;
 
   const handleCopy = async () => {
     try {
