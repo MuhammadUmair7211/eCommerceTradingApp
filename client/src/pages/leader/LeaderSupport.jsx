@@ -187,7 +187,7 @@ const LeaderSupport = () => {
                         : selectedChat.user?.username}
                     </div>
 
-                    <p className="break-words">{msg.message}</p>
+                    <p className="wrap-break-word">{msg.message}</p>
 
                     <div className="text-[10px] mt-1 opacity-70">
                       {new Date(msg.createdAt).toLocaleString()}
