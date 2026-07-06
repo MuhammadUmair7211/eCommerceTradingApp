@@ -249,15 +249,15 @@ const InjectionManagement = () => {
                       <td className="p-3 text-sm">{item.injectionOrder}</td>
 
                       <td className="p-3 text-sm">
-                        {item.commissionRate || 0}%
+                        {item?.commissionRate || 0}%
                       </td>
 
                       <td className="p-3 text-sm text-red-500 font-medium">
-                        ${item.injectionCost || 0}
+                        ${item?.injectionCost || 0}
                       </td>
 
                       <td className="p-3 text-sm text-green-600 font-medium">
-                        ${item.fixedCommission || 0}
+                        ${item?.fixedCommission || 0}
                       </td>
 
                       <td className="p-3 text-sm">filterData?.difference</td>
@@ -265,12 +265,12 @@ const InjectionManagement = () => {
                       <td className="p-3">
                         <span
                           className={`px-3 py-1 rounded-full text-xs font-semibold ${
-                            item.status === "completed"
+                            item?.status === "completed"
                               ? "bg-green-100 text-green-700"
                               : "bg-yellow-100 text-yellow-700"
                           }`}
                         >
-                          {item.status}
+                          {item?.status}
                         </span>
                       </td>
 
@@ -279,32 +279,32 @@ const InjectionManagement = () => {
                       </td>
 
                       <td className="p-3 text-sm">
-                        {item.status === "completed" && item.completedAt && (
+                        {item?.status === "completed" && item?.completedAt && (
                           <span className="text-green-600">
                             {new Date(item.completedAt).toLocaleString()}
                           </span>
                         )}
 
-                        {item.status === "rejected" && item.rejectedAt && (
+                        {item?.status === "rejected" && item?.rejectedAt && (
                           <span className="text-red-600">
                             {new Date(item.rejectedAt).toLocaleString()}
                           </span>
                         )}
 
-                        {item.status === "pending" && (
+                        {item?.status === "pending" && (
                           <span className="text-gray-400">-</span>
                         )}
                       </td>
 
                       <td className="p-3 text-sm">
-                        {new Date(item.createdAt).toLocaleString()}
+                        {new Date(item?.createdAt).toLocaleString()}
                       </td>
 
                       <td className="p-3">
                         <select
                           disabled={
-                            item.status === "completed" ||
-                            item.status === "rejected"
+                            item?.status === "completed" ||
+                            item?.status === "rejected"
                           }
                           onChange={(e) => {
                             const value = e.target.value;
@@ -323,8 +323,8 @@ const InjectionManagement = () => {
                             e.target.value = "";
                           }}
                           className={`border rounded-lg px-2 py-1 text-xs cursor-pointer bg-white ${
-                            item.status === "completed" ||
-                            item.status === "rejected"
+                            item?.status === "completed" ||
+                            item?.status === "rejected"
                               ? "opacity-50 cursor-not-allowed"
                               : ""
                           }`}

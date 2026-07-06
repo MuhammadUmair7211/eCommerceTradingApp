@@ -11,54 +11,52 @@ import {
 import axios from "axios";
 import { toast } from "react-toastify";
 import { baseUrl } from "../../../config/config";
+import { useApp } from "../../context/AppContext";
 
 const LeaderSupport = () => {
+  const { allSupports, getLeaderData } = useApp();
   const [selectedChat, setSelectedChat] = useState(null);
   const [reply, setReply] = useState("");
-  const [supports, setSupports] = useState([]);
   const [isMobileChatOpen, setIsMobileChatOpen] = useState(false);
 
-  // FETCH SUPPORTS
-  const fetchSupports = async () => {
-    try {
-      const { data } = await axios.get(`${baseUrl}/support/all`);
-
-      if (data.success) {
-        setSupports(data.supports || []);
-        return data.supports;
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
   useEffect(() => {
-    fetchSupports();
+    getLeaderData();
   }, []);
-
   // SEND REPLY
   const handleReply = async () => {
     if (!reply.trim() || !selectedChat?._id) return;
-
     try {
       const { data } = await axios.put(
         `${baseUrl}/support/reply/${selectedChat._id}`,
         { message: reply },
       );
-
       if (data.success) {
         setReply("");
         toast.success(data.message);
+        await getLeaderData();
 
-        const updated = await fetchSupports();
-        const freshChat = updated.find((c) => c._id === selectedChat._id);
-
-        setSelectedChat(freshChat);
+        // Update currently selected chat
+        const updated = data.support;
+        if (updated) {
+          setSelectedChat(updated);
+        }
       }
     } catch (error) {
       console.log(error);
+      toast.error("Failed to send reply");
     }
   };
+  useEffect(() => {
+    if (!selectedChat) return;
+
+    const updatedChat = allSupports.find(
+      (chat) => chat._id === selectedChat._id,
+    );
+
+    if (updatedChat) {
+      setSelectedChat(updatedChat);
+    }
+  }, [allSupports]);
 
   return (
     <div className="h-screen bg-slate-900 text-slate-300 flex overflow-hidden">
@@ -70,7 +68,7 @@ const LeaderSupport = () => {
         {/* HEADER */}
         <div className="p-5 border-b border-slate-700">
           <h1 className="text-xl font-bold">Customer Support</h1>
-          <p className="text-sm">Total Requests: {supports?.length || 0}</p>
+          <p className="text-sm">Total Requests: {allSupports?.length || 0}</p>
         </div>
 
         {/* SEARCH */}
@@ -90,7 +88,7 @@ const LeaderSupport = () => {
 
         {/* CHAT LIST */}
         <div className="flex-1 overflow-y-auto">
-          {supports?.map((chat) => (
+          {allSupports?.map((chat) => (
             <div
               key={chat._id}
               onClick={() => {
@@ -189,7 +187,7 @@ const LeaderSupport = () => {
                         : selectedChat.user?.username}
                     </div>
 
-                    <p className="wrap-break-words">{msg.message}</p>
+                    <p className="break-words">{msg.message}</p>
 
                     <div className="text-[10px] mt-1 opacity-70">
                       {new Date(msg.createdAt).toLocaleString()}

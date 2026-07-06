@@ -31,7 +31,7 @@ function AdminTeamPage() {
     );
   }
 
-  const filteredTeamMembers = admin.teamMembers.filter((member) => {
+  const filteredTeamMembers = admin?.teamMembers.filter((member) => {
     return (
       member.username?.toLowerCase().includes(search.toLowerCase()) ||
       member.phoneNumber?.includes(search) ||
@@ -39,17 +39,17 @@ function AdminTeamPage() {
     );
   });
 
-  const totalBalance = admin.teamMembers.reduce(
+  const totalBalance = admin?.teamMembers.reduce(
     (curr, acc) => curr + (acc.balance || 0),
     0,
   );
 
-  const totalOrders = admin.teamMembers.reduce(
+  const totalOrders = admin?.teamMembers.reduce(
     (curr, acc) => curr + (acc.totalOrders || 0),
     0,
   );
 
-  const totalCommission = admin.teamMembers.reduce(
+  const totalCommission = admin?.teamMembers.reduce(
     (curr, acc) => curr + (acc.commission || 0),
     0,
   );
@@ -76,32 +76,34 @@ function AdminTeamPage() {
     <div className="min-h-screen bg-slate-900 p-6 text-slate-300">
       {/* HEADER */}
       <div className="bg-slate-800 border border-slate-700 rounded-xl p-5 mb-4">
-        <h1 className="text-2xl font-bold text-white">{admin.username} Team</h1>
+        <h1 className="text-2xl font-bold text-white">
+          {admin?.username} Team
+        </h1>
 
         <div className="flex flex-wrap gap-4 mt-3 text-sm text-slate-400">
           <p>
             <span className="text-slate-500">Profile ID:</span>{" "}
-            <span className="text-green-400">{admin.profileCode}</span>
+            <span className="text-green-400">{admin?.profileCode}</span>
           </p>
 
           <p>
             <span className="text-slate-500">Invite Code:</span>{" "}
-            {admin.referralCode}
+            {admin?.referralCode}
           </p>
 
           <p className="flex items-center gap-2">
             <Activity
               className={`w-4 h-4 ${
-                admin.isOnline ? "text-green-400" : "text-red-400"
+                admin?.isOnline ? "text-green-400" : "text-red-400"
               }`}
             />
 
-            {admin.isOnline ? "Online" : "Offline"}
+            {admin?.isOnline ? "Online" : "Offline"}
           </p>
 
           <p>
             <span className="text-slate-500">Team Members:</span>{" "}
-            {admin.teamMembers.length}
+            {admin?.teamMembers.length}
           </p>
         </div>
       </div>
@@ -136,7 +138,7 @@ function AdminTeamPage() {
       </div>
 
       {/* EMPTY STATE */}
-      {admin.teamMembers.length === 0 ? (
+      {admin?.teamMembers.length === 0 ? (
         <div className="flex flex-col items-center justify-center py-16 px-6 text-center bg-slate-800 border border-dashed border-slate-700 rounded-xl">
           <div className="w-16 h-16 flex items-center justify-center rounded-full bg-slate-700 mb-4">
             <Users className="w-8 h-8 text-slate-400" />
@@ -157,7 +159,7 @@ function AdminTeamPage() {
         </div>
       ) : (
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
-          {filteredTeamMembers.map((u) => (
+          {filteredTeamMembers?.map((u) => (
             <div
               key={u._id}
               className="relative group bg-slate-800 border border-slate-700 rounded-xl overflow-hidden hover:border-slate-600 transition duration-300"
@@ -190,7 +192,7 @@ function AdminTeamPage() {
                 <div className="mt-2 text-sm">
                   💰 Balance:
                   <span className="text-green-400 font-semibold ml-1">
-                    ${u.balance.toFixed(2) || 0}
+                    ${u?.balance?.toFixed(2) || 0}
                   </span>
                 </div>
               </div>

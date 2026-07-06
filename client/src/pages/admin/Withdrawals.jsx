@@ -15,29 +15,28 @@ function Withdrawals() {
   const itemsPerPage = 5;
 
   // FETCH
-  const fetchWithdrawals = async () => {
-    try {
-      setLoading(true);
-      const token = localStorage.getItem("adminToken");
-      const { data } = await axios.get(
-        `${baseUrl}/withdrawals/admin-withdrawals`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        },
-      );
-      if (data?.success) {
-        setWithdrawals(data.withdrawals || []);
-      }
-    } catch (error) {
-      console.log(error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
   useEffect(() => {
+    const fetchWithdrawals = async () => {
+      try {
+        setLoading(true);
+        const token = localStorage.getItem("adminToken");
+        const { data } = await axios.get(
+          `${baseUrl}/withdrawals/admin-withdrawals`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          },
+        );
+        if (data?.success) {
+          setWithdrawals(data.withdrawals || []);
+        }
+      } catch (error) {
+        console.log(error);
+      } finally {
+        setLoading(false);
+      }
+    };
     fetchWithdrawals();
   }, []);
 
@@ -63,6 +62,10 @@ function Withdrawals() {
     currentPage * itemsPerPage,
   );
 
+  if (loading) {
+    return <h1>loading....</h1>;
+  }
+
   return (
     <div className="bg-slate-900 text-slate-300 border border-slate-700 overflow-hidden p-2">
       {/* HEADER */}
@@ -70,10 +73,11 @@ function Withdrawals() {
         heading="Withdrawals History"
         subheading="View all withdrawal requests"
       />
-
       {/* SEARCH */}
       <div className="flex items-center justify-center">
-        <span className="text-sm">total records: {filteredRecords.length}</span>
+        <span className="text-sm">
+          total records: {filteredRecords?.length}
+        </span>
         <SearchBar
           value={searchTerm}
           onChange={(value) => {
@@ -98,7 +102,7 @@ function Withdrawals() {
           </thead>
 
           <tbody>
-            {paginatedRecords.map((w) => {
+            {paginatedRecords?.map((w) => {
               return (
                 <tr
                   key={w._id}
@@ -153,16 +157,15 @@ function Withdrawals() {
         </table>
 
         {/* EMPTY STATE */}
-        {paginatedRecords.length === 0 && (
+        {paginatedRecords?.length === 0 && (
           <div className="p-10 text-center text-gray-500">
             <AlertCircle className="mx-auto mb-2" />
             No withdrawal records found
           </div>
         )}
       </div>
-
       {/* PAGINATION */}
-      {filteredRecords.length > 0 && (
+      {filteredRecords?.length > 0 && (
         <div className="p-4">
           <Pagination
             currentPage={currentPage}

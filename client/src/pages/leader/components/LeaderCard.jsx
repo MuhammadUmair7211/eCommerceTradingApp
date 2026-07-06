@@ -48,7 +48,7 @@ const LeaderCard = () => {
 
       {/* Info Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        {leaderData.map((data, i) => (
+        {leaderData?.map((data, i) => (
           <div
             key={i}
             className="bg-slate-800 border border-slate-700 p-4 rounded-lg hover:bg-slate-700 transition"

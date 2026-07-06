@@ -251,7 +251,7 @@ export default function Members() {
                   </td>
                 </tr>
               ) : (
-                currentMembers.map((member) => {
+                currentMembers?.map((member) => {
                   return (
                     <tr
                       key={member._id}

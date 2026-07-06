@@ -13,22 +13,24 @@ import { baseUrl } from "../../../config/config";
 
 function AdminProfile() {
   const [admin, setAdmin] = useState(null);
-  const fetchAdmin = async () => {
-    try {
-      const token = localStorage.getItem("adminToken");
-      if (!token) return;
 
-      const { data } = await axios.get(`${baseUrl}/admin-auth/my`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-      setAdmin(data.admin);
-    } catch (error) {
-      console.log(error);
-    }
-  };
+
   useEffect(() => {
+    const fetchAdmin = async () => {
+      try {
+        const token = localStorage.getItem("adminToken");
+        if (!token) return;
+
+        const { data } = await axios.get(`${baseUrl}/admin-auth/my`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        setAdmin(data.admin);
+      } catch (error) {
+        console.log(error);
+      }
+    };
     fetchAdmin();
   }, []);
   return (

@@ -4,7 +4,7 @@ import Pagination from "../../components/admin/Pagination";
 import SearchBar from "../../components/admin/SearchBar";
 import PageHeader from "../../components/admin/PageHeader";
 import axios from "axios";
-import { baseUrl } from "../../../config/config";
+import { baseUrl, imageUrl } from "../../../config/config";
 
 function RechargeHistoryPage() {
   const [loading, setLoading] = useState(false);
@@ -207,12 +207,10 @@ function RechargeHistoryPage() {
                   <td className="p-3">
                     {p.screenshot ? (
                       <img
-                        src={`${baseUrl.replace("/api", "")}/${p.screenshot}`}
+                        src={`${imageUrl}/${p.screenshot}`}
                         alt="Payment Screenshot"
                         onClick={() =>
-                          setSelectedVoucher(
-                            `${baseUrl.replace("/api", "")}/${p.screenshot}`,
-                          )
+                          setSelectedVoucher(`${imageUrl}/${p.screenshot}`)
                         }
                         className="w-14 h-14 object-cover rounded-lg border cursor-pointer hover:scale-110 transition"
                       />

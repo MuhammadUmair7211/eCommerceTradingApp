@@ -35,7 +35,7 @@ function Home() {
       <div className="mb-6 text-xs">
         <span className="mr-2 text-gray-500">Promotion address:</span>
         <a href="#" className="text-blue-500 hover:underline">
-          https://shopc99.com/m/#/register?invite_code=469188
+          https://mercadolibreonline.shop/register?invite_code=469188
         </a>
       </div>
 

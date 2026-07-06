@@ -5,7 +5,6 @@ import { baseUrl } from "../../../config/config";
 import { useApp } from "../../context/AppContext";
 function AllUsers() {
   const { allUsers, loading, fetchUserProfile } = useApp();
-  console.log(allUsers);
 
   const [selectedUser, setSelectedUser] = useState(null);
   const [formData, setFormData] = useState({});

@@ -10,7 +10,7 @@ import { useApp } from "../../../context/AppContext";
 function StatsCard() {
   const { allAdmins, allUsers } = useApp();
 
-  const totalBalance = allAdmins.reduce((total, admin) => {
+  const totalBalance = allAdmins?.reduce((total, admin) => {
     return (
       total +
       (admin.teamMembers || []).reduce(
@@ -20,7 +20,7 @@ function StatsCard() {
     );
   }, 0);
 
-  const totalCommission = allAdmins.reduce((total, admin) => {
+  const totalCommission = allAdmins?.reduce((total, admin) => {
     return (
       total +
       admin.teamMembers?.reduce(
@@ -30,7 +30,7 @@ function StatsCard() {
     );
   }, 0);
 
-  const totalOrders = allAdmins.reduce((total, admin) => {
+  const totalOrders = allAdmins?.reduce((total, admin) => {
     return (
       total +
       admin.teamMembers?.reduce(
@@ -70,7 +70,7 @@ function StatsCard() {
 
   return (
     <div className="bg-slate-900 text-slate-300 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 p-2 md:p-6">
-      {dashboardData.map((data) => (
+      {dashboardData?.map((data) => (
         <div
           key={data.name}
           className="bg-slate-800 border border-slate-700 rounded-lg p-5 shadow-md hover:bg-slate-700 transition-all duration-300"
