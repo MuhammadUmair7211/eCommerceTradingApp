@@ -4,11 +4,11 @@ export default function StatsSection() {
   const { user } = useApp();
   const stats = [
     {
-      value: user?.commission.toFixed(2),
+      value: user?.commission?.toFixed(2),
       label: "Get commission",
     },
     {
-      value: "$" + user?.frozenAmount.toFixed(2),
+      value: "$" + user?.frozenAmount?.toFixed(2),
       label: "Amount frozen",
     },
     {
@@ -16,7 +16,7 @@ export default function StatsSection() {
       label: "Order number",
     },
     {
-      value: "$" + user?.balance.toFixed(2),
+      value: "$" + user?.balance?.toFixed(2),
       label: "Available balance",
     },
   ];

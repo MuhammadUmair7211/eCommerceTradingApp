@@ -7,7 +7,7 @@ import PenguinLoader from "./PenguinLoader";
 import { baseUrl } from "../../../config/config";
 import { useApp } from "../../context/AppContext";
 export default function StartOrderButton() {
-  const { user, setUser, fetchUserProfile } = useApp();
+  const { user, setUser } = useApp();
   const [commissionArray, setCommissionArray] = useState([]);
   const [productCommission, setProductCommission] = useState(null);
   const [cycleLocked, setCycleLocked] = useState(false);
@@ -34,6 +34,7 @@ export default function StartOrderButton() {
       .catch((err) => console.error(err));
   }, []);
 
+
   useEffect(() => {
     if (cycleLocked || !user?.currentCycleOrders || !user?.balance) return;
     const pool = user?.balance * 0.125;
@@ -46,9 +47,9 @@ export default function StartOrderButton() {
   }, [user?.balance, cycleLocked, user?.currentCycleOrders]);
 
   const delay = (ms) => new Promise((res) => setTimeout(res, ms));
+
   // handle start
   const handleStartOrder = async () => {
-    await fetchUserProfile();
     setLoader(true);
     try {
       await delay(3000);
@@ -58,7 +59,6 @@ export default function StartOrderButton() {
           Authorization: `Bearer ${token}`,
         },
       });
-      console.log(data);
       if (!data.success) {
         toast.error(data.message);
         return;
@@ -100,7 +100,6 @@ export default function StartOrderButton() {
         products[Math.floor(Math.random() * products.length)];
       const randomCommission = commissionArray[currentOrderIndex] ?? 0;
       console.log(randomCommission);
-      
 
       setProductCommission(randomCommission);
       const newOrderId = `ORD-${randomProduct.id}-${Date.now()}`;

@@ -1,14 +1,16 @@
 import axios from "axios";
 import { createContext, useContext, useEffect, useState } from "react";
 import { baseUrl } from "../../config/config";
+import { useLocation } from "react-router-dom";
 
 export const AppContext = createContext();
 
 export const useApp = () => {
-  return useContext(AppContext); 
+  return useContext(AppContext);
 };
 
 const AppProvider = ({ children }) => {
+  const location = useLocation();
   // user data
   const [user, setUser] = useState(null);
   const [orders, setOrders] = useState([]);
@@ -84,14 +86,14 @@ const AppProvider = ({ children }) => {
       await fetchUserProfile();
     }
     load();
-  }, []);
+  }, [location.pathname]);
 
   useEffect(() => {
     async function load() {
       await getLeaderData();
     }
     load();
-  }, []);
+  }, [location.pathname]);
 
   return (
     <AppContext.Provider

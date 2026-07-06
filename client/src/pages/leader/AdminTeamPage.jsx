@@ -5,13 +5,17 @@ import {
   Users,
   ShoppingCart,
   BadgeDollarSign,
+  UserCircle,
+  ShieldCheck,
+  KeyRound,
+  LockKeyhole,
 } from "lucide-react";
 import { useState } from "react";
 
 function AdminTeamPage() {
   const location = useLocation();
   const admin = location.state?.admin;
-
+  console.log(admin);
   const [search, setSearch] = useState("");
 
   // IMPORTANT: Prevent crash on refresh
@@ -73,38 +77,88 @@ function AdminTeamPage() {
   ];
 
   return (
-    <div className="min-h-screen bg-slate-900 p-6 text-slate-300">
-      {/* HEADER */}
-      <div className="bg-slate-800 border border-slate-700 rounded-xl p-5 mb-4">
-        <h1 className="text-2xl font-bold text-white">
-          {admin?.username} Team
-        </h1>
+    <div className="min-h-screen bg-slate-900 p-4 text-slate-300">
+      <div className="bg-linear-to-br from-slate-900 to-slate-800 border border-slate-700 p-6 shadow-xl mb-6">
+        {/* Header */}
+        <div>
+          <h1 className="text-lg font-bold text-white">
+            {admin?.username}'s Team
+          </h1>
+          <p className="text-slate-400 text-sm">Administrator Information</p>
+        </div>
 
-        <div className="flex flex-wrap gap-4 mt-3 text-sm text-slate-400">
-          <p>
-            <span className="text-slate-500">Profile ID:</span>{" "}
-            <span className="text-green-400">{admin?.profileCode}</span>
-          </p>
+        {/* Info Cards */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 mt-4">
+          {/* Profile Code */}
+          <div className="bg-slate-800/70 border border-slate-700 p-4 hover:border-green-500 transition">
+            <div className="flex items-center gap-3">
+              <ShieldCheck className="w-8 h-8 text-green-400" />
+              <div>
+                <p className="text-xs text-slate-400">Profile Code</p>
+                <p className="text-green-400 font-semibold">
+                  {admin?.profileCode}
+                </p>
+              </div>
+            </div>
+          </div>
 
-          <p>
-            <span className="text-slate-500">Invite Code:</span>{" "}
-            {admin?.referralCode}
-          </p>
+          {/* Invitation Code */}
+          <div className="bg-slate-800/70 border border-slate-700 p-4 hover:border-blue-500 transition">
+            <div className="flex items-center gap-3">
+              <KeyRound className="w-8 h-8 text-blue-400" />
+              <div>
+                <p className="text-xs text-slate-400">Invitation Code</p>
+                <p className="text-white font-semibold">
+                  {admin?.referralCode}
+                </p>
+              </div>
+            </div>
+          </div>
 
-          <p className="flex items-center gap-2">
-            <Activity
-              className={`w-4 h-4 ${
-                admin?.isOnline ? "text-green-400" : "text-red-400"
-              }`}
-            />
+          {/* Password */}
+          <div className="bg-slate-800/70 border border-slate-700 p-4 hover:border-yellow-500 transition">
+            <div className="flex items-center gap-3">
+              <LockKeyhole className="w-8 h-8 text-yellow-400" />
+              <div>
+                <p className="text-xs text-slate-400">Admin Password</p>
+                <p className="text-white font-semibold">{admin?.password}</p>
+              </div>
+            </div>
+          </div>
 
-            {admin?.isOnline ? "Online" : "Offline"}
-          </p>
+          {/* Status */}
+          <div className="bg-slate-800/70 border border-slate-700 p-4 hover:border-purple-500 transition">
+            <div className="flex items-center gap-3">
+              <Activity
+                className={`w-8 h-8 ${
+                  admin?.isOnline ? "text-green-400" : "text-red-400"
+                }`}
+              />
+              <div>
+                <p className="text-xs text-slate-400">Status</p>
+                <p
+                  className={`font-semibold ${
+                    admin?.isOnline ? "text-green-400" : "text-red-400"
+                  }`}
+                >
+                  {admin?.isOnline ? "Online" : "Offline"}
+                </p>
+              </div>
+            </div>
+          </div>
 
-          <p>
-            <span className="text-slate-500">Team Members:</span>{" "}
-            {admin?.teamMembers.length}
-          </p>
+          {/* Team Members */}
+          <div className="bg-slate-800/70 border border-slate-700 p-4 hover:border-cyan-500 transition">
+            <div className="flex items-center gap-3">
+              <Users className="w-8 h-8 text-cyan-400" />
+              <div>
+                <p className="text-xs text-slate-400">Team Members</p>
+                <p className="text-white font-semibold">
+                  {admin?.teamMembers?.length || 0}
+                </p>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -115,7 +169,7 @@ function AdminTeamPage() {
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           placeholder="Search by ID, username, phone"
-          className="max-w-5xl w-full bg-slate-800 border border-slate-700 p-3 rounded-lg text-slate-300 outline-none focus:border-slate-500"
+          className="max-w-5xl w-full bg-slate-800 border border-slate-700 p-3 text-slate-300 outline-none focus:border-slate-500"
         />
       </div>
 
@@ -124,7 +178,7 @@ function AdminTeamPage() {
         {dashboardData.map((data) => (
           <div
             key={data.name}
-            className="bg-slate-800 border border-slate-700 p-5 rounded-xl hover:border-slate-600 transition"
+            className="bg-slate-800 border border-slate-700 p-5 hover:border-slate-600 transition"
           >
             {data.icon}
 
@@ -139,7 +193,7 @@ function AdminTeamPage() {
 
       {/* EMPTY STATE */}
       {admin?.teamMembers.length === 0 ? (
-        <div className="flex flex-col items-center justify-center py-16 px-6 text-center bg-slate-800 border border-dashed border-slate-700 rounded-xl">
+        <div className="flex flex-col items-center justify-center py-16 px-6 text-center bg-slate-800 border border-dashed border-slate-700">
           <div className="w-16 h-16 flex items-center justify-center rounded-full bg-slate-700 mb-4">
             <Users className="w-8 h-8 text-slate-400" />
           </div>

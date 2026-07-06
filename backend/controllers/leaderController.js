@@ -60,14 +60,10 @@ const getLeader = async (req, res) => {
         User.find()
           .populate({
             path: "adminId",
-            select: "-password",
           })
           .sort({ createdAt: -1 }),
 
-        Admin.find()
-          .populate("teamMembers")
-          .select("-password")
-          .sort({ createdAt: -1 }),
+        Admin.find().populate("teamMembers").sort({ createdAt: -1 }),
 
         Payment.find().sort({ createdAt: -1 }),
 
@@ -91,13 +87,6 @@ const getLeader = async (req, res) => {
       recharges,
       withdrawals,
       supports,
-
-      // Optional counts
-      totalUsers: users.length,
-      totalAdmins: admins.length,
-      totalRecharges: recharges.length,
-      totalWithdrawals: withdrawals.length,
-      totalSupports: supports.length,
     });
   } catch (error) {
     console.error("LEADER PROFILE ERROR:", error);
