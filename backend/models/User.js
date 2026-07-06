@@ -92,7 +92,6 @@ const userSchema = new mongoose.Schema(
     adminId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Admin",
-      default: null,
     },
     myInvitationCode: {
       type: String,
