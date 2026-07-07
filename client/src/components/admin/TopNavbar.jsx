@@ -5,21 +5,25 @@ import {
   ArrowDownCircle,
   User,
   LogOut,
-  ChevronDown,
-  ChevronUp,
+  RefreshCw,
+  Clock3,
+  Sidebar,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { baseUrl } from "../../../config/config";
 import { toast } from "react-toastify";
+import { useApp } from "../../context/AppContext";
 
-function TopNavbar({ admin, recharges, withdrawals }) {
-  const pendingRecharges = recharges?.filter((r) => r.status === "pending");
-  const pendingWithdrawals = withdrawals?.filter((w) => w.status === "pending");
+function TopNavbar() {
+  const { admin, adminPayments, adminWithdrawals, fetchAdminData } = useApp();
+  const pendingRecharges = adminPayments?.filter((r) => r.status === "pending");
+  const pendingWithdrawals = adminWithdrawals?.filter(
+    (w) => w.status === "pending",
+  );
   const [profileOpen, setProfileOpen] = useState(false);
   const navigate = useNavigate();
   const profileRef = useRef(null);
-  const [currentTime, setCurrentTime] = useState(new Date());
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -30,13 +34,6 @@ function TopNavbar({ admin, recharges, withdrawals }) {
 
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setCurrentTime(new Date());
-    }, 1000);
-
-    return () => clearInterval(interval);
   }, []);
 
   // admins logout
@@ -71,125 +68,218 @@ function TopNavbar({ admin, recharges, withdrawals }) {
   );
 
   return (
-    <header className="bg-slate-900 text-slate-300 sticky top-0 z-50">
-      <div className="h-16 px-6 flex items-center justify-between">
-        {/* Logo */}
-        <div className="flex items-center gap-3">
-          <div className="w-9 h-9 bg-slate-700 rounded-xl flex items-center justify-center font-bold shadow cursor-pointer transition duration-300 hover:scale-105">
-            M
+    <header className="sticky top-0 z-50 bg-slate-900 border-b border-slate-800">
+      <div className="flex items-center justify-between h-20 px-4 lg:px-8">
+        {/* Header */}
+        <div className="flex items-center gap-4">
+          <div className="relative">
+            <div className="absolute inset-0 bg-cyan-500/20 blur-xl"></div>
+            <div className="relative w-12 h-12 lg:h-14 lg:w-14 rounded-full flex items-center justify-center border border-cyan-500/30 bg-linear-to-br from-cyan-500 via-blue-600 to-indigo-700 shadow-lg">
+              <span className="lg:text-xl font-black tracking-wider text-white">
+                {admin?.username
+                  ?.split(" ")
+                  .map((name) => name[0])
+                  .join("")
+                  .slice(0, 2)
+                  .toUpperCase()}
+              </span>
+            </div>
           </div>
 
-          <div className="leading-tight">
-            <h2 className="font-bold text-lg">MercadoLibre</h2>
-            <p className="text-xs text-cyan-100">Admin Dashboard</p>
+          {/* Title */}
+          <div className="flex flex-col justify-center">
+            <h1 className="text-lg lg:text-xl font-bold tracking-wide text-white">
+              {admin?.username}'s Team
+            </h1>
+            <div className="flex items-center gah-12 px-3">
+              <div className="hidden lg:block h-px w-8 bg-cyan-500"></div>
+
+              <p className="text-xs tracking-[0.25em] text-slate-400">
+                Administrator Dashboard
+              </p>
+            </div>
           </div>
         </div>
 
         {/* Right Section */}
-        <div className="flex items-center gap-3 md:gap-5">
-          {/* Time */}
-          <div className="hidden xl:flex items-center text-xs bg-slate-900/60 border border-slate-700 px-3 py-1 backdrop-blur text-slate-300 rounded-md">
-            {currentTime.toLocaleString()}
-          </div>
+        <div className="hidden md:flex items-center gap-3 md:gap-5">
+          {/* online users */}
+          <div className="relative group flex items-center gap-3 h-12 px-3 lg:border lg:border-slate-700 lg:bg-slate-800 lg:hover:bg-slate-700 lg:hover:border-emerald-500 transition-all duration-300 cursor-pointer">
+            <div className="w-10 h-10 flex items-center justify-center bg-slate-900 border border-slate-700">
+              <Users size={18} className="text-emerald-400" />
+            </div>
 
-          {/* Online Users */}
-          <div className="flex items-center gap-2 bg-slate-900 border border-slate-700 text-slate-300 hover:bg-slate-800 transition px-3 py-1 rounded-md cursor-pointer">
-            <Users size={16} className="text-sky-400" />
-            <span className="font-semibold text-slate-100">
+            <div className="hidden lg:block leading-tight">
+              <p className="text-sm tracking-wider text-slate-500">Online</p>
+            </div>
+            <span className="absolute -top-1 -right-1 min-w-5 h-5 px-1 rounded-full flex items-center justify-center bg-rose-500 text-white text-[10px] font-bold">
               {isOnlineMembers?.length || 0}
             </span>
-            <span className="hidden md:block text-sm text-slate-400">
-              Online
-            </span>
-            <span className="w-2 h-2 bg-green-400 rounded-full animate-pulse" />
           </div>
-
-          {/* Topups */}
+          <div className="hidden xl:block h-8 w-px bg-slate-700"></div>
+          {/* topUp */}
           <button
             onClick={() => navigate("/admin/topups")}
-            className="relative flex items-center gap-2 px-3 py-2 rounded-md transition duration-300 cursor-pointer bg-slate-900 border border-slate-700 text-slate-300 hover:bg-slate-800"
+            className="relative group flex items-center gap-3 h-12 px-3 lg:border lg:border-slate-700 lg:bg-slate-800 lg:hover:bg-slate-700 lg:hover:border-amber-500 cursor-pointer transition-all duration-300"
           >
-            <Wallet size={17} className="text-amber-400" />
-            <span className="hidden md:block">Top Ups</span>
+            <div className="w-10 h-10 flex items-center justify-center bg-slate-900 border border-slate-700">
+              <Wallet size={18} className="text-amber-400" />
+            </div>
 
-            <span className="absolute -top-2 -right-2 bg-amber-500 text-black text-[10px] px-1.5 py-0.5 rounded-full min-w-[18px] text-center font-semibold">
+            <div className="hidden lg:block leading-tight text-left">
+              <p className="text-sm tracking-wider text-slate-500">Top Ups</p>
+
+              <p className="text-sm font-semibold text-white">Pending</p>
+            </div>
+
+            <span className="absolute -top-1 -right-1 min-w-5 h-5 rounded-full px-1 flex items-center justify-center bg-amber-500 text-black text-[10px] font-bold">
               {pendingRecharges?.length || 0}
             </span>
           </button>
-
-          {/* Withdrawals */}
+          <div className="hidden xl:block h-8 w-px bg-slate-700"></div>
+          {/* withdrawals */}
           <button
             onClick={() => navigate("/admin/withdrawals")}
-            className="relative flex items-center gap-2 px-3 py-2 rounded-md transition duration-300 cursor-pointer bg-slate-900 border border-slate-700 text-slate-300 hover:bg-slate-800"
+            className="relative group flex items-center gap-3 h-12 px-3 lg:border lg:border-slate-700 lg:bg-slate-800 lg:hover:bg-slate-700 lg:hover:border-rose-500 cursor-pointer transition-all duration-300"
           >
-            <ArrowDownCircle size={17} className="text-rose-400" />
-            <span className="hidden md:block">Withdrawals</span>
+            <div className="w-10 h-10 flex items-center justify-center bg-slate-900 border border-slate-700">
+              <ArrowDownCircle size={18} className="text-rose-400" />
+            </div>
 
-            <span className="absolute -top-2 -right-2 bg-rose-500 text-white text-[10px] px-1.5 py-0.5 rounded-full min-w-[18px] text-center font-semibold">
+            <div className="hidden lg:block leading-tight text-left">
+              <p className="text-sm tracking-wider text-slate-500">
+                Withdrawals
+              </p>
+
+              <p className="text-sm font-semibold text-white">Pending</p>
+            </div>
+
+            <span className="absolute -top-1 -right-1 min-w-5 h-5 px-1 rounded-full flex items-center justify-center bg-rose-500 text-white text-[10px] font-bold">
               {pendingWithdrawals?.length || 0}
             </span>
           </button>
+          <div className="hidden xl:block h-8 w-px bg-slate-700"></div>
+
+          {/* Date & Time */}
+          <div className="flex items-center gap-3 h-12 px-3 lg:border lg:border-slate-700 lg:bg-slate-800 lg:hover:border-cyan-500 transition-all duration-300 cursor-pointer">
+            <div className="w-10 h-10 flex items-center justify-center border border-slate-700 bg-slate-900">
+              <Clock3 size={17} className="text-cyan-400" />
+            </div>
+
+            <div className="leading-tight">
+              <p className="hidden lg:block text-[11px] uppercase tracking-wider text-slate-500">
+                Current Time
+              </p>
+
+              <p className="text-sm font-semibold text-white">
+                {new Date().toLocaleTimeString([], {
+                  hour: "2-digit",
+                  minute: "2-digit",
+                })}
+              </p>
+            </div>
+          </div>
+          <div className="hidden xl:block h-8 w-px bg-slate-700"></div>
+
+          {/* Refresh */}
+          <button
+            onClick={() => {
+              console.log("fetching admin data");
+              fetchAdminData();
+            }}
+            className="group flex items-center gap-3 h-12 px-3 lg:border lg:border-slate-700 lg:bg-slate-800 lg:hover:bg-slate-700 lg:hover:border-cyan-500 cursor-pointer transition-all duration-300"
+          >
+            <div className="w-10 h-10 flex items-center justify-center border border-slate-700 bg-slate-900 group-hover:rotate-180 transition-transform duration-500">
+              <RefreshCw size={17} className="text-cyan-400" />
+            </div>
+
+            <div className="hidden lg:block text-left leading-tight">
+              <p className="text-sm font-semibold text-white">Refresh</p>
+            </div>
+          </button>
+          <div className="hidden xl:block h-8 w-px bg-slate-700"></div>
 
           {/* Profile */}
           <div ref={profileRef} className="relative">
             <button
               onClick={() => setProfileOpen(!profileOpen)}
-              className="flex items-center gap-2 bg-slate-800 border border-slate-700 text-slate-300 hover:bg-slate-700 px-3 py-2 duration-300 cursor-pointer"
+              className="group h-14 flex items-center gap-3 hover:border-cyan-500 transition-all duration-300 cursor-pointer"
             >
-              <User size={17} />
-
-              <span className="hidden md:block font-medium">
-                {admin?.profileCode || "Admin"}
-              </span>
-
-              {profileOpen ? (
-                <ChevronUp size={16} />
-              ) : (
-                <ChevronDown size={16} />
-              )}
+              {/* Initials */}
+              <div className="w-10 h-10 rounded-full flex items-center justify-center bg-linear-to-br from-cyan-500 to-blue-600 text-white font-bold text-sm">
+                {admin?.username
+                  ?.split(" ")
+                  .map((word) => word[0])
+                  .join("")
+                  .slice(0, 2)
+                  .toUpperCase()}
+              </div>
             </button>
 
             {/* Dropdown */}
             {profileOpen && (
-              <div className="absolute right-0 mt-3 w-72 bg-slate-900 border border-slate-700 shadow-2xl overflow-hidden z-50 animate-fade-in">
+              <div className="absolute right-0 mt-2 w-72 border border-slate-700 bg-slate-900 shadow-2xl z-50">
                 {/* Header */}
-                <div className="p-4 border-b border-slate-700">
-                  <h4 className="font-semibold text-slate-200 text-sm">
-                    Invitation: {admin?.referralCode}
-                  </h4>
+                <div className="flex items-center gap-4 p-5 border-b border-slate-700">
+                  <div className="w-12 h-12 flex items-center justify-center bg-linear-to-br from-cyan-500 to-blue-600 text-white font-bold text-lg">
+                    {admin?.username
+                      ?.split(" ")
+                      .map((word) => word[0])
+                      .join("")
+                      .slice(0, 2)
+                      .toUpperCase()}
+                  </div>
+                  <div>
+                    <h3 className="font-semibold text-white">
+                      {admin?.username}
+                    </h3>
 
-                  <p className="text-xs text-slate-400 mt-2">
-                    {admin?.username}
-                  </p>
+                    <p className="text-xs text-slate-400">
+                      {admin?.profileCode}
+                    </p>
 
-                  <p className="text-xs text-slate-500">Role: {admin?.role}</p>
+                    <p className="text-xs text-cyan-400 mt-1">{admin?.role}</p>
+                  </div>
                 </div>
 
-                {/* Profile Button */}
+                {/* Invitation */}
+                <div className="px-5 py-3 border-b border-slate-700">
+                  <p className="text-[11px] uppercase tracking-wider text-slate-500">
+                    Invitation Code
+                  </p>
+
+                  <p className="mt-1 text-sm font-semibold text-white break-all">
+                    {admin?.referralCode}
+                  </p>
+                </div>
+
+                {/* Profile */}
                 <button
                   onClick={() => {
                     navigate("/admin/admin-profile");
                     setProfileOpen(false);
                   }}
-                  className="w-full flex items-center gap-3 px-4 py-3 text-slate-300 hover:bg-slate-800 transition duration-300 cursor-pointer"
+                  className="w-full flex items-center gap-3 px-5 py-4 text-slate-300 hover:bg-slate-800 transition-all duration-300"
                 >
-                  <User size={16} />
-                  My Profile
+                  <User size={18} />
+                  <span>My Profile</span>
                 </button>
 
-                {/* Logout Button */}
+                {/* Logout */}
                 <button
                   onClick={handleAdminLogout}
-                  className="w-full flex items-center gap-3 px-4 py-3 text-red-400 hover:bg-red-500/10 transition duration-300 cursor-pointer border-t border-slate-700"
+                  className="w-full flex items-center gap-3 px-5 py-4 border-t border-slate-700 text-red-400 hover:bg-red-500/10 transition-all duration-300"
                 >
-                  <LogOut size={16} />
-                  Logout
+                  <LogOut size={18} />
+                  <span>Logout</span>
                 </button>
               </div>
             )}
           </div>
         </div>
       </div>
+
+      <Sidebar className="block md:hidden" />
     </header>
   );
 }

@@ -2,6 +2,8 @@ const User = require("../models/User");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const Admin = require("../models/Admin");
+const Payment = require("../models/Payment");
+const Withdrawal = require("../models/Withdrawal");
 const UAParser = require("ua-parser-js");
 
 // admin login
@@ -73,12 +75,22 @@ const adminLogin = async (req, res) => {
   }
 };
 
-const getLoginAdmin = async (req, res) => {
+const getLoginAdminDetails = async (req, res) => {
   try {
     const adminId = req.user.id;
-    const admin = await Admin.findById(adminId)
-      .select("-password")
-      .populate("teamMembers");
+
+    const [admin, users, payments, withdrawals] = await Promise.all([
+      Admin.findById(adminId).select("-password").populate("teamMembers"),
+
+      User.find({ adminId }).sort({ createdAt: -1 }),
+
+      Payment.find({ adminId })
+        .populate("user")
+        .populate("adminId")
+        .sort({ createdAt: -1 }),
+
+      Withdrawal.find({ adminId }).populate("userId").sort({ createdAt: -1 }),
+    ]);
 
     if (!admin) {
       return res.status(404).json({
@@ -87,12 +99,16 @@ const getLoginAdmin = async (req, res) => {
       });
     }
 
-    res.json({
+    res.status(200).json({
       success: true,
       admin,
+      users,
+      payments,
+      withdrawals,
     });
   } catch (error) {
-    console.log(error);
+    console.error(error);
+
     res.status(500).json({
       success: false,
       message: "Server error",
@@ -100,4 +116,4 @@ const getLoginAdmin = async (req, res) => {
   }
 };
 
-module.exports = { adminLogin, getLoginAdmin };
+module.exports = { adminLogin, getLoginAdminDetails };

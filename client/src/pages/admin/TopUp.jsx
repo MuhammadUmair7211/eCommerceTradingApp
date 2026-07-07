@@ -1,52 +1,21 @@
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { AlertCircle, Clock, XCircle, CheckCircle } from "lucide-react";
 import Pagination from "../../components/admin/Pagination";
 import SearchBar from "../../components/admin/SearchBar";
 import PageHeader from "../../components/admin/PageHeader";
-import axios from "axios";
-import { baseUrl, imageUrl } from "../../../config/config";
+import { imageUrl } from "../../../config/config";
+import { useApp } from "../../context/AppContext";
 
 function RechargeHistoryPage() {
-  const [loading, setLoading] = useState(false);
-  const [recharges, setRecharges] = useState([]);
+  const { adminPayments, loading } = useApp();
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedVoucher, setSelectedVoucher] = useState(null);
 
   const itemsPerPage = 5;
-
-  // Fetch Recharges
-  const fetchAllAdminRecharges = async () => {
-    try {
-      setLoading(true);
-      const token = localStorage.getItem("adminToken");
-      if (!token) {
-        console.error("Admin token missing");
-        return;
-      }
-
-      const { data } = await axios.get(`${baseUrl}/payments`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-      if (data?.success) {
-        setRecharges(data.payments || []);
-      }
-    } catch (error) {
-      console.error(error?.response?.data?.message || error.message);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    fetchAllAdminRecharges();
-  }, []);
-
   // Search Filter
   const filteredRecords = useMemo(() => {
-    return recharges.filter((record) => {
+    return adminPayments.filter((record) => {
       const search = searchTerm.toLowerCase();
 
       return (
@@ -59,7 +28,7 @@ function RechargeHistoryPage() {
           .includes(search)
       );
     });
-  }, [recharges, searchTerm]);
+  }, [adminPayments, searchTerm]);
 
   // Pagination
   const totalPages = Math.ceil(filteredRecords.length / itemsPerPage) || 1;

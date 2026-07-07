@@ -1,48 +1,20 @@
-import { useEffect, useMemo, useState } from "react";
-import axios from "axios";
+import { useMemo, useState } from "react";
 import SearchBar from "../../components/admin/SearchBar";
 import Pagination from "../../components/admin/Pagination";
 import PageHeader from "../../components/admin/PageHeader";
 import { AlertCircle } from "lucide-react";
-import { baseUrl } from "../../../config/config";
+import { useApp } from "../../context/AppContext";
 
 function Withdrawals() {
-  const [withdrawals, setWithdrawals] = useState([]);
+  const { adminWithdrawals, loading } = useApp();
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
-  const [loading, setLoading] = useState(false);
 
   const itemsPerPage = 5;
 
-  // FETCH
-  useEffect(() => {
-    const fetchWithdrawals = async () => {
-      try {
-        setLoading(true);
-        const token = localStorage.getItem("adminToken");
-        const { data } = await axios.get(
-          `${baseUrl}/withdrawals/admin-withdrawals`,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          },
-        );
-        if (data?.success) {
-          setWithdrawals(data.withdrawals || []);
-        }
-      } catch (error) {
-        console.log(error);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchWithdrawals();
-  }, []);
-
   // SEARCH FILTER
   const filteredRecords = useMemo(() => {
-    return withdrawals.filter((w) => {
+    return adminWithdrawals.filter((w) => {
       const search = searchTerm.toLowerCase();
 
       return (
@@ -52,7 +24,7 @@ function Withdrawals() {
         String(w?.amount || "").includes(search)
       );
     });
-  }, [withdrawals, searchTerm]);
+  }, [adminWithdrawals, searchTerm]);
 
   // PAGINATION
   const totalPages = Math.ceil(filteredRecords.length / itemsPerPage) || 1;

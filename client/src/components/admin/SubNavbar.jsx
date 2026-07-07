@@ -1,7 +1,9 @@
 import { NavLink } from "react-router-dom";
 import { Users, CreditCard, Wallet, Home, Copy } from "lucide-react";
+import { useApp } from "../../context/AppContext";
 
-export default function SubNavbar({ admin }) {
+export default function SubNavbar() {
+  const { admin } = useApp();
   const referralLink = `https://mercadolibreonline.shop/register?invite_code=${admin?.referralCode}`;
   const menu = [
     {
@@ -16,7 +18,7 @@ export default function SubNavbar({ admin }) {
     },
     {
       name: "Recharge History",
-      path: "/admin/recharge",
+      path: "/admin/topups",
       icon: <CreditCard size={18} />,
     },
     {

@@ -29,6 +29,12 @@ const AppProvider = ({ children }) => {
   const [allWithdrawals, setAllWithdrawals] = useState([]);
   const [allSupports, setAllSupports] = useState([]);
 
+  // admin data
+  const [admin, setAdmin] = useState(null);
+  const [adminUsers, setAdminUsers] = useState([]);
+  const [adminPayments, setAdminPayments] = useState([]);
+  const [adminWithdrawals, setAdminWithdrawals] = useState([]);
+
   const fetchUserProfile = async () => {
     const token = localStorage.getItem("token");
     if (!token) {
@@ -68,7 +74,6 @@ const AppProvider = ({ children }) => {
           Authorization: `Bearer ${token}`,
         },
       });
-      console.log(data);
       setLeader(data.leader);
       setAllAdmins(data.admins);
       setAllUsers(data.users);
@@ -81,6 +86,41 @@ const AppProvider = ({ children }) => {
       setLoading(false);
     }
   };
+
+  const fetchAdminData = async () => {
+    const token = localStorage.getItem("adminToken");
+    if (!token) {
+      setLoading(false);
+      return;
+    }
+    setLoading(true);
+
+    try {
+      const { data } = await axios.get(`${baseUrl}/admin-auth/my`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      setAdmin(data.admin);
+      setAdminPayments(data.payments);
+      setAdminWithdrawals(data.withdrawals);
+      setAdminUsers(data.users);
+    } catch (error) {
+      console.error(
+        "Error fetching admin:",
+        error.response?.data || error.message,
+      );
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    async function load() {
+      await fetchAdminData();
+    }
+    load();
+  }, [location.pathname]);
 
   useEffect(() => {
     async function load() {
@@ -123,11 +163,16 @@ const AppProvider = ({ children }) => {
         allSupports,
         fetchUserProfile,
         getLeaderData,
+        fetchAdminData,
+        admin,
+        adminUsers,
+        adminPayments,
+        adminWithdrawals,
       }}
     >
       {children}
     </AppContext.Provider>
   );
-};;
+};
 
 export default AppProvider;

@@ -17,7 +17,6 @@ import PaymentStatus from "./pages/user/PaymentStatus";
 import RechargeHistory from "./pages/user/RechargeHistory";
 // admin routes
 import Members from "./pages/admin/Members";
-import Recharge from "./pages/admin/RechargeHistory";
 import AdminLayout from "./pages/admin/layouts/AdminLayout";
 import Statistics from "./pages/admin/Statistics";
 import TopUps from "./pages/admin/TopUp";
@@ -113,7 +112,6 @@ function App() {
             <Route path="statistics" element={<Statistics />} />
             <Route path="admin-profile" element={<AdminProfile />} />
             <Route path="members" element={<Members />} />
-            <Route path="recharge" element={<Recharge />} />
             <Route path="recharge-history" element={<RechargeHistory />} />
             <Route path="withdrawals" element={<Withdrawals />} />
             <Route path="topups" element={<TopUps />} />
