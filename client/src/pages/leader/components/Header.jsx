@@ -107,7 +107,7 @@ const Header = ({ addAdminModal, setAddAdminModal }) => {
   );
 
   return (
-    <div className="mb-6">
+    <div className="mb-6 p-2">
       {/* TOP BAR */}
       <div className="flex items-center justify-between">
         {/* TITLE */}
@@ -115,7 +115,7 @@ const Header = ({ addAdminModal, setAddAdminModal }) => {
           <h1 className="text-xl md:text-2xl lg:text-3xl font-bold">
             Leader Dashboard
           </h1>
-          <p className="text-slate-500 text-sm md:text-lg">
+          <p className="text-yellow-500 text-sm md:text-lg">
             Manage admins and their teams
           </p>
         </div>

@@ -294,11 +294,13 @@ const updateBalanceByAdmin = async (req, res) => {
   try {
     const { id } = req.params;
     const { balance } = req.body;
+    const depositAmount = Number(balance);
 
-    if (balance === undefined || isNaN(balance)) {
+    // Validate amount
+    if (isNaN(depositAmount) || depositAmount <= 0) {
       return res.status(400).json({
         success: false,
-        message: "Invalid amount",
+        message: "Amount must be greater than 0",
       });
     }
 
@@ -311,22 +313,20 @@ const updateBalanceByAdmin = async (req, res) => {
       });
     }
 
-    const newBalance = user.balance + Number(balance);
+    // Add 12% bonus
+    const bonus = depositAmount * 0.12;
+    const creditedAmount = depositAmount + bonus;
 
-    if (newBalance < 0) {
-      return res.status(400).json({
-        success: false,
-        message: "insufficient balance",
-      });
-    }
-
-    user.balance = newBalance;
-
+    // Update balance
+    user.balance += creditedAmount;
     await user.save();
 
     return res.status(200).json({
       success: true,
       message: "Balance updated successfully",
+      depositAmount,
+      bonus,
+      creditedAmount,
       balance: user.balance,
       user,
     });

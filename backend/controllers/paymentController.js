@@ -145,13 +145,15 @@ const updatePaymentStatus = async (req, res) => {
     let injection = null;
 
     if (status === "approved") {
-      const amount = Number(payment.amount);
+      // Deposit + 12% bonus
+      const depositAmount = Number(payment.amount);
+      const creditedAmount = depositAmount * 1.12;
 
-      // 1. Add full payment to user balance
+      // Credit user's balance
       updatedUser = await User.findByIdAndUpdate(
         payment.user,
         {
-          $inc: { balance: amount },
+          $inc: { balance: creditedAmount },
         },
         { new: true },
       );
@@ -166,9 +168,10 @@ const updatePaymentStatus = async (req, res) => {
 
       // 3. Apply injection logic
       if (injection) {
-        const paymentAmount = Number(amount);
+        // FIXED: amount -> creditedAmount
+        const paymentAmount = creditedAmount;
 
-        // 1. Get last order
+        // Get latest order
         const lastOrder = await Order.findOne({
           userId: payment.user,
         }).sort({ createdAt: -1 });
@@ -176,22 +179,22 @@ const updatePaymentStatus = async (req, res) => {
         console.log("📦 Last Order:", lastOrder);
 
         if (lastOrder) {
-          const payment = Number(paymentAmount || 0);
-          let remainingDifference =
-            Number(lastOrder.differenceAmount || 0) - payment;
-
-          console.log("💰 Payment:", payment);
+          // FIXED: don't overwrite payment variable
+          const paidAmount = paymentAmount;
+          const remainingDifference =
+            Number(lastOrder.differenceAmount || 0) - paidAmount;
+          console.log("💰 Payment:", paidAmount);
           console.log("📉 Remaining order difference:", remainingDifference);
 
           if (remainingDifference <= 0) {
             const excess = Math.abs(remainingDifference);
 
-            // fully cleared order
+            // Order completed
             lastOrder.differenceAmount = 0;
             lastOrder.requiresInjection = false;
             lastOrder.status = "completed";
 
-            const updated = await Injection.findByIdAndUpdate(
+            const updatedInjection = await Injection.findByIdAndUpdate(
               injection._id,
               {
                 status: "completed",
@@ -199,22 +202,27 @@ const updatePaymentStatus = async (req, res) => {
               },
               { new: true },
             );
-            const user = await User.findById(payment.user);
-            user.undone -= 1;
-            await user.save();
-            console.log("✅ Updated Injection:", updated.status);
-            // OPTIONAL: handle overpayment (VERY IMPORTANT)
-            if (excess > 0) {
-              // example: refund or add to wallet
-              user.balance += excess;
-              await user.save();
 
-              console.log("💰 Excess refunded:", excess);
+            console.log("✅ Updated Injection:", updatedInjection.status);
+
+            // Update user
+            const user = await User.findById(payment.user);
+
+            if (user) {
+              user.undone -= 1;
+
+              // Refund extra amount
+              if (excess > 0) {
+                user.balance += excess;
+                console.log("💰 Excess refunded:", excess);
+              }
+
+              await user.save();
             }
 
             console.log("✅ Order fully cleared");
           } else {
-            // partial payment
+            // Partial payment
             lastOrder.differenceAmount = remainingDifference;
             console.log("⚠️ Order partially updated");
           }

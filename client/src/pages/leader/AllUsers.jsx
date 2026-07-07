@@ -84,7 +84,7 @@ function AllUsers() {
                     setFormData(u);
                   }}
                   key={u._id}
-                  className="relative group shadow-lg transition border border-slate-700 overflow-hidden rounded-lg cursor-pointer"
+                  className="relative group flex flex-col justify-between shadow-lg transition border border-slate-700 overflow-hidden cursor-pointer"
                 >
                   {/* CARD CONTENT */}
                   <div className="p-4 bg-slate-800">
@@ -113,9 +113,9 @@ function AllUsers() {
                     </div>
 
                     <div className="mt-2 text-sm">
-                      💰 Balance:{" "}
-                      <span className="text-green-600 font-semibold">
-                        ${u?.balance?.toFixed(2) || 0}
+                      💰 Balance:
+                      <span className="ml-1 font-semibold text-green-400">
+                        ${((u?.balance || 0) + (u?.commission || 0)).toFixed(2)}
                       </span>
                     </div>
                   </div>
@@ -133,7 +133,7 @@ function AllUsers() {
                     </button>
                   </div>
 
-                  <div className="p-4 grid grid-cols-1 md:grid-cols-2 gap-3 text-sm">
+                  <div className="p-4 grid grid-cols-1 md:grid-cols-2 gap-2 text-sm">
                     <div>
                       📱 Phone:{" "}
                       <span className="font-medium">{u.phoneNumber}</span>
@@ -147,11 +147,10 @@ function AllUsers() {
                     <div>🎫 My Code: {u.myInvitationCode}</div>
 
                     <div>👥 Team Members: {u.teamMembers?.length || 0}</div>
-
                     <div>
-                      💰 Balance:
-                      <span className="font-semibold text-green-600 ml-1">
-                        ${u.balance?.toFixed(2) || 0}
+                      <span className="text-gray-500">💸 Commission:</span>
+                      <span className="ml-2 font-bold text-emerald-600">
+                        ${Number(u.commission || 0).toFixed(2)}
                       </span>
                     </div>
 

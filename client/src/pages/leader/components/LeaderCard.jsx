@@ -3,64 +3,91 @@ import { useApp } from "../../../context/AppContext";
 
 const LeaderCard = () => {
   const { leader } = useApp();
+
   const leaderData = [
     {
       name: "Username",
       icon: <User size={18} />,
       value: leader?.username || "Loading...",
+      color: "text-blue-400",
     },
     {
       name: "Role",
       icon: <ShieldCheck size={18} />,
       value: leader?.role || "Leader",
+      color: "text-green-400",
     },
     {
-      name: "Created At",
+      name: "Created",
       icon: <CalendarDays size={18} />,
       value: leader?.createdAt
-        ? new Date(leader.createdAt).toLocaleString()
+        ? new Date(leader.createdAt).toLocaleDateString()
         : "Loading...",
+      color: "text-orange-400",
     },
     {
       name: "Leader ID",
       icon: <Fingerprint size={18} />,
       value: leader?._id || "Loading...",
+      color: "text-purple-400",
     },
   ];
 
   return (
-    <div className="bg-slate-900 text-slate-300 border border-slate-700 shadow-lg p-2 md:p-6 rounded-lg">
+    <div className="border border-slate-700 bg-linear-to-br from-slate-900 via-slate-900 to-slate-800 p-2 shadow-xl">
       {/* Header */}
-      <div className="flex items-center justify-between mb-6">
-        <div>
-          <h2 className="text-2xl font-bold text-white">Team Leader</h2>
+      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-6">
+        {/* Left */}
+        <div className="flex items-center gap-5">
+          {/* Avatar */}
+          <div className="w-12 h-12 md:w-20 md:h-20 rounded-full bg-linear-to-r from-green-500 to-emerald-400 flex items-center justify-center text-3xl font-bold text-white shadow-lg">
+            {leader?.username?.charAt(0)?.toUpperCase() || "L"}
+          </div>
 
-          <p className="text-sm text-slate-400">Leader account information</p>
+          <div>
+            <h2 className="text-lg md:text-2xl font-bold text-white uppercase">
+              {leader?.username || "Leader"}
+            </h2>
 
-          <p className="text-sm text-slate-500">phone: +92-123456789</p>
+            <p className="text-slate-400">Team Leader Dashboard</p>
+
+            <p className="text-sm text-slate-500">📞+92-123456789</p>
+          </div>
         </div>
 
-        <div className="bg-slate-800 border border-slate-700 text-slate-300 px-4 py-2 rounded-full flex items-center gap-2">
+        {/* Status */}
+        <div className="inline-flex items-center gap-2 bg-green-500/15 border border-green-500/30 px-5 py-2">
           <ShieldCheck size={18} className="text-green-400" />
-          <span className="font-medium">Active</span>
+
+          <span className="font-semibold text-green-400">Active</span>
         </div>
       </div>
 
-      {/* Info Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        {leaderData?.map((data, i) => (
-          <div
-            key={i}
-            className="bg-slate-800 border border-slate-700 p-4 rounded-lg hover:bg-slate-700 transition"
-          >
-            <div className="flex items-center gap-2 text-slate-400 mb-2">
-              <span className="text-slate-400">{data.icon}</span>
-              <span className="text-sm">{data.name}</span>
-            </div>
+      {/* Divider */}
+      <div className="my-6 border-t border-slate-700"></div>
 
-            <p className="font-bold text-lg text-white break-all">
-              {data.value}
-            </p>
+      {/* Info Cards */}
+      <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-4 ">
+        {leaderData.map((item) => (
+          <div
+            key={item.name}
+            className="border border-slate-700 bg-slate-800/70 p-5 transition duration-300 hover:-translate-y-1 hover:border-slate-500 hover:bg-slate-800 cursor-pointer"
+          >
+            <div className="flex items-center gap-3">
+              <div className={`flex items-center justify-center ${item.color}`}>
+                {item.icon}
+              </div>
+
+              <div>
+                <p className="text-xs uppercase tracking-wider text-slate-400">
+                  {item.name}
+                </p>
+
+                <p className={`mt-1 text-lg font-bold ${item.color} break-all`}>
+                  {item.value}
+                </p>
+              </div>
+            </div>
           </div>
         ))}
       </div>
