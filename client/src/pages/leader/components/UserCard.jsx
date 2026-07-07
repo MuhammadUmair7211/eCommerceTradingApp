@@ -6,6 +6,7 @@ import {
   Fingerprint,
   Globe,
   MapPin,
+  Notebook,
   Phone,
   Ticket,
   Trophy,
@@ -27,9 +28,12 @@ const InfoRow = ({ icon, label, value, valueClass = "" }) => (
   </div>
 );
 
-const UserCard = ({ user, adminUsername }) => {
+const UserCard = ({ user, adminUsername, onClick, showEditButton }) => {
   return (
-    <div className="group flex flex-col justify-between overflow-hidden border border-slate-700 bg-slate-800 shadow-lg transition-all duration-300 cursor-pointer hover:-translate-y-1 hover:border-blue-500 hover:shadow-2xl">
+    <div
+      onClick={onClick}
+      className={`${showEditButton ? "" : "hover:-translate-y-1"} relative group flex flex-col justify-between overflow-hidden border border-slate-700 bg-slate-800 shadow-lg transition-all duration-300 cursor-pointer hover:border-slate-400 hover:shadow-2xl`}
+    >
       {/* Header */}
       <div className="border-b border-slate-700 bg-linear-to-r from-slate-700 to-slate-800 p-2">
         {/* Top Row */}
@@ -50,15 +54,25 @@ const UserCard = ({ user, adminUsername }) => {
             </div>
           </div>
 
-          <span
-            className={`self-start sm:self-auto rounded-full border px-3 py-1 text-xs font-semibold ${
-              user.isOnline
-                ? "border-green-500/30 bg-green-500/10 text-green-400"
-                : "border-red-500/30 bg-red-500/10 text-red-400"
-            }`}
-          >
-            ● {user.isOnline ? "Online" : "Offline"}
-          </span>
+          <div className="flex flex-wrap items-center gap-2">
+            {/* VIP Level */}
+            <span className="flex items-center gap-2 rounded-full border border-yellow-500/30 bg-yellow-500/10 px-3 py-1 text-xs font-semibold text-yellow-400">
+              <Trophy size={14} />
+              {user.vipLevel || "VIP0"}
+            </span>
+
+            {/* Online Status */}
+            <span
+              className={`flex items-center gap-2 rounded-full border px-3 py-1 text-xs font-semibold ${
+                user.isOnline
+                  ? "border-green-500/30 bg-green-500/10 text-green-400"
+                  : "border-red-500/30 bg-red-500/10 text-red-400"
+              }`}
+            >
+              <span className="text-[10px]">●</span>
+              {user.isOnline ? "Online" : "Offline"}
+            </span>
+          </div>
         </div>
 
         {/* Balance Section */}
@@ -103,6 +117,23 @@ const UserCard = ({ user, adminUsername }) => {
         </div>
       </div>
 
+      {showEditButton && (
+        <>
+          {/* HOVER OVERLAY */}
+          <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition flex items-center justify-center">
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                onClick?.();
+              }}
+              className="px-5 py-2 bg-blue-600 text-white font-medium hover:bg-blue-700 transition duration-300 cursor-pointer"
+            >
+              Edit Profile
+            </button>
+          </div>
+        </>
+      )}
+
       {/* Details */}
       <div className="grid grid-cols-1 gap-1 p-2 sm:grid-cols-2">
         <InfoRow
@@ -124,11 +155,6 @@ const UserCard = ({ user, adminUsername }) => {
           valueClass="text-emerald-400"
         />
 
-        <InfoRow
-          icon={<Trophy size={16} />}
-          label="VIP Level"
-          value={user.vipLevel || "VIP0"}
-        />
         <InfoRow
           icon={<Fingerprint size={16} />}
           label="User ID"
@@ -155,12 +181,17 @@ const UserCard = ({ user, adminUsername }) => {
             user.lastLogin ? new Date(user.lastLogin).toLocaleString() : "N/A"
           }
         />
+        <InfoRow
+          icon={<CreditCard size={16} />}
+          label="Wallet"
+          value={user.bankCard || "N/A"}
+        />
 
         <div className="sm:col-span-2">
           <InfoRow
-            icon={<CreditCard size={16} />}
-            label="Wallet"
-            value={user.bankCard || "N/A"}
+            icon={<Notebook size={16} />}
+            label="Note"
+            value={user.note || "N/A"}
           />
         </div>
       </div>

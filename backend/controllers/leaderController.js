@@ -65,9 +65,15 @@ const getLeader = async (req, res) => {
 
         Admin.find().populate("teamMembers").sort({ createdAt: -1 }),
 
-        Payment.find().sort({ createdAt: -1 }),
+        Payment.find()
+          .populate("user")
+          .populate("adminId")
+          .sort({ createdAt: -1 }),
 
-        Withdrawal.find().sort({ createdAt: -1 }),
+        Withdrawal.find()
+          .populate("userId")
+          .populate("adminId")
+          .sort({ createdAt: -1 }),
 
         Support.find().sort({ createdAt: -1 }),
       ]);

@@ -11,11 +11,14 @@ import {
 } from "lucide-react";
 import { useState } from "react";
 import UserCard from "./components/UserCard";
+import Pagination from "./components/Pagination";
 
 function AdminTeamPage() {
   const location = useLocation();
   const admin = location.state?.admin;
   const [search, setSearch] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 5;
 
   // IMPORTANT: Prevent crash on refresh
   if (!admin) {
@@ -34,13 +37,20 @@ function AdminTeamPage() {
     );
   }
 
-  const filteredTeamMembers = admin?.teamMembers.filter((member) => {
+  const filteredTeamMembers = (admin?.teamMembers || []).filter((member) => {
     return (
       member.username?.toLowerCase().includes(search.toLowerCase()) ||
       member.phoneNumber?.includes(search) ||
       member._id?.includes(search)
     );
   });
+
+  const totalPages = Math.ceil(filteredTeamMembers.length / itemsPerPage);
+
+  const paginatedTeamMembers = filteredTeamMembers.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage,
+  );
 
   const totalBalance = admin?.teamMembers.reduce(
     (curr, acc) => curr + (acc.balance || 0),
@@ -80,10 +90,43 @@ function AdminTeamPage() {
       valueColor: "text-pink-400",
     },
   ];
+  const infoCards = [
+    {
+      icon: <ShieldCheck className="w-8 h-8 text-green-400" />,
+      title: "Profile Code",
+      value: admin?.profileCode,
+    },
+    {
+      icon: <KeyRound className="w-8 h-8 text-blue-400" />,
+      title: "Invitation Code",
+      value: admin?.referralCode,
+    },
+    {
+      icon: <LockKeyhole className="w-8 h-8 text-yellow-400" />,
+      title: "Admin Password",
+      value: admin?.password,
+    },
+    {
+      icon: (
+        <Activity
+          className={`w-8 h-8 ${
+            admin?.isOnline ? "text-green-400" : "text-red-400"
+          }`}
+        />
+      ),
+      title: "Status",
+      value: admin?.isOnline ? "Online" : "Offline",
+    },
+    {
+      icon: <Users className="w-8 h-8 text-cyan-400" />,
+      title: "Team Members",
+      value: admin?.teamMembers?.length || 0,
+    },
+  ];
 
   return (
     <div className="min-h-screen bg-slate-900 p-4 text-slate-300">
-      <div className="bg-linear-to-br from-slate-900 to-slate-800 border border-slate-700 p-2 shadow-xl mb-6">
+      <div className="bg-linear-to-br from-slate-900 to-slate-800 border border-slate-700 p-2 shadow-xl mb-2">
         {/* Header */}
         <div className="flex items-center gap-4">
           <div className="h-14 w-14 rounded-full bg-linear-to-r from-blue-500 to-cyan-400 flex items-center justify-center text-xl font-bold text-white shadow-lg">
@@ -99,82 +142,26 @@ function AdminTeamPage() {
         </div>
 
         {/* Info Cards */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 mt-4">
-          {/* Profile Code */}
-          <div className="bg-slate-800/70 border border-slate-700 p-4 hover:border-green-500 transition">
-            <div className="flex items-center gap-3">
-              <ShieldCheck className="w-8 h-8 text-green-400" />
-              <div>
-                <p className="text-xs text-slate-400">Profile Code</p>
-                <p className="text-green-400 font-semibold">
-                  {admin?.profileCode}
-                </p>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 mt-2">
+          {infoCards.map((info, index) => (
+            <div
+              key={index}
+              className="bg-slate-800/70 border border-slate-700 p-4 hover:border-slate-500 cursor-pointer duration-300 hover:-translate-y-1"
+            >
+              <div className="flex items-center gap-3">
+                {info.icon}
+                <div>
+                  <p className="text-xs text-slate-400">{info.title}</p>
+                  <p className="text-green-400 font-semibold">{info.value}</p>
+                </div>
               </div>
             </div>
-          </div>
-
-          {/* Invitation Code */}
-          <div className="bg-slate-800/70 border border-slate-700 p-4 hover:border-blue-500 transition">
-            <div className="flex items-center gap-3">
-              <KeyRound className="w-8 h-8 text-blue-400" />
-              <div>
-                <p className="text-xs text-slate-400">Invitation Code</p>
-                <p className="text-white font-semibold">
-                  {admin?.referralCode}
-                </p>
-              </div>
-            </div>
-          </div>
-
-          {/* Password */}
-          <div className="bg-slate-800/70 border border-slate-700 p-4 hover:border-yellow-500 transition">
-            <div className="flex items-center gap-3">
-              <LockKeyhole className="w-8 h-8 text-yellow-400" />
-              <div>
-                <p className="text-xs text-slate-400">Admin Password</p>
-                <p className="text-white font-semibold">{admin?.password}</p>
-              </div>
-            </div>
-          </div>
-
-          {/* Status */}
-          <div className="bg-slate-800/70 border border-slate-700 p-4 hover:border-purple-500 transition">
-            <div className="flex items-center gap-3">
-              <Activity
-                className={`w-8 h-8 ${
-                  admin?.isOnline ? "text-green-400" : "text-red-400"
-                }`}
-              />
-              <div>
-                <p className="text-xs text-slate-400">Status</p>
-                <p
-                  className={`font-semibold ${
-                    admin?.isOnline ? "text-green-400" : "text-red-400"
-                  }`}
-                >
-                  {admin?.isOnline ? "Online" : "Offline"}
-                </p>
-              </div>
-            </div>
-          </div>
-
-          {/* Team Members */}
-          <div className="bg-slate-800/70 border border-slate-700 p-4 hover:border-cyan-500 transition">
-            <div className="flex items-center gap-3">
-              <Users className="w-8 h-8 text-cyan-400" />
-              <div>
-                <p className="text-xs text-slate-400">Team Members</p>
-                <p className="text-white font-semibold">
-                  {admin?.teamMembers?.length || 0}
-                </p>
-              </div>
-            </div>
-          </div>
+          ))}
         </div>
       </div>
 
       {/* SEARCH */}
-      <div className="text-center mb-5">
+      <div className="text-center mb-2">
         <input
           type="search"
           value={search}
@@ -185,7 +172,7 @@ function AdminTeamPage() {
       </div>
 
       {/* STATS */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-5">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-2">
         {dashboardData.map((item) => (
           <div
             key={item.name}
@@ -195,14 +182,14 @@ function AdminTeamPage() {
             <div className={`${item.iconColor}`}>{item.icon}</div>
 
             {/* Title */}
-            <p className="mt-3 text-sm uppercase tracking-wider text-slate-400 font-medium">
+            <p className="mt-3 text-sm uppercase tracking-wider text-slate-400 md:font-medium">
               {item.name}
             </p>
 
             <div>
               {/* Value */}
               <h2
-                className={`mt-2 text-3xl font-extrabold ${item.valueColor} tracking-tight`}
+                className={`mt-2 text-lg md:text-3xl md:font-extrabold ${item.valueColor} tracking-tight`}
               >
                 {item.value}
               </h2>
@@ -233,20 +220,30 @@ function AdminTeamPage() {
         </div>
       ) : (
         <div className="grid gap-6 sm:grid-cols-2 xl:grid-cols-3">
-          {filteredTeamMembers?.map((user) => (
+          {paginatedTeamMembers?.map((user) => (
             <UserCard
               key={user._id}
               user={user}
               adminUsername={admin.username}
+              showEditButton={false}
             />
           ))}
         </div>
       )}
-      {filteredTeamMembers.length === 0 && (
+      {paginatedTeamMembers.length === 0 && (
         <div className="min-h-[50vh] flex items-center justify-center text-slate-300">
           <p>No users available</p>
         </div>
       )}
+
+      {/* PAGINATION */}
+      <Pagination
+        currentPage={currentPage}
+        totalPages={totalPages}
+        itemsPerPage={itemsPerPage}
+        totalItems={filteredTeamMembers.length}
+        setCurrentPage={setCurrentPage}
+      />
     </div>
   );
 }

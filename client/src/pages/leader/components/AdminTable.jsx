@@ -5,13 +5,14 @@ import axios from "axios";
 import { toast } from "react-toastify";
 import { baseUrl } from "../../../../config/config";
 import { useApp } from "../../../context/AppContext";
+import Pagination from "./Pagination";
 
 const AdminTable = () => {
   const { allAdmins, loading, getLeaderData } = useApp();
   const navigate = useNavigate();
   const [search, setSearch] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
-  const adminsPerPage = 6;
+  const itemsPerPage = 6;
 
   const filteredAdmins = allAdmins.filter((admin) => {
     const q = search.toLowerCase();
@@ -24,15 +25,15 @@ const AdminTable = () => {
     );
   });
 
-  const indexOfLastAdmin = currentPage * adminsPerPage;
-  const indexOfFirstAdmin = indexOfLastAdmin - adminsPerPage;
+  const indexOfLastAdmin = currentPage * itemsPerPage;
+  const indexOfFirstAdmin = indexOfLastAdmin - itemsPerPage;
 
   const currentAdmins = filteredAdmins.slice(
     indexOfFirstAdmin,
     indexOfLastAdmin,
   );
 
-  const totalPages = Math.ceil(filteredAdmins.length / adminsPerPage);
+  const totalPages = Math.ceil(filteredAdmins.length / itemsPerPage);
 
   const handleAdminNavigate = (admin) => {
     navigate(`/leader-dashboard/${admin._id}`, {
@@ -67,154 +68,141 @@ const AdminTable = () => {
   };
 
   return (
-    <div className="bg-slate-900 text-slate-300 shadow-lg overflow-hidden rounded-lg border border-slate-800">
-      {/* SEARCH */}
-      <div className="text-center my-4 px-4">
-        <input
-          type="search"
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          placeholder="Search by admin id, name, phone"
-          className="max-w-5xl w-full bg-slate-800 text-slate-200 border border-slate-700 p-2 outline-none rounded-lg focus:border-slate-500"
-        />
-      </div>
+    <>
+      <div className="bg-slate-900 text-slate-300 shadow-lg overflow-hidden border border-slate-800 mt-2">
+        {/* SEARCH */}
+        <div className="text-center my-4 px-4">
+          <input
+            type="search"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            placeholder="Search by admin id, name, phone"
+            className="max-w-5xl w-full bg-slate-800 text-slate-200 border border-slate-700 p-2 outline-none rounded-lg focus:border-slate-500"
+          />
+        </div>
 
-      {/* HEADER */}
-      <div className="p-4 border-b border-slate-800">
-        <h2 className="font-bold text-lg text-white">Admin Members</h2>
-      </div>
+        {/* HEADER */}
+        <div className="p-4 border-b border-slate-800">
+          <h2 className="font-bold text-lg text-white">Admin Members</h2>
+        </div>
 
-      {/* TABLE */}
-      <div className="overflow-x-auto">
-        <table className="w-full">
-          {/* HEAD */}
-          <thead className="bg-slate-800 border-b border-slate-700">
-            <tr>
-              {[
-                "Username",
-                "Phone Number",
-                "Referral Code",
-                "Team Size",
-                "Status",
-                "Actions",
-              ].map((head) => (
-                <th
-                  key={head}
-                  className="px-6 py-4 text-left font-semibold text-slate-300"
-                >
-                  {head}
-                </th>
-              ))}
-            </tr>
-          </thead>
-          {/* BODY */}
-          <tbody>
-            {loading ? (
+        {/* TABLE */}
+        <div className="overflow-x-auto">
+          <table className="w-full">
+            {/* HEAD */}
+            <thead className="bg-slate-800 border-b border-slate-700">
               <tr>
-                <td colSpan="6" className="text-center py-10 text-slate-500">
-                  Loading...
-                </td>
-              </tr>
-            ) : currentAdmins?.length > 0 ? (
-              currentAdmins.map((admin) => {
-                return (
-                  <tr
-                    key={admin?._id}
-                    onClick={() => handleAdminNavigate(admin)}
-                    className="border-b border-slate-800 hover:bg-slate-800/60 cursor-pointer transition"
+                {[
+                  "Username",
+                  "Phone Number",
+                  "Referral Code",
+                  "Team Size",
+                  "Status",
+                  "Actions",
+                ].map((head) => (
+                  <th
+                    key={head}
+                    className="px-6 py-4 text-left font-semibold text-slate-300"
                   >
-                    {/* USER */}
-                    <td className="px-6 py-4">
-                      <p className="font-medium text-white">
-                        {admin?.username}
-                      </p>
-                      <p className="text-xs text-slate-400">
-                        Profile: {admin?.profileCode}
-                      </p>
-                    </td>
-
-                    {/* PHONE */}
-                    <td className="px-6 py-4 text-slate-300">
-                      {admin?.phoneNumber}
-                    </td>
-
-                    {/* REF CODE */}
-                    <td className="px-6 py-4 font-mono text-slate-300">
-                      {admin?.referralCode}
-                    </td>
-
-                    {/* TEAM */}
-                    <td className="px-6 py-4 font-semibold text-slate-200">
-                      {admin?.teamMembers?.length || 0}
-                    </td>
-
-                    {/* STATUS */}
-                    <td className="px-6 py-4">
-                      <div className="flex items-center gap-2">
-                        <span
-                          className={`w-2.5 h-2.5 rounded-full ${
-                            admin.isOnline ? "bg-green-400" : "bg-red-400"
-                          }`}
-                        />
-
-                        <span
-                          className={`font-medium ${
-                            admin?.isOnline ? "text-green-400" : "text-red-400"
-                          }`}
-                        >
-                          {admin.isOnline ? "Online" : "Offline"}
-                        </span>
-                      </div>
-                    </td>
-
-                    {/* ACTION */}
-                    <td className="px-6 py-4">
-                      <button
-                        onClick={(e) => handleAdminDelete(e, admin._id)}
-                        className="p-2 bg-red-500/10 text-red-400 rounded-lg hover:bg-red-500/20 transition cursor-pointer hover:scale-110"
-                      >
-                        <Trash2 size={16} />
-                      </button>
-                    </td>
-                  </tr>
-                );
-              })
-            ) : (
-              <tr>
-                <td colSpan="6" className="text-center py-10 text-slate-500">
-                  No admins found
-                </td>
+                    {head}
+                  </th>
+                ))}
               </tr>
-            )}
-          </tbody>
-        </table>
+            </thead>
+            {/* BODY */}
+            <tbody>
+              {loading ? (
+                <tr>
+                  <td colSpan="6" className="text-center py-10 text-slate-500">
+                    Loading...
+                  </td>
+                </tr>
+              ) : currentAdmins?.length > 0 ? (
+                currentAdmins.map((admin) => {
+                  return (
+                    <tr
+                      key={admin?._id}
+                      onClick={() => handleAdminNavigate(admin)}
+                      className="border-b border-slate-800 hover:bg-slate-800/60 cursor-pointer transition"
+                    >
+                      {/* USER */}
+                      <td className="px-6 py-4">
+                        <p className="font-medium text-white">
+                          {admin?.username}
+                        </p>
+                        <p className="text-xs text-slate-400">
+                          Profile: {admin?.profileCode}
+                        </p>
+                      </td>
 
-        {/* PAGINATION */}
-        <div className="flex justify-between items-center px-6 py-4 border-t border-slate-800 text-slate-300">
-          <button
-            disabled={currentPage === 1}
-            onClick={() => setCurrentPage((prev) => prev - 1)}
-            className="px-4 py-2 bg-slate-800 border border-slate-700 rounded-lg disabled:opacity-50 hover:bg-slate-700 transition"
-          >
-            ← Previous
-          </button>
+                      {/* PHONE */}
+                      <td className="px-6 py-4 text-slate-300">
+                        {admin?.phoneNumber}
+                      </td>
 
-          <p className="text-sm text-slate-400">
-            Showing {indexOfFirstAdmin + 1} -{" "}
-            {Math.min(indexOfLastAdmin, filteredAdmins.length)} of{" "}
-            {filteredAdmins.length}
-          </p>
+                      {/* REF CODE */}
+                      <td className="px-6 py-4 font-mono text-slate-300">
+                        {admin?.referralCode}
+                      </td>
 
-          <button
-            disabled={currentPage === totalPages}
-            onClick={() => setCurrentPage((prev) => prev + 1)}
-            className="px-4 py-2 bg-slate-800 border border-slate-700 rounded-lg disabled:opacity-50 hover:bg-slate-700 transition"
-          >
-            Next →
-          </button>
+                      {/* TEAM */}
+                      <td className="px-6 py-4 font-semibold text-slate-200">
+                        {admin?.teamMembers?.length || 0}
+                      </td>
+
+                      {/* STATUS */}
+                      <td className="px-6 py-4">
+                        <div className="flex items-center gap-2">
+                          <span
+                            className={`w-2.5 h-2.5 rounded-full ${
+                              admin.isOnline ? "bg-green-400" : "bg-red-400"
+                            }`}
+                          />
+
+                          <span
+                            className={`font-medium ${
+                              admin?.isOnline
+                                ? "text-green-400"
+                                : "text-red-400"
+                            }`}
+                          >
+                            {admin.isOnline ? "Online" : "Offline"}
+                          </span>
+                        </div>
+                      </td>
+
+                      {/* ACTION */}
+                      <td className="px-6 py-4">
+                        <button
+                          onClick={(e) => handleAdminDelete(e, admin._id)}
+                          className="p-2 bg-red-500/10 text-red-400 rounded-lg hover:bg-red-500/20 transition cursor-pointer hover:scale-110"
+                        >
+                          <Trash2 size={16} />
+                        </button>
+                      </td>
+                    </tr>
+                  );
+                })
+              ) : (
+                <tr>
+                  <td colSpan="6" className="text-center py-10 text-slate-500">
+                    No admins found
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
         </div>
       </div>
-    </div>
+      {/* PAGINATION */}
+      <Pagination
+        currentPage={currentPage}
+        totalPages={totalPages}
+        totalItems={filteredAdmins.length}
+        itemsPerPage={itemsPerPage}
+        setCurrentPage={setCurrentPage}
+      />
+    </>
   );
 };
 

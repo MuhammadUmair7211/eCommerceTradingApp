@@ -1,48 +1,23 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
 import { CheckCircle, Clock, XCircle } from "lucide-react";
 import { baseUrl, imageUrl } from "../../../config/config";
+import Pagination from "./components/Pagination";
+import { useApp } from "../../context/AppContext";
 
 function Recharges() {
-  const [payments, setPayments] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const { allPayments, loading, getLeaderData } = useApp();
   const [selectedImage, setSelectedImage] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 5;
 
-  const totalPages = Math.ceil(payments.length / itemsPerPage);
+  const totalPages = Math.ceil(allPayments.length / itemsPerPage);
 
-  const paginatedPayments = payments.slice(
+  const paginatedPayments = allPayments.slice(
     (currentPage - 1) * itemsPerPage,
     currentPage * itemsPerPage,
   );
-
-  useEffect(() => {
-    let isMounted = true;
-
-    const fetchPayments = async () => {
-      try {
-        const { data } = await axios.get(`${baseUrl}/payments/all-payments`);
-
-        if (isMounted) {
-          setPayments(data?.payments || []);
-        }
-      } catch (error) {
-        console.log(error);
-      } finally {
-        if (isMounted) {
-          setLoading(false);
-        }
-      }
-    };
-
-    void fetchPayments();
-
-    return () => {
-      isMounted = false;
-    };
-  }, []);
 
   const updateStatus = async (id, status) => {
     try {
@@ -53,13 +28,10 @@ function Recharges() {
 
       if (data.success) {
         toast.success(data.message);
+        getLeaderData();
       } else {
         toast.error(data.message);
       }
-
-      setPayments((prev) =>
-        prev.map((p) => (p._id === id ? { ...p, status } : p)),
-      );
     } catch (error) {
       console.log(error);
     }
@@ -89,7 +61,7 @@ function Recharges() {
                   Loading...
                 </td>
               </tr>
-            ) : payments.length === 0 ? (
+            ) : allPayments.length === 0 ? (
               <tr>
                 <td colSpan="5" className="p-4 text-center text-slate-500">
                   No payment records found
@@ -194,41 +166,14 @@ function Recharges() {
       </div>
 
       {/* PAGINATION */}
-      {payments.length > 0 && (
-        <div className="flex items-center justify-between mt-4 text-slate-300">
-          <button
-            disabled={currentPage === 1}
-            onClick={() => setCurrentPage((p) => p - 1)}
-            className="px-4 py-2 bg-slate-800 border border-slate-700 rounded disabled:opacity-50"
-          >
-            Previous
-          </button>
 
-          <div className="flex gap-2">
-            {[...Array(totalPages)].map((_, i) => (
-              <button
-                key={i}
-                onClick={() => setCurrentPage(i + 1)}
-                className={`w-10 h-10 rounded border border-slate-700 ${
-                  currentPage === i + 1
-                    ? "bg-slate-700 text-white"
-                    : "bg-slate-800 text-slate-400"
-                }`}
-              >
-                {i + 1}
-              </button>
-            ))}
-          </div>
-
-          <button
-            disabled={currentPage === totalPages}
-            onClick={() => setCurrentPage((p) => p + 1)}
-            className="px-4 py-2 bg-slate-800 border border-slate-700 rounded disabled:opacity-50"
-          >
-            Next
-          </button>
-        </div>
-      )}
+      <Pagination
+        currentPage={currentPage}
+        totalPages={totalPages}
+        itemsPerPage={itemsPerPage}
+        totalItems={allPayments.length}
+        setCurrentPage={setCurrentPage}
+      />
 
       {/* IMAGE MODAL */}
       {selectedImage && (

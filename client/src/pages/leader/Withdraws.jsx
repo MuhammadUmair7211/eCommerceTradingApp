@@ -1,41 +1,21 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
 import { CheckCircle, Clock, XCircle } from "lucide-react";
 import { baseUrl } from "../../../config/config";
+import Pagination from "./components/Pagination";
+import { useApp } from "../../context/AppContext";
 
 function Withdraws() {
-  const [withdraws, setWithdraws] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const { allWithdrawals, loading, getLeaderData } = useApp();
   const [currentPage, setCurrentPage] = useState(1);
-
   const itemsPerPage = 5;
-  const totalPages = Math.ceil(withdraws.length / itemsPerPage);
+  const totalPages = Math.ceil(allWithdrawals.length / itemsPerPage);
 
-  const paginatedWithdrawals = withdraws.slice(
+  const paginatedWithdrawals = allWithdrawals.slice(
     (currentPage - 1) * itemsPerPage,
     currentPage * itemsPerPage,
   );
-
-  const fetchAllWithdraws = async () => {
-    try {
-      setLoading(true);
-
-      const { data } = await axios.get(
-        `${baseUrl}/withdrawals/all-withdrawals`,
-      );
-
-      setWithdraws(data.withdrawals || []);
-    } catch (error) {
-      console.error(error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    fetchAllWithdraws();
-  }, []);
 
   const updateWithdrawStatus = async (id, status) => {
     try {
@@ -46,10 +26,7 @@ function Withdraws() {
 
       if (data.success) {
         toast.success(data.message);
-
-        setWithdraws((prev) =>
-          prev.map((p) => (p._id === id ? { ...p, status } : p)),
-        );
+        getLeaderData();
       } else {
         toast.error(data.message);
       }
@@ -81,7 +58,7 @@ function Withdraws() {
                   Loading...
                 </td>
               </tr>
-            ) : withdraws.length === 0 ? (
+            ) : allWithdrawals.length === 0 ? (
               <tr>
                 <td colSpan="4" className="p-4 text-center text-slate-500">
                   No withdrawal records found
@@ -169,41 +146,13 @@ function Withdraws() {
       </div>
 
       {/* PAGINATION */}
-      {withdraws.length > 0 && (
-        <div className="flex items-center justify-between mt-4 text-slate-300">
-          <button
-            disabled={currentPage === 1}
-            onClick={() => setCurrentPage((p) => p - 1)}
-            className="px-4 py-2 bg-slate-800 border border-slate-700 rounded disabled:opacity-50"
-          >
-            Prev
-          </button>
-
-          <div className="flex gap-2">
-            {[...Array(totalPages)].map((_, i) => (
-              <button
-                key={i}
-                onClick={() => setCurrentPage(i + 1)}
-                className={`w-9 h-9 rounded border border-slate-700 ${
-                  currentPage === i + 1
-                    ? "bg-slate-700 text-white"
-                    : "bg-slate-800 text-slate-400"
-                }`}
-              >
-                {i + 1}
-              </button>
-            ))}
-          </div>
-
-          <button
-            disabled={currentPage === totalPages}
-            onClick={() => setCurrentPage((p) => p + 1)}
-            className="px-4 py-2 bg-slate-800 border border-slate-700 rounded disabled:opacity-50"
-          >
-            Next
-          </button>
-        </div>
-      )}
+      <Pagination
+        currentPage={currentPage}
+        totalPages={totalPages}
+        itemsPerPage={itemsPerPage}
+        totalItems={allWithdrawals.length}
+        setCurrentPage={setCurrentPage}
+      />
     </div>
   );
 }

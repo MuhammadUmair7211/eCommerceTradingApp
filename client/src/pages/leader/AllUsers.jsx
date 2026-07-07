@@ -3,8 +3,10 @@ import axios from "axios";
 import { toast } from "react-toastify";
 import { baseUrl } from "../../../config/config";
 import { useApp } from "../../context/AppContext";
+import UserCard from "./components/UserCard";
+import Pagination from "./components/Pagination";
 function AllUsers() {
-  const { allUsers, loading, fetchUserProfile } = useApp();
+  const { allUsers, loading, getLeaderData } = useApp();
 
   const [selectedUser, setSelectedUser] = useState(null);
   const [formData, setFormData] = useState({});
@@ -47,7 +49,7 @@ function AllUsers() {
 
       if (data.success) {
         toast.success(data.message);
-        await fetchUserProfile();
+        getLeaderData();
         setSelectedUser(null);
       }
     } catch (error) {
@@ -76,158 +78,31 @@ function AllUsers() {
           <div className="text-center ">No users found</div>
         ) : (
           <div className="bg-slate-900 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-2">
-            {paginatedUsers?.map((u) => {
+            {paginatedUsers?.map((user) => {
               return (
-                <div
+                <UserCard
+                  key={user?._id}
+                  user={user}
+                  adminUsername={user?.adminId?.username}
+                  showEditButton={true}
                   onClick={() => {
-                    setSelectedUser(u);
-                    setFormData(u);
+                    setSelectedUser(user);
+                    setFormData(user);
                   }}
-                  key={u._id}
-                  className="relative group flex flex-col justify-between shadow-lg transition border border-slate-700 overflow-hidden cursor-pointer"
-                >
-                  {/* CARD CONTENT */}
-                  <div className="p-4 bg-slate-800">
-                    <div className="flex items-center justify-between">
-                      <h2 className="font-semibold text-lg">
-                        👤 username : {u.username}
-                      </h2>
-
-                      <span
-                        className={`px-2 py-1 text-xs rounded-full ${
-                          u.isOnline
-                            ? "bg-green-100 text-green-700"
-                            : "bg-red-100 text-red-700"
-                        }`}
-                      >
-                        {u.isOnline ? "online" : "offline"}
-                      </span>
-                    </div>
-
-                    <div className="mt-2 text-sm text-gray-600">
-                      🎟 referred By:{" "}
-                      <span className="font-bold text-blue-600">
-                        {u.referredBy || "not available"} -{" "}
-                        {u?.adminId?.username}
-                      </span>
-                    </div>
-
-                    <div className="mt-2 text-sm">
-                      💰 Balance:
-                      <span className="ml-1 font-semibold text-green-400">
-                        ${((u?.balance || 0) + (u?.commission || 0)).toFixed(2)}
-                      </span>
-                    </div>
-                  </div>
-
-                  {/* HOVER OVERLAY */}
-                  <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition flex items-center justify-center">
-                    <button
-                      onClick={() => {
-                        setSelectedUser(u);
-                        setFormData(u);
-                      }}
-                      className="px-5 py-2 bg-blue-600 text-white font-medium hover:bg-blue-700 transition duration-300 cursor-pointer"
-                    >
-                      Edit Profile
-                    </button>
-                  </div>
-
-                  <div className="p-4 grid grid-cols-1 md:grid-cols-2 gap-2 text-sm">
-                    <div>
-                      📱 Phone:{" "}
-                      <span className="font-medium">{u.phoneNumber}</span>
-                    </div>
-
-                    <div>
-                      🆔 ID:
-                      <span className="text-xs break-all ml-1">{u._id}</span>
-                    </div>
-
-                    <div>🎫 My Code: {u.myInvitationCode}</div>
-
-                    <div>👥 Team Members: {u.teamMembers?.length || 0}</div>
-                    <div>
-                      <span className="text-gray-500">💸 Commission:</span>
-                      <span className="ml-2 font-bold text-emerald-600">
-                        ${Number(u.commission || 0).toFixed(2)}
-                      </span>
-                    </div>
-
-                    <div>
-                      👑 Role:
-                      <span className="capitalize ml-1">{u.role}</span>
-                    </div>
-
-                    <div>🏆 Account Level: {u.vipLevel || "VIP0"}</div>
-
-                    <div>🏦 Wallet Address: {u.bankCard || "N/A"}</div>
-
-                    <div>🏙️ City: {u.city || "not available"}</div>
-
-                    <div>🌍 Country: {u.country || "not available"}</div>
-
-                    <div>🌐 IP: {u.ip || "not available"}</div>
-
-                    <div>
-                      ⏰ Last Login:
-                      {u.lastLogin
-                        ? new Date(u.lastLogin).toLocaleString()
-                        : " not available"}
-                    </div>
-
-                    <div className="md:col-span-2">
-                      🖥️ Browser: {u.userAgent || "not available"}
-                    </div>
-
-                    <div className="md:col-span-2 text-xs text-gray-400">
-                      📅 Joined: {new Date(u.createdAt).toLocaleString()}
-                    </div>
-                    <div> note: {u.note || "not available"}</div>
-                  </div>
-
-                  {/* FOOTER */}
-                  <div className="p-3 text-xs bg-slate-700">
-                    Click card to view full profile
-                  </div>
-                </div>
+                />
               );
             })}
           </div>
         )}
-        {/* PAGINATION */}
-        {!loading && totalPages > 1 && (
-          <div className="flex justify-between mt-6 gap-2">
-            <button
-              disabled={currentPage === 1}
-              onClick={() => setCurrentPage((p) => p - 1)}
-              className="px-3 py-1 border rounded disabled:opacity-50"
-            >
-              Prev
-            </button>
 
-            <div className="flex items-center gap-2">
-              {[...Array(totalPages)].map((_, i) => (
-                <button
-                  key={i}
-                  onClick={() => setCurrentPage(i + 1)}
-                  className={`px-3 py-1 border rounded ${
-                    currentPage === i + 1 ? "bg-blue-500 text-white" : ""
-                  }`}
-                >
-                  {i + 1}
-                </button>
-              ))}
-            </div>
-            <button
-              disabled={currentPage === totalPages}
-              onClick={() => setCurrentPage((p) => p + 1)}
-              className="px-3 py-1 border rounded disabled:opacity-50"
-            >
-              Next
-            </button>
-          </div>
-        )}
+        {/* PAGINATION */}
+        <Pagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          itemsPerPage={itemsPerPage}
+          totalItems={allUsers.length}
+          setCurrentPage={setCurrentPage}
+        />
       </div>
       {selectedUser && formData && (
         <div className="fixed inset-0 z-999 flex items-center justify-center">
