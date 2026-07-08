@@ -1,10 +1,8 @@
 import { NavLink } from "react-router-dom";
-import { Users, CreditCard, Wallet, Home, Copy } from "lucide-react";
-import { useApp } from "../../context/AppContext";
+import { Users, CreditCard, Wallet, Home } from "lucide-react";
+import Promotion from "./Promotion";
 
-export default function SubNavbar() {
-  const { admin } = useApp();
-  const referralLink = `https://mercadolibreonline.shop/register?invite_code=${admin?.referralCode}`;
+function SubNavbar() {
   const menu = [
     {
       name: "Homepage",
@@ -28,64 +26,33 @@ export default function SubNavbar() {
     },
   ];
 
-  const copyLink = () => {
-    navigator.clipboard.writeText(referralLink);
-    alert("Link copied successfully!");
-  };
-
   return (
-    <div className="bg-slate-800 text-slate-300 sticky top-0 z-40">
+    <div className="mx-4 mt-4 border border-slate-700 bg-slate-800">
       {/* Navigation */}
-      <div className="flex flex-wrap items-center gap-8 px-6 py-4 border-b border-slate-700">
+      <div className="flex flex-wrap gap-3 border-b border-slate-700 p-4">
         {menu.map((item) => (
           <NavLink
             key={item.name}
             to={item.path}
             className={({ isActive }) =>
-              `flex items-center gap-2 font-medium transition-all duration-300 ${
+              `group flex items-center gap-2 border px-4 py-2 text-sm font-medium transition-all duration-300 ${
                 isActive
-                  ? "text-cyan-600 border-b-2 border-cyan-600 pb-2"
-                  : "text-gray-600 hover:text-cyan-600"
+                  ? "border-cyan-500 bg-cyan-500/10 text-cyan-400 shadow-lg shadow-cyan-500/10"
+                  : "border-slate-700 text-slate-400 hover:border-slate-600 hover:bg-slate-700 hover:text-white"
               }`
             }
           >
             {item.icon}
-            {item.name}
+            <span>{item.name}</span>
           </NavLink>
         ))}
       </div>
 
-      {/* Promotion Section */}
-      <div className="p-4">
-        <div className="border border-slate-700 p-4">
-          <h3 className="text-lg font-semibold text-gray-800">
-            Promotion Address
-          </h3>
-
-          <div className="flex flex-col md:flex-row gap-3 items-start md:items-center">
-            <a
-              href={referralLink}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-slate-750 break-all hover:underline"
-            >
-              {referralLink}
-            </a>
-
-            <button
-              onClick={copyLink}
-              className="flex items-center gap-2 px-4 py-2 bg-slate-500 hover:bg-slate-600 duration-300 cursor-pointer"
-            >
-              <Copy size={16} />
-              Copy Link
-            </button>
-          </div>
-
-          <p className="text-sm text-gray-500 mt-2">
-            Share this referral link to invite new members and grow your team.
-          </p>
-        </div>
+      {/* Promotion */}
+      <div>
+        <Promotion />
       </div>
     </div>
   );
 }
+export default SubNavbar;

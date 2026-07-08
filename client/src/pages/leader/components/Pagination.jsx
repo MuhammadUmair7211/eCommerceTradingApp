@@ -13,7 +13,7 @@ const Pagination = ({
       <button
         disabled={currentPage === 1}
         onClick={() => setCurrentPage((prev) => prev - 1)}
-        className="px-4 py-2 bg-slate-800 border border-slate-700 disabled:opacity-50 hover:bg-slate-700 transition"
+        className="px-4 py-2 bg-slate-800 border border-slate-700 disabled:opacity-50 hover:bg-slate-700 transition duration-300 cursor-pointer"
       >
         ← Previous
       </button>
@@ -26,7 +26,7 @@ const Pagination = ({
       <button
         disabled={currentPage === totalPages || totalPages === 0}
         onClick={() => setCurrentPage((prev) => prev + 1)}
-        className="px-4 py-2 bg-slate-800 border border-slate-700 disabled:opacity-50 hover:bg-slate-700 transition"
+        className="px-4 py-2 bg-slate-800 border border-slate-700 disabled:opacity-50 hover:bg-slate-700 transition duration-300 cursor-pointer"
       >
         Next →
       </button>

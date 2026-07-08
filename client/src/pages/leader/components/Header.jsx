@@ -15,6 +15,7 @@ const Header = ({ addAdminModal, setAddAdminModal }) => {
   }, []);
   const navigate = useNavigate();
   const [menu, setMenu] = useState(false);
+
   // handle leader logout
   const handleLogout = async () => {
     try {
@@ -107,14 +108,12 @@ const Header = ({ addAdminModal, setAddAdminModal }) => {
   );
 
   return (
-    <div className="mb-6 p-2">
+    <div className="bg-slate-800 border border-slate-700 p-2">
       {/* TOP BAR */}
       <div className="flex items-center justify-between">
         {/* TITLE */}
-        <div>
-          <h1 className="text-xl md:text-2xl lg:text-3xl font-bold">
-            Leader Dashboard
-          </h1>
+        <div className="p-2">
+          <h1 className="text-xl md:text-xl font-bold">Leader Dashboard</h1>
           <p className="text-yellow-500 text-sm md:text-lg">
             Manage admins and their teams
           </p>

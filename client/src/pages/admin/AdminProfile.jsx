@@ -5,39 +5,16 @@ import {
   KeySquare,
   Phone,
   ShieldCheck,
-  SquarePen,
 } from "lucide-react";
 import { useApp } from "../../context/AppContext";
-
-const InfoCard = ({ icon, label, value, className = "", onAction }) => (
-  <div
-    className={`flex items-center gap-4 border border-slate-700 bg-slate-800 p-3 shadow-lg hover:border-cyan-500 transition-all duration-300 cursor-pointer ${className}`}
-  >
-    {/* Icon */}
-    <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-slate-700 bg-slate-900">
-      {icon}
-    </div>
-
-    {/* Content */}
-    <div className="flex-1">
-      <p className="text-xs uppercase tracking-wider text-slate-400">{label}</p>
-      <p className="mt-1 font-medium text-white break-all">{value ?? "-"}</p>
-    </div>
-
-    {onAction && (
-      <button
-        title="Change Password"
-        onClick={onAction}
-        className="rounded-full p-2 text-slate-400 transition-all duration-300 hover:bg-slate-700 hover:text-cyan-400 active:scale-95 cursor-pointer"
-      >
-        <SquarePen size={18} />
-      </button>
-    )}
-  </div>
-);
+import InfoCard from "../../components/admin/InfoCard";
+import { useState } from "react";
 
 function AdminProfile() {
   const { admin } = useApp();
+  const [showEditButton, setShowEditButton] = useState(true);
+  const [showInput, setShowInput] = useState(false);
+  const [inputValue, setInputValue] = useState("");
 
   const profileItems = [
     {
@@ -78,14 +55,17 @@ function AdminProfile() {
     },
   ];
   const handleChangePassword = () => {
-    console.log("password handle change");
+    setShowEditButton((prev) => !prev);
+    setShowInput((prev) => !prev);
+    setInputValue(admin?.password);
   };
   return (
     <div className="min-h-[60vh] bg-gary-100 shadow-lg p-4">
       <div className="max-w-3xl mx-auto shadow-lg border border-slate-800 p-4">
         {/* Header */}
-        <div className="flex items-center gap-5 border-b border-slate-700 pb-4 mb-4">
-          <div className="flex h-16 w-16 items-center justify-center rounded-full bg-linear-to-br from-cyan-500 to-blue-600 text-2xl font-bold text-white">
+        <div className="mb-6 flex items-center gap-5 border-b border-slate-700 pb-5">
+          {/* Avatar */}
+          <div className="flex h-16 w-16 rounded-full items-center justify-center bg-linear-to-br from-cyan-500 to-blue-600 text-xl font-bold tracking-wide text-white shadow-lg">
             {admin?.username
               ?.split(" ")
               .map((w) => w[0])
@@ -94,13 +74,24 @@ function AdminProfile() {
               .toUpperCase()}
           </div>
 
-          <div>
-            <h1 className="text-2xl font-bold text-white capitalize">
+          {/* Info */}
+          <div className="flex flex-col">
+            <h1 className="text-2xl font-bold capitalize tracking-wide text-white">
               {admin?.username}
             </h1>
 
-            <p className="text-sm text-cyan-400">Administrator</p>
-            <p>{admin?.teamMembers?.length || 0} members</p>
+            <div className="mt-1 flex items-center gap-3 text-sm">
+              <span className="bg-cyan-500/10 rounded-full px-2 py-1 font-medium text-cyan-400">
+                Administrator
+              </span>
+
+              <span className="text-slate-400">
+                {admin?.teamMembers?.length || 0}{" "}
+                {admin?.teamMembers?.length === 1
+                  ? "Team Member"
+                  : "Team Members"}
+              </span>
+            </div>
           </div>
         </div>
         {/* Info Grid */}
@@ -111,9 +102,13 @@ function AdminProfile() {
               icon={item.icon}
               label={item.label}
               value={item.value}
-              onAction={
-                item.label === "Password" ? handleChangePassword : undefined
-              }
+              onClick={handleChangePassword}
+              showEditButton={showEditButton}
+              showInput={showInput}
+              inputValue={inputValue}
+              setInputValue={setInputValue}
+              setShowInput={setShowInput}
+              setShowEditButton={setShowEditButton}
             />
           ))}
 

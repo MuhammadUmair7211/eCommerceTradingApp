@@ -34,9 +34,9 @@ const LeaderCard = () => {
   ];
 
   return (
-    <div className="border border-slate-700 bg-linear-to-br from-slate-900 via-slate-900 to-slate-800 p-2 shadow-xl">
+    <div className="border border-slate-700 bg-slate-800 mt-2 p-2 shadow-lg">
       {/* Header */}
-      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-6">
+      <div className="border border-slate-700 flex flex-col md:flex-row md:items-center md:justify-between gap-6 p-4">
         {/* Left */}
         <div className="flex items-center gap-5">
           {/* Avatar */}
@@ -45,7 +45,7 @@ const LeaderCard = () => {
           </div>
 
           <div>
-            <h2 className="text-lg md:text-2xl font-bold text-white uppercase">
+            <h2 className="text-lg md:text-xl font-bold text-white uppercase">
               {leader?.username || "Leader"}
             </h2>
 
@@ -63,11 +63,8 @@ const LeaderCard = () => {
         </div>
       </div>
 
-      {/* Divider */}
-      <div className="my-6 border-t border-slate-700"></div>
-
       {/* Info Cards */}
-      <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-4 ">
+      <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-4 border border-slate-700 mt-2 p-4">
         {leaderData.map((item) => (
           <div
             key={item.name}

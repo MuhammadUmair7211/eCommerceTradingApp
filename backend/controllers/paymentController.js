@@ -4,7 +4,6 @@ const Injection = require("../models/Injection");
 const mongoose = require("mongoose");
 const Order = require("../models/Order");
 
-
 // for user recharge
 const createPayment = async (req, res) => {
   try {
@@ -145,9 +144,7 @@ const updatePaymentStatus = async (req, res) => {
     let injection = null;
 
     if (status === "approved") {
-      // Deposit + 12% bonus
-      const depositAmount = Number(payment.amount);
-      const creditedAmount = depositAmount * 1.12;
+      const creditedAmount = Number(payment.amount);
 
       // Credit user's balance
       updatedUser = await User.findByIdAndUpdate(

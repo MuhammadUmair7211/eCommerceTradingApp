@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { AlertCircle, Clock, XCircle, CheckCircle } from "lucide-react";
+import { AlertCircle, Clock, XCircle, CheckCircle, Users } from "lucide-react";
 import Pagination from "../../components/admin/Pagination";
 import SearchBar from "../../components/admin/SearchBar";
 import PageHeader from "../../components/admin/PageHeader";
@@ -80,35 +80,51 @@ function RechargeHistoryPage() {
 
   return (
     <div>
-      <div className="bg-slate-900 text-slate-300 border border-slate-700 overflow-hidden p-2">
+      <div className="bg-slate-800 text-slate-300 border border-slate-700 overflow-hidden p-2">
         {/* Header */}
         <PageHeader
           heading="Recharge History"
           subheading="View all recharge transactions"
         />
 
-        {/* Search */}
-        <div className="flex items-center justify-center">
-          <span className="text-sm text-gray-500">
-            total records: {filteredRecords.length}
-          </span>
-          <SearchBar
-            value={searchTerm}
-            onChange={(value) => {
-              setSearchTerm(value);
-              setCurrentPage(1);
-            }}
-          />
+        {/* search + filter records length */}
+        <div className="mt-4 flex flex-col gap-4 border border-slate-700 bg-slate-800 p-4 lg:flex-row lg:items-center">
+          {/* Total records */}
+          <div className="flex shrink-0 items-center gap-3">
+            <div className="flex h-10 w-10 items-center justify-center bg-cyan-500/10 text-cyan-400">
+              <Users size={20} />
+            </div>
+
+            <div>
+              <p className="text-xs uppercase tracking-widest text-slate-500">
+                Total Records
+              </p>
+              <p className="text-lg font-semibold text-white">
+                {filteredRecords.length}
+              </p>
+            </div>
+          </div>
+
+          {/* Search */}
+          <div className="flex-1">
+            <SearchBar value={searchTerm} onChange={setSearchTerm} />
+          </div>
         </div>
 
         {/* Table */}
-        <div className="overflow-x-auto">
+        <div className="overflow-x-auto mt-2">
           <table className="w-full min-w-450 cursor-pointer">
             <thead className="border border-slate-700">
-              <tr className="align-top hover:bg-slate-800 duration-300">
-                <th className="px-4 py-3 text-left">Details</th>
-                <th className="px-4 py-3 text-left">Screenshot</th>
-                <th className="px-4 py-3 text-left">Status</th>
+              <tr className="align-center hover:bg-slate-900 duration-300">
+                <th className="p-4 text-left border border-slate-700">
+                  Details
+                </th>
+                <th className="p-4 text-center border border-slate-700">
+                  Screenshot
+                </th>
+                <th className="p-4 text-center border border-slate-700">
+                  Status
+                </th>
               </tr>
             </thead>
 
@@ -116,64 +132,72 @@ function RechargeHistoryPage() {
               {paginatedRecords.map((p) => (
                 <tr
                   key={p._id}
-                  className="border-t border-slate-700 align-center hover:bg-gray-800 duration-300"
+                  className="border border-slate-700 align-top hover:bg-gray-900 duration-300"
                 >
-                  <td className="p-4">
-                    <div className="space-y-3">
-                      {/* User */}
-                      <div>
-                        <h3 className="font-semibold text-base">
-                          username : {p.user?.username || "N/A"}
-                        </h3>
-
-                        <p className="text-xs">user id : {p.user?._id}</p>
-                      </div>
-
-                      {/* Admin & Amount */}
-                      <div className="flex flex-wrap items-center gap-2">
-                        <span className="px-2 py-1 text-xs bg-slate-700 font-medium">
-                          admin: {p.adminId?.username || "no admin available"}
-                        </span>
-
-                        <span className="px-2 py-1 text-xs bg-green-100 text-green-700 font-semibold">
-                          amount: ${Number(p.amount || 0).toLocaleString()}
-                        </span>
-                      </div>
-
-                      {/* Transaction Card */}
-                      <div className="max-w-lg w-full border border-slate-700 rounded-lg p-3 space-y-2 shadow-sm">
-                        {/* Transaction ID */}
+                  <td className="p-2 text-xs font-semibold leading-7 border border-slate-700">
+                    <div className="space-y-4">
+                      {/* User & Admin */}
+                      <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
                         <div>
-                          <p className="text-[11px] uppercase tracking-wide">
-                            Transaction ID
-                          </p>
-                          <p className="text-xs font-medium break-all">
-                            {p.transactionId}
+                          <h3 className="text-lg font-semibold text-white">
+                            {p.user?.username || "N/A"}
+                          </h3>
+
+                          <p className="mt-1 text-xs text-slate-500 break-all">
+                            User ID: {p.user?._id}
                           </p>
                         </div>
 
-                        {/* Wallet Address */}
-                        <div>
-                          <p className="text-[11px] uppercase tracking-wide">
-                            Wallet Address
-                          </p>
-                          <p className="text-xs break-all rounded-md">
-                            {p.walletAddress}
-                          </p>
+                        <div className="flex flex-wrap gap-2">
+                          <span className="border border-cyan-500/30 bg-cyan-500/10 px-3 py-1 text-xs font-medium text-cyan-400">
+                            Admin: {p.adminId?.username || "Not Assigned"}
+                          </span>
+
+                          <span className="border border-emerald-500/30 bg-emerald-500/10 px-3 py-1 text-xs font-semibold text-emerald-400">
+                            ${Number(p.amount || 0).toLocaleString()}
+                          </span>
+                        </div>
+                      </div>
+
+                      {/* Transaction Details */}
+                      <div className="border border-slate-700 bg-slate-900">
+                        <div className="grid gap-4 p-4 md:grid-cols-2">
+                          <div>
+                            <p className="mb-1 text-[11px] uppercase tracking-[0.18em] text-slate-500">
+                              Transaction ID
+                            </p>
+
+                            <p className="break-all text-sm text-slate-300">
+                              {p.transactionId}
+                            </p>
+                          </div>
+
+                          <div>
+                            <p className="mb-1 text-[11px] uppercase tracking-[0.18em] text-slate-500">
+                              Wallet Address
+                            </p>
+
+                            <p className="break-all text-sm text-slate-300">
+                              {p.walletAddress}
+                            </p>
+                          </div>
                         </div>
 
-                        {/* Date */}
-                        <div className="flex items-center justify-between pt-1 border-t border-slate-700">
-                          <span className="text-[11px]">Created</span>
-                          <span className="text-xs flex items-center gap-1">
-                            🕒 {new Date(p.createdAt).toLocaleString()}
+                        <div className="flex items-center justify-between border-t border-slate-700 bg-slate-800 px-4 py-3">
+                          <span className="text-xs uppercase tracking-widest text-slate-500">
+                            Created
+                          </span>
+
+                          <span className="text-sm text-slate-300">
+                            {new Date(p.createdAt).toLocaleString()}
                           </span>
                         </div>
                       </div>
                     </div>
                   </td>
+
                   {/* Screenshot */}
-                  <td className="p-3">
+                  <td className="p-2 text-xs text-center align-middle font-semibold leading-7 border border-slate-700">
                     {p.screenshot ? (
                       <img
                         src={`${imageUrl}/${p.screenshot}`}
@@ -181,7 +205,7 @@ function RechargeHistoryPage() {
                         onClick={() =>
                           setSelectedVoucher(`${imageUrl}/${p.screenshot}`)
                         }
-                        className="w-14 h-14 object-cover rounded-lg border cursor-pointer hover:scale-110 transition"
+                        className="w-40 h-40 object-cover border cursor-pointer hover:scale-110 transition mx-auto"
                       />
                     ) : (
                       <span className="text-gray-400">No Image</span>
@@ -189,7 +213,9 @@ function RechargeHistoryPage() {
                   </td>
 
                   {/* Status */}
-                  <td className="p-3">{getStatusBadge(p.status)}</td>
+                  <td className="p-2 text-xs text-center align-middle font-semibold leading-7 border border-slate-700">
+                    {getStatusBadge(p.status)}
+                  </td>
                 </tr>
               ))}
             </tbody>
@@ -204,26 +230,24 @@ function RechargeHistoryPage() {
         </div>
 
         {/* Pagination */}
-        {filteredRecords.length > 0 && (
-          <div className="p-4">
-            <Pagination
-              currentPage={currentPage}
-              totalPages={totalPages}
-              onPageChange={setCurrentPage}
-            />
-          </div>
-        )}
+        <Pagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          itemsPerPage={itemsPerPage}
+          totalItems={filteredRecords.length}
+          setCurrentPage={setCurrentPage}
+        />
 
         {/* Voucher Modal */}
         {selectedVoucher && (
-          <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50">
-            <div className="bg-white rounded-xl p-4 max-w-4xl w-full mx-4">
+          <div className="fixed inset-0 text-slate-500 bg-black/70 flex items-center justify-center z-50">
+            <div className="max-w-4xl w-full mx-4">
               <div className="relative flex items-center justify-center mb-4">
                 <h2 className="text-lg font-bold">Screenshot Preview</h2>
 
                 <button
                   onClick={() => setSelectedVoucher(null)}
-                  className="absolute right-0 px-4 py-1 rounded text-red-500 font-semibold hover:bg-red-600 hover:text-white transition"
+                  className="absolute right-0 px-4 py-1 rounded text-red-500 font-semibold hover:bg-red-600 hover:text-white transition duration-300 cursor-pointer"
                 >
                   Close
                 </button>

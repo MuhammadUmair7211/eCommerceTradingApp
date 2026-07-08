@@ -69,7 +69,7 @@ const AdminTable = () => {
 
   return (
     <>
-      <div className="bg-slate-900 text-slate-300 shadow-lg overflow-hidden border border-slate-800 mt-2">
+      <div className="bg-slate-800 text-slate-300 shadow-lg overflow-hidden border border-slate-700 mt-2 p-2">
         {/* SEARCH */}
         <div className="text-center my-4 px-4">
           <input
@@ -77,20 +77,20 @@ const AdminTable = () => {
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Search by admin id, name, phone"
-            className="max-w-5xl w-full bg-slate-800 text-slate-200 border border-slate-700 p-2 outline-none rounded-lg focus:border-slate-500"
+            className="max-w-5xl w-full bg-slate-900 text-slate-500 border border-slate-700 p-2 outline-none"
           />
         </div>
 
         {/* HEADER */}
-        <div className="p-4 border-b border-slate-800">
+        <div className="p-4 border border-slate-700">
           <h2 className="font-bold text-lg text-white">Admin Members</h2>
         </div>
 
         {/* TABLE */}
         <div className="overflow-x-auto">
-          <table className="w-full">
+          <table className="w-full border border-slate-700">
             {/* HEAD */}
-            <thead className="bg-slate-800 border-b border-slate-700">
+            <thead className="bg-slate-900 border-b border-slate-700">
               <tr>
                 {[
                   "Username",
@@ -123,7 +123,7 @@ const AdminTable = () => {
                     <tr
                       key={admin?._id}
                       onClick={() => handleAdminNavigate(admin)}
-                      className="border-b border-slate-800 hover:bg-slate-800/60 cursor-pointer transition"
+                      className="border-b border-slate-700 hover:bg-slate-700 cursor-pointer transition"
                     >
                       {/* USER */}
                       <td className="px-6 py-4">

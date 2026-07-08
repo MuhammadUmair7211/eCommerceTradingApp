@@ -5,6 +5,7 @@ import axios from "axios";
 import { baseUrl } from "../../../config/config";
 import { useApp } from "../../context/AppContext";
 import { toast } from "react-toastify";
+import BackButton from "../../components/user/BackButton";
 function PaymentStatus() {
   const { fetchUserProfile } = useApp();
   const navigate = useNavigate();
@@ -53,6 +54,7 @@ function PaymentStatus() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100">
       <div className="w-full max-w-2xl bg-white shadow-lg p-6">
+        <BackButton />
         {/* Title */}
         <h1 className="text-2xl font-bold text-center">Payment Status</h1>
         <p className="text-center text-gray-500 mb-6">

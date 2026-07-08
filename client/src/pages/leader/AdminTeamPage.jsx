@@ -221,7 +221,7 @@ function AdminTeamPage() {
           </div>
         </div>
       ) : (
-        <div className="grid gap-6 sm:grid-cols-2 xl:grid-cols-3">
+        <div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-3">
           {paginatedTeamMembers?.map((user) => (
             <UserCard
               key={user._id}

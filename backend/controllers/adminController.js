@@ -145,6 +145,48 @@ const getAllUsersAdmin = async (req, res) => {
   }
 };
 
+// change admin password
+const changeAdminPassword = async (req, res) => {
+  try {
+    const { password } = req.body;
+
+    if (!password) {
+      return res.status(400).json({
+        success: false,
+        message: "Password is required",
+      });
+    }
+    const admin = await Admin.findById(req.user.id);
+
+    if (!admin) {
+      return res.status(404).json({
+        success: false,
+        message: "admin not found",
+      });
+    }
+
+    // Don't update if the password hasn't changed
+    if (admin.password === password) {
+      return res.status(400).json({
+        success: false,
+        message: "New password must be different from the current password",
+      });
+    }
+
+    admin.password = password;
+    await admin.save();
+    res.status(200).json({
+      success: true,
+      message: "Password changed successfully",
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
 // const admin logout
 const adminLogout = async (req, res) => {
   try {
@@ -170,4 +212,5 @@ module.exports = {
   deleteAdmin,
   getAllUsersAdmin,
   adminLogout,
+  changeAdminPassword,
 };

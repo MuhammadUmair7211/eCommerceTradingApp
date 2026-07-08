@@ -4,10 +4,11 @@ import {
   RefreshCcw,
   ShieldCheck,
   User,
+  Users,
   Wallet,
   X,
 } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import axios from "axios";
 import SearchBar from "../../components/admin/SearchBar";
 import PageHeader from "../../components/admin/PageHeader";
@@ -16,12 +17,12 @@ import ProfileModal from "../../components/admin/ProfileModal";
 import Pagination from "../../components/admin/Pagination";
 import { toast } from "react-toastify";
 import { baseUrl } from "../../../config/config";
+import { useApp } from "../../context/AppContext";
 
 export default function Members() {
-  const [members, setMembers] = useState([]);
+  const { adminUsers, loading, fetchAdminData } = useApp();
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
-  const [loading, setLoading] = useState(false);
   const [editNotesModal, setEditNotesModal] = useState(false);
   const [addOrderModal, setAddOrderModal] = useState(false);
   const [balanceModal, setBalanceModal] = useState(false);
@@ -34,31 +35,7 @@ export default function Members() {
 
   const navigate = useNavigate();
 
-  // FETCH USERS
-  const fetchAllUsersAdmin = async () => {
-    setLoading(true);
-    try {
-      const token = localStorage.getItem("adminToken");
-      const { data } = await axios.get(`${baseUrl}/admins/admin-users`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-
-      setMembers(data.users || []);
-    } catch (error) {
-      console.log(error.response?.data || error.message);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    fetchAllUsersAdmin();
-  }, []);
-
-  // SAFE SEARCH FILTER
-  const filteredMembers = (members || []).filter((member) => {
+  const filteredMembers = (adminUsers || []).filter((member) => {
     const search = searchTerm.toLowerCase();
 
     return (
@@ -72,12 +49,6 @@ export default function Members() {
       member.completedOrders?.toString().includes(search)
     );
   });
-
-  // PAGINATION SAFETY
-  const indexOfLast = currentPage * itemsPerPage;
-  const indexOfFirst = indexOfLast - itemsPerPage;
-
-  const currentMembers = filteredMembers.slice(indexOfFirst, indexOfLast);
 
   const totalPages = Math.max(
     1,
@@ -103,7 +74,7 @@ export default function Members() {
       );
       toast.success(data.message || "Notes updated successfully");
       setEditNotesModal(false);
-      fetchAllUsersAdmin();
+      fetchAdminData();
     } catch (error) {
       console.log(error);
       toast.error(error.response?.data?.message || "Failed to update notes");
@@ -132,7 +103,7 @@ export default function Members() {
       );
       toast.success(data.message || "Order updated successfully");
       setAddOrderModal(false);
-      fetchAllUsersAdmin();
+      fetchAdminData();
       setTotalOrders("");
     } catch (error) {
       console.log(error.response?.data);
@@ -153,7 +124,7 @@ export default function Members() {
       );
       console.log(data);
       toast.success(data.message || "Orders cleared successfully");
-      fetchAllUsersAdmin(); // refresh UI
+      fetchAdminData();
     } catch (error) {
       toast.error(error.response?.data?.message || "Failed to clear orders");
     }
@@ -186,7 +157,7 @@ export default function Members() {
       );
       toast.success(data.message || "Balance updated successfully");
       setBalanceModal(false);
-      fetchAllUsersAdmin();
+      fetchAdminData();
     } catch (error) {
       console.error(error);
       toast.error(error.response?.data?.message || "Failed to update balance");
@@ -195,22 +166,35 @@ export default function Members() {
 
   return (
     <div>
-      <div className="bg-slate-900 text-slate-300 border border-slate-700 overflow-hidden p-2">
+      <div className="bg-slate-800 text-slate-300 border border-slate-700 overflow-hidden p-2">
         {/* HEADER */}
         <PageHeader
           heading="All Members List"
           subheading="Manage all registered members"
         />
 
-        {/* SEARCH */}
-        <div className="flex items-center justify-center">
-          <span className="text-sm">total members : {members.length}</span>
-          <SearchBar
-            value={searchTerm}
-            onChange={(value) => {
-              setSearchTerm(value);
-            }}
-          />
+        {/* search + filter records length */}
+        <div className="mt-4 flex flex-col gap-4 border border-slate-700 bg-slate-800 p-4 lg:flex-row lg:items-center">
+          {/* Total Members */}
+          <div className="flex shrink-0 items-center gap-3">
+            <div className="flex h-10 w-10 items-center justify-center bg-cyan-500/10 text-cyan-400">
+              <Users size={20} />
+            </div>
+
+            <div>
+              <p className="text-xs uppercase tracking-widest text-slate-500">
+                Total Members
+              </p>
+              <p className="text-lg font-semibold text-white">
+                {adminUsers.length}
+              </p>
+            </div>
+          </div>
+
+          {/* Search */}
+          <div className="flex-1">
+            <SearchBar value={searchTerm} onChange={setSearchTerm} />
+          </div>
         </div>
 
         {/* MODAL */}
@@ -220,23 +204,41 @@ export default function Members() {
           user={selectedUser}
         />
 
-        <div className="overflow-x-auto">
+        <div className="overflow-x-auto mt-2">
           <table className="w-full min-w-450 cursor-pointer">
             <thead className="border border-slate-700">
-              <tr className="align-top hover:bg-slate-800 duration-300">
-                <th className="p-4 text-left">User Information</th>
-                <th className="p-4 text-left">Account Details</th>
-                <th className="p-4 text-left">Order Statistics</th>
-                <th className="p-4 text-left">Top up/withdraw/wallet</th>
-                <th className="p-4 text-left">Upper-level Agent</th>
-                <th className="p-4 text-center">Recently Logged In</th>
-                <th className="p-4 text-center">Online Status</th>
-                <th className="p-4 text-center">Registration Information</th>
-                <th className="p-4 text-center">Operate</th>
+              <tr className="align-center hover:bg-slate-900 duration-300">
+                <th className="p-4 text-left border border-slate-700">
+                  User Information
+                </th>
+                <th className="p-4 text-left border border-slate-700">
+                  Account Details
+                </th>
+                <th className="p-4 text-left border border-slate-700">
+                  Order Statistics
+                </th>
+                <th className="p-4 text-left border border-slate-700">
+                  Top up/withdraw/wallet
+                </th>
+                <th className="p-4 text-left border border-slate-700">
+                  Upper-level Agent
+                </th>
+                <th className="p-4 text-center border border-slate-700">
+                  Recently Logged In
+                </th>
+                <th className="p-4 text-center border border-slate-700">
+                  Online Status
+                </th>
+                <th className="p-4 text-center border border-slate-700">
+                  Registration Information
+                </th>
+                <th className="p-4 text-center border border-slate-700">
+                  Operate
+                </th>
               </tr>
             </thead>
 
-            <tbody className="">
+            <tbody>
               {/* LOADING STATE (FIXED - NO DIV INSIDE TBODY ISSUE) */}
               {loading ? (
                 <tr>
@@ -244,21 +246,21 @@ export default function Members() {
                     Loading members...
                   </td>
                 </tr>
-              ) : currentMembers.length === 0 ? (
+              ) : filteredMembers.length === 0 ? (
                 <tr>
                   <td colSpan="9" className="text-center p-10">
                     No members found
                   </td>
                 </tr>
               ) : (
-                currentMembers?.map((member) => {
+                filteredMembers?.map((member) => {
                   return (
                     <tr
                       key={member._id}
-                      className="border-t border-slate-700 align-top hover:bg-gray-800 duration-300"
+                      className="border border-slate-700 align-top hover:bg-gray-900 duration-300"
                     >
                       {/* USER INFO */}
-                      <td className="p-2 text-xs font-semibold leading-7">
+                      <td className="p-2 text-xs font-semibold leading-7 border border-slate-700">
                         <p>username : {member.username}</p>
                         <p>Phone : {member.phoneNumber}</p>
                         <p>Invitation Code : {member.referredBy}</p>
@@ -267,7 +269,7 @@ export default function Members() {
                       </td>
 
                       {/* ACCOUNT DETAILS */}
-                      <td className="p-2 text-xs leading-7">
+                      <td className="p-2 text-xs leading-7 border border-slate-700">
                         <p className="text-green-600 font-semibold">
                           Account Balance : ${member?.balance?.toFixed(2) || 0}
                         </p>
@@ -286,7 +288,7 @@ export default function Members() {
                       </td>
 
                       {/* ORDER STATS */}
-                      <td className="p-2 text-xs leading-7">
+                      <td className="p-2 text-xs leading-7 border border-slate-700">
                         <p className="flex items-center gap-4">
                           Remaining Orders :{" "}
                           {member.totalOrders - member.completedOrders}
@@ -305,7 +307,7 @@ export default function Members() {
                       </td>
 
                       {/* WALLET */}
-                      <td className="p-2 text-xs leading-7">
+                      <td className="p-2 text-xs leading-7 border border-slate-700">
                         <p>
                           Total Recharges : {member.recharges?.length} times
                         </p>
@@ -316,7 +318,7 @@ export default function Members() {
                       </td>
 
                       {/* AGENT */}
-                      <td className="p-2 text-xs leading-7">
+                      <td className="p-2 text-xs leading-7 border border-slate-700">
                         <p className="text-red-500">
                           parent user : {member?.parentUser || "not available"}
                         </p>
@@ -326,7 +328,7 @@ export default function Members() {
                       </td>
 
                       {/* LOGIN INFO */}
-                      <td className="p-2 text-xs leading-7 text-center">
+                      <td className="p-2 text-xs leading-7 text-center border border-slate-700">
                         <p>
                           Login IP at : {member.lastLogin || "not available"}
                         </p>
@@ -337,7 +339,7 @@ export default function Members() {
                       </td>
 
                       {/* STATUS */}
-                      <td className="p-2 text-center pt-12">
+                      <td className="p-2 text-center pt-12 border border-slate-700">
                         <span
                           className={`px-3 py-1 rounded-full text-xs font-semibold ${
                             member.isOnline
@@ -350,7 +352,7 @@ export default function Members() {
                       </td>
 
                       {/* REGISTRATION */}
-                      <td className="p-2 text-xs leading-7 text-center">
+                      <td className="p-2 text-xs leading-7 text-center border border-slate-700">
                         <p>
                           Registered on:{" "}
                           <span className="font-medium">
@@ -373,7 +375,7 @@ export default function Members() {
                       </td>
 
                       {/* ACTIONS */}
-                      <td className="p-2">
+                      <td className="p-2 border border-slate-700">
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 text-xs">
                           {/* Injection Management */}
                           <button
@@ -448,7 +450,9 @@ export default function Members() {
       <Pagination
         currentPage={currentPage}
         totalPages={totalPages}
-        onPageChange={(page) => setCurrentPage(page)}
+        totalItems={filteredMembers.length}
+        itemsPerPage={itemsPerPage}
+        setCurrentPage={setCurrentPage}
       />
 
       {/* notes modal */}

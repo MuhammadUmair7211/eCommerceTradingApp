@@ -1,28 +1,37 @@
-function Pagination({ currentPage, totalPages, onPageChange }) {
+const Pagination = ({
+  currentPage,
+  totalPages,
+  totalItems,
+  itemsPerPage,
+  setCurrentPage,
+}) => {
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+
   return (
-    <div className="flex justify-between items-center mt-4 bg-slate-800 rounded-full">
+    <div className="flex justify-between items-center mt-4 text-slate-300">
       <button
         disabled={currentPage === 1}
-        onClick={() => onPageChange(currentPage - 1)}
-        className="px-3 py-1 border duration-300 cursor-pointer
-        disabled:cursor-not-allowed disabled:bg-gray-200 disabled:text-gray-400 rounded-full hover:text-white"
+        onClick={() => setCurrentPage((prev) => prev - 1)}
+        className="px-4 py-2 bg-slate-800 border border-slate-700 disabled:opacity-50 hover:bg-slate-700 transition duration-300 cursor-pointer"
       >
-        Prev
+        ← Previous
       </button>
 
-      <span className="text-sm font-medium">
-        Page {currentPage} / {totalPages}
-      </span>
+      <p className="text-sm text-slate-400">
+        Showing {totalItems === 0 ? 0 : indexOfFirstItem + 1} -{" "}
+        {Math.min(indexOfLastItem, totalItems)} of {totalItems}
+      </p>
 
       <button
-        disabled={currentPage === totalPages}
-        onClick={() => onPageChange(currentPage + 1)}
-        className="px-3 py-1 border duration-300 cursor-pointer
-        disabled:cursor-not-allowed disabled:bg-gray-200 disabled:text-gray-400 rounded-full hover:text-white"
+        disabled={currentPage === totalPages || totalPages === 0}
+        onClick={() => setCurrentPage((prev) => prev + 1)}
+        className="px-4 py-2 bg-slate-800 border border-slate-700 disabled:opacity-50 hover:bg-slate-700 transition duration-300 cursor-pointer"
       >
-        Next
+        Next →
       </button>
     </div>
   );
-}
+};
+
 export default Pagination;

@@ -1,78 +1,21 @@
-import { useEffect, useState } from "react";
+import {
+  ArrowDownCircle,
+  BadgeDollarSign,
+  Banknote,
+  CircleCheckBig,
+  HandCoins,
+  Landmark,
+  ShoppingCart,
+  UserRound,
+  Users,
+  Wallet,
+} from "lucide-react";
 import PageHeader from "../../components/admin/PageHeader";
 import StatCard from "../../components/user/StatCard";
-import axios from "axios";
-import { baseUrl } from "../../../config/config";
+import { useApp } from "../../context/AppContext";
 
 function Statistics() {
-  const [admin, setAdmin] = useState(null);
-  const [recharges, setRecharges] = useState([]);
-  const [withdrawals, setWithdrawals] = useState([]);
-
-  // fetch admin
-  const fetchAdmin = async () => {
-    try {
-      const token = localStorage.getItem("adminToken");
-      if (!token) return;
-
-      const { data } = await axios.get(`${baseUrl}/admin-auth/my`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-
-      setAdmin(data.admin);
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  // fetch recharges
-  const fetchRecharges = async () => {
-    try {
-      const token = localStorage.getItem("adminToken");
-      if (!token) return;
-      const { data } = await axios.get(`${baseUrl}/payments`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-      if (data.success) {
-        setRecharges(data.payments);
-      }
-    } catch (error) {
-      console.error(error);
-    }
-  };
-
-  // fetch withdrawals
-  const fetchWithdrawals = async () => {
-    try {
-      const token = localStorage.getItem("adminToken");
-
-      const { data } = await axios.get(
-        `${baseUrl}/withdrawals/admin-withdrawals`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        },
-      );
-
-      if (data.success) {
-        setWithdrawals(data.withdrawals);
-      } else {
-        console.log(data.message);
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  };
-  useEffect(() => {
-    fetchAdmin();
-    fetchRecharges();
-    fetchWithdrawals();
-  }, []);
+  const { admin, adminPayments, adminWithdrawals } = useApp();
 
   // total orders count
   const totalOrders = admin?.teamMembers.reduce(
@@ -86,20 +29,23 @@ function Statistics() {
   );
 
   // total recharges
-  const totalRecharges = recharges.reduce((curr, acc) => curr + acc.amount, 0);
+  const totalRecharges = adminPayments.reduce(
+    (curr, acc) => curr + acc.amount,
+    0,
+  );
 
   // approved recharge count
-  const approvedRechargeCount = recharges?.filter(
+  const approvedRechargeCount = adminPayments?.filter(
     (r) => r.status === "approved",
   ).length;
 
   // total withdrawals
-  const totalWithdrawals = withdrawals.reduce(
+  const totalWithdrawals = adminWithdrawals.reduce(
     (curr, acc) => curr + acc.amount,
     0,
   );
   // approved withdrawal count
-  const approvedWithdrawalCount = withdrawals?.filter(
+  const approvedWithdrawalCount = adminWithdrawals?.filter(
     (w) => w.status === "approved",
   ).length;
   // total commission
@@ -112,35 +58,104 @@ function Statistics() {
     (curr, acc) => curr + acc.balance,
     0,
   );
+
+  // cards
   const cards = [
-    { title: "First-time Top-up Users", value: totalWithdrawals },
-    { title: "Total Users", value: admin?.teamMembers.length },
-    { title: "Total Orders", value: totalOrders },
-    { title: "Completed Orders", value: completedOrders },
-    { title: "User Recharge", value: "$" + totalRecharges },
-    { title: "Users Recharged", value: approvedRechargeCount },
-    { title: "User Withdrawals", value: "$" + totalWithdrawals },
-    { title: "Withdrawal Requests", value: approvedWithdrawalCount },
-    { title: "Order Commission", value: "$" + totalCommission?.toFixed(2) },
-    { title: "Interest Treasure Transfer", value: "0 USDT" },
-    { title: "Subordinate Commission", value: "0 USDT" },
-    { title: "Total User Balance", value: "$" + totalUserBalance?.toFixed(2) },
+    {
+      title: "First-time Top-up Users",
+      value: 0,
+      icon: <UserRound size={24} />,
+      color: "text-violet-400 bg-violet-500/10 border-violet-500/30",
+    },
+    {
+      title: "Total Users",
+      value: admin?.teamMembers?.length,
+      icon: <Users size={24} />,
+      color: "text-sky-400 bg-sky-500/10 border-sky-500/30",
+    },
+    {
+      title: "Total Orders",
+      value: totalOrders,
+      icon: <ShoppingCart size={24} />,
+      color: "text-orange-400 bg-orange-500/10 border-orange-500/30",
+    },
+    {
+      title: "Completed Orders",
+      value: completedOrders,
+      icon: <CircleCheckBig size={24} />,
+      color: "text-emerald-400 bg-emerald-500/10 border-emerald-500/30",
+    },
+    {
+      title: "User Recharge",
+      value: `$${totalRecharges?.toFixed(2)}`,
+      icon: <Wallet size={24} />,
+      color: "text-green-400 bg-green-500/10 border-green-500/30",
+    },
+    {
+      title: "Users Recharged",
+      value: approvedRechargeCount,
+      icon: <Banknote size={24} />,
+      color: "text-lime-400 bg-lime-500/10 border-lime-500/30",
+    },
+    {
+      title: "User Withdrawals",
+      value: `$${totalWithdrawals?.toFixed(2)}`,
+      icon: <ArrowDownCircle size={24} />,
+      color: "text-red-400 bg-red-500/10 border-red-500/30",
+    },
+    {
+      title: "Withdrawal Requests",
+      value: approvedWithdrawalCount,
+      icon: <Landmark size={24} />,
+      color: "text-amber-400 bg-amber-500/10 border-amber-500/30",
+    },
+    {
+      title: "Order Commission",
+      value: `$${totalCommission?.toFixed(2)}`,
+      icon: <BadgeDollarSign size={24} />,
+      color: "text-yellow-400 bg-yellow-500/10 border-yellow-500/30",
+    },
+    {
+      title: "Interest Treasure Transfer",
+      value: "0 USDT",
+      icon: <HandCoins size={24} />,
+      color: "text-cyan-400 bg-cyan-500/10 border-cyan-500/30",
+    },
+    {
+      title: "Subordinate Commission",
+      value: "0 USDT",
+      icon: <BadgeDollarSign size={24} />,
+      color: "text-fuchsia-400 bg-fuchsia-500/10 border-fuchsia-500/30",
+    },
+    {
+      title: "Total User Balance",
+      value: `$${totalUserBalance?.toFixed(2)}`,
+      icon: <Wallet size={24} />,
+      color: "text-indigo-400 bg-indigo-500/10 border-indigo-500/30",
+    },
   ];
 
   return (
     <div className="bg-slate-900 text-slate-300 space-y-4">
       {/* Header */}
-      <div className="bg-slate-900 text-slate-300 shadow-lg border border-slate-700 overflow-hidden p-2">
+      <div className="relative overflow-hidden border border-slate-700 bg-slate-800 p-6 shadow-xl">
+        {/* Content */}
         <PageHeader
           heading="Mall Statistics"
-          subheading="  Overview of platform activity and financial performance."
+          subheading="Overview of platform activity and financial performance."
         />
       </div>
 
       {/* Stats Grid */}
-      <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+      <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
         {cards.map((card, index) => (
-          <StatCard key={index} title={card.title} value={card.value} />
+          <StatCard
+            key={index}
+            title={card.title}
+            value={card.value}
+            icon={card.icon}
+            color={card.color}
+          />
         ))}
       </div>
     </div>
