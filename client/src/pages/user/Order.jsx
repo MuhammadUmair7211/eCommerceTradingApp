@@ -2,6 +2,7 @@ import axios from "axios";
 import { toast } from "react-toastify";
 import { baseUrl } from "../../../config/config";
 import { useApp } from "../../context/AppContext";
+import BackButton from "../../components/user/BackButton";
 const Orders = () => {
   const { orders, setOrders, loading } = useApp();
   // confirm order
@@ -55,7 +56,10 @@ const Orders = () => {
         </div>
       ) : orders.length > 0 ? (
         <>
-          <h1 className="text-xl font-bold mb-5">My Orders</h1>
+          <div className="flex items-center gap-2 mb-4">
+            <BackButton />
+            <h1 className="text-xl font-bold">My Orders</h1>
+          </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
             {orders?.map((order) => (

@@ -1,6 +1,7 @@
 import { ChevronRight, Lock, User, CreditCard, Headset } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useApp } from "../../context/AppContext";
+import BackButton from "../../components/user/BackButton";
 
 const Account = () => {
   const navigate = useNavigate();
@@ -13,6 +14,7 @@ const Account = () => {
       <div className="max-w-md mx-auto space-y-5">
         {/* HEADER */}
         <div className="flex items-center justify-center gap-2">
+          <BackButton />
           <User className="text-[#2B3374]" size={24} />
           <h2 className="text-2xl font-bold text-[#2B3374]">Personal Center</h2>
         </div>

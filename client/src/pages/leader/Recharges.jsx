@@ -5,6 +5,7 @@ import { CheckCircle, Clock, XCircle } from "lucide-react";
 import { baseUrl, imageUrl } from "../../../config/config";
 import Pagination from "./components/Pagination";
 import { useApp } from "../../context/AppContext";
+import BackButton from "./components/BackButton";
 
 function Recharges() {
   const { allPayments, loading, getLeaderData } = useApp();
@@ -39,6 +40,7 @@ function Recharges() {
 
   return (
     <div className="p-4 md:p-6 bg-slate-900 text-slate-300 min-h-screen">
+      <BackButton />
       <h1 className="text-xl font-bold text-white mb-4">Recharge History</h1>
 
       <div className="bg-slate-900 border border-slate-800 overflow-x-auto">

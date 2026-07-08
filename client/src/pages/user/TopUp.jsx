@@ -1,6 +1,7 @@
 import { Wallet, Zap } from "lucide-react";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import BackButton from "../../components/user/BackButton";
 
 function TopUp() {
   const [amount, setAmount] = useState(null);
@@ -14,6 +15,7 @@ function TopUp() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100 p-4">
       <div className="w-full max-w-2xl bg-white shadow-lg p-6">
+        <BackButton />
         {/* Title */}
         <h1 className="text-2xl font-bold text-center flex items-center justify-center gap-2">
           <Wallet />

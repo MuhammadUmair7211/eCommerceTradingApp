@@ -1,121 +1,132 @@
-import axios from "axios";
 import {
   BadgeCheck,
   Calendar,
   KeyRound,
+  KeySquare,
   Phone,
   ShieldCheck,
-  User,
-  Users,
+  SquarePen,
 } from "lucide-react";
-import { useEffect, useState } from "react";
-import { baseUrl } from "../../../config/config";
+import { useApp } from "../../context/AppContext";
+
+const InfoCard = ({ icon, label, value, className = "", onAction }) => (
+  <div
+    className={`flex items-center gap-4 border border-slate-700 bg-slate-800 p-3 shadow-lg hover:border-cyan-500 transition-all duration-300 cursor-pointer ${className}`}
+  >
+    {/* Icon */}
+    <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-slate-700 bg-slate-900">
+      {icon}
+    </div>
+
+    {/* Content */}
+    <div className="flex-1">
+      <p className="text-xs uppercase tracking-wider text-slate-400">{label}</p>
+      <p className="mt-1 font-medium text-white break-all">{value ?? "-"}</p>
+    </div>
+
+    {onAction && (
+      <button
+        title="Change Password"
+        onClick={onAction}
+        className="rounded-full p-2 text-slate-400 transition-all duration-300 hover:bg-slate-700 hover:text-cyan-400 active:scale-95 cursor-pointer"
+      >
+        <SquarePen size={18} />
+      </button>
+    )}
+  </div>
+);
 
 function AdminProfile() {
-  const [admin, setAdmin] = useState(null);
+  const { admin } = useApp();
 
-
-  useEffect(() => {
-    const fetchAdmin = async () => {
-      try {
-        const token = localStorage.getItem("adminToken");
-        if (!token) return;
-
-        const { data } = await axios.get(`${baseUrl}/admin-auth/my`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-        setAdmin(data.admin);
-      } catch (error) {
-        console.log(error);
-      }
-    };
-    fetchAdmin();
-  }, []);
+  const profileItems = [
+    {
+      label: "Phone Number",
+      icon: <Phone className="text-blue-400" />,
+      value: admin?.phoneNumber,
+    },
+    {
+      label: "Referral Code",
+      icon: <KeyRound className="text-green-400" />,
+      value: admin?.referralCode,
+    },
+    {
+      label: "Profile Code",
+      icon: <BadgeCheck className="text-yellow-400" />,
+      value: admin?.profileCode,
+    },
+    {
+      label: "Role",
+      icon: <ShieldCheck className="text-purple-400" />,
+      value: admin?.role,
+    },
+    {
+      label: "Password",
+      icon: <KeySquare className="text-pink-400" />,
+      value: admin?.password,
+    },
+    {
+      label: "Status",
+      icon: (
+        <div
+          className={`h-3 w-3 rounded-full ${
+            admin?.isOnline ? "bg-green-500" : "bg-red-500"
+          }`}
+        />
+      ),
+      value: admin?.isOnline ? "Online" : "Offline",
+    },
+  ];
+  const handleChangePassword = () => {
+    console.log("password handle change");
+  };
   return (
-    <div className="min-h-[65vh] bg-gary-100 shadow-lg p-6">
-      <div className="max-w-3xl mx-auto shadow-lg border border-slate-800 p-6">
+    <div className="min-h-[60vh] bg-gary-100 shadow-lg p-4">
+      <div className="max-w-3xl mx-auto shadow-lg border border-slate-800 p-4">
         {/* Header */}
-        <div className="flex items-center gap-4 mb-6">
-          <div className="bg-blue-600 p-3 rounded-full">
-            <User className="text-white" />
+        <div className="flex items-center gap-5 border-b border-slate-700 pb-4 mb-4">
+          <div className="flex h-16 w-16 items-center justify-center rounded-full bg-linear-to-br from-cyan-500 to-blue-600 text-2xl font-bold text-white">
+            {admin?.username
+              ?.split(" ")
+              .map((w) => w[0])
+              .join("")
+              .slice(0, 2)
+              .toUpperCase()}
           </div>
 
           <div>
-            <h1 className="text-xl font-bold">{admin?.username}</h1>
-            <p className="text-slate-400 text-sm">Admin Profile</p>
+            <h1 className="text-2xl font-bold text-white capitalize">
+              {admin?.username}
+            </h1>
+
+            <p className="text-sm text-cyan-400">Administrator</p>
+            <p>{admin?.teamMembers?.length || 0} members</p>
           </div>
         </div>
-
         {/* Info Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {/* Phone */}
-          <div className="border border-slate-700 shadow-lg p-4 flex items-center gap-3">
-            <Phone className="text-blue-400" />
-            <div>
-              <p className="text-xs text-slate-400">Phone Number</p>
-              <p>{admin?.phoneNumber}</p>
-            </div>
-          </div>
-
-          {/* Referral Code */}
-          <div className="border border-slate-700 shadow-lg p-4 flex items-center gap-3">
-            <KeyRound className="text-green-400" />
-            <div>
-              <p className="text-xs text-slate-400">Referral Code</p>
-              <p>{admin?.referralCode}</p>
-            </div>
-          </div>
-
-          {/* Profile Code */}
-          <div className="border border-slate-700 shadow-lg p-4 flex items-center gap-3">
-            <BadgeCheck className="text-yellow-400" />
-            <div>
-              <p className="text-xs text-slate-400">Profile Code</p>
-              <p>{admin?.profileCode}</p>
-            </div>
-          </div>
-
-          {/* Role */}
-          <div className="border border-slate-700 shadow-lg p-4 flex items-center gap-3">
-            <ShieldCheck className="text-purple-400" />
-            <div>
-              <p className="text-xs text-slate-400">Role</p>
-              <p className="capitalize">{admin?.role}</p>
-            </div>
-          </div>
-
-          {/* Team Members */}
-          <div className="border border-slate-700 shadow-lg p-4 flex items-center gap-3">
-            <Users className="text-pink-400" />
-            <div>
-              <p className="text-xs text-slate-400">Team Members</p>
-              <p>{admin?.teamMembers?.length || 0}</p>
-            </div>
-          </div>
-
-          {/* Status */}
-          <div className="border border-slate-700 shadow-lg p-4 flex items-center gap-3">
-            <div
-              className={`w-3 h-3 rounded-full ${
-                admin?.isOnline ? "bg-green-500" : "bg-red-500"
-              }`}
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+          {profileItems.map((item) => (
+            <InfoCard
+              key={item.label}
+              icon={item.icon}
+              label={item.label}
+              value={item.value}
+              onAction={
+                item.label === "Password" ? handleChangePassword : undefined
+              }
             />
-            <div>
-              <p className="text-xs text-slate-400">Status</p>
-              <p>{admin?.isOnline ? "online" : "offline"}</p>
-            </div>
-          </div>
+          ))}
 
-          {/* Created At */}
-          <div className="border border-slate-700 shadow-lg p-4 flex items-center gap-3 md:col-span-2">
-            <Calendar className="text-cyan-400" />
-            <div>
-              <p className="text-xs text-slate-400">Created At</p>
-              <p>{new Date(admin?.createdAt).toLocaleString()}</p>
-            </div>
-          </div>
+          <InfoCard
+            className="md:col-span-2"
+            icon={<Calendar className="text-cyan-400" />}
+            label="Created At"
+            value={
+              admin?.createdAt
+                ? new Date(admin.createdAt).toLocaleString()
+                : "-"
+            }
+          />
         </div>
       </div>
     </div>

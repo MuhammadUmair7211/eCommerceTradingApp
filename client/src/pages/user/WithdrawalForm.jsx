@@ -5,6 +5,7 @@ import axios from "axios";
 import { toast } from "react-toastify";
 import { baseUrl } from "../../../config/config";
 import { useApp } from "../../context/AppContext";
+import BackButton from "../../components/user/BackButton";
 function WithdrawalForm() {
   const { user } = useApp();
   const navigate = useNavigate();
@@ -49,6 +50,7 @@ function WithdrawalForm() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100 p-4">
       <div className="w-full max-w-2xl bg-white shadow-lg p-6">
+        <BackButton />
         {/* Title */}
         <h1 className="text-2xl font-bold text-center flex items-center justify-center gap-2 mb-6">
           <Wallet />

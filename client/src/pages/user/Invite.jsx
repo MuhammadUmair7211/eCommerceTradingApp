@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Copy, Gift, Share2 } from "lucide-react";
 import { useApp } from "../../context/AppContext";
+import BackButton from "../../components/user/BackButton";
 function Invite() {
   const { user } = useApp();
   const [copied, setCopied] = useState(false);
@@ -20,6 +21,7 @@ function Invite() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100 p-4">
       <div className="w-full max-w-xl bg-white shadow-lg p-6">
+        <BackButton />
         {/* Title */}
         <h1 className="text-2xl font-bold text-center flex items-center justify-center gap-2 mb-2">
           <Gift />

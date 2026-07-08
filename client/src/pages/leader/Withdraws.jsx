@@ -5,6 +5,7 @@ import { CheckCircle, Clock, XCircle } from "lucide-react";
 import { baseUrl } from "../../../config/config";
 import Pagination from "./components/Pagination";
 import { useApp } from "../../context/AppContext";
+import BackButton from "./components/BackButton";
 
 function Withdraws() {
   const { allWithdrawals, loading, getLeaderData } = useApp();
@@ -37,6 +38,7 @@ function Withdraws() {
 
   return (
     <div className="p-4 md:p-6 bg-slate-900 min-h-screen text-slate-300">
+      <BackButton />
       <h1 className="text-xl font-bold text-white mb-4">Withdrawal History</h1>
 
       <div className="bg-slate-900 border border-slate-800 overflow-x-auto">

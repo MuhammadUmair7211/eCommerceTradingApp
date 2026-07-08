@@ -12,6 +12,7 @@ import {
 import { useState } from "react";
 import UserCard from "./components/UserCard";
 import Pagination from "./components/Pagination";
+import BackButton from "./components/BackButton";
 
 function AdminTeamPage() {
   const location = useLocation();
@@ -126,6 +127,7 @@ function AdminTeamPage() {
 
   return (
     <div className="min-h-screen bg-slate-900 p-4 text-slate-300">
+      <BackButton />
       <div className="bg-linear-to-br from-slate-900 to-slate-800 border border-slate-700 p-2 shadow-xl mb-2">
         {/* Header */}
         <div className="flex items-center gap-4">

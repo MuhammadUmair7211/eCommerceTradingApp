@@ -2,6 +2,7 @@ import { useState } from "react";
 import { CheckCircle, Clock, XCircle } from "lucide-react";
 import { baseUrl, imageUrl } from "../../../config/config";
 import { useApp } from "../../context/AppContext";
+import BackButton from "../../components/user/BackButton";
 
 function RechargeHistory() {
   const { recharges } = useApp();
@@ -28,6 +29,7 @@ function RechargeHistory() {
   return (
     <div className="min-h-screen bg-gray-100 p-6">
       <div className="max-w-450 mx-auto">
+        <BackButton />
         {/* Header */}
         <h1 className="text-2xl font-bold text-center mb-8 text-gray-800">
           Recharge/TopUp History

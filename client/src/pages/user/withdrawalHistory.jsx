@@ -1,6 +1,7 @@
 import { CheckCircle, Clock, XCircle } from "lucide-react";
 import { useApp } from "../../context/AppContext";
 import { useEffect } from "react";
+import BackButton from "../../components/user/BackButton";
 
 function WithdrawalHistory() {
   const { withdrawals, fetchUserProfile } = useApp();
@@ -30,6 +31,7 @@ function WithdrawalHistory() {
     <div className="min-h-screen bg-gray-100 p-6">
       <div className="max-w-450 mx-auto">
         {/* Header */}
+        <BackButton />
         <h1 className="text-2xl font-bold text-center mb-8 text-gray-800">
           Withdrawal History
         </h1>

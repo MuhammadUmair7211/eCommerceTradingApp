@@ -5,6 +5,7 @@ import { baseUrl } from "../../../config/config";
 import { useApp } from "../../context/AppContext";
 import UserCard from "./components/UserCard";
 import Pagination from "./components/Pagination";
+import BackButton from "./components/BackButton";
 function AllUsers() {
   const { allUsers, loading, getLeaderData } = useApp();
 
@@ -60,6 +61,7 @@ function AllUsers() {
   return (
     <>
       <div className="min-h-screen p-4 bg-slate-900 text-slate-300">
+        <BackButton />
         <h1 className="text-xl font-bold mb-2">All Users Information</h1>
         {/* SEARCH BAR */}
         <input
