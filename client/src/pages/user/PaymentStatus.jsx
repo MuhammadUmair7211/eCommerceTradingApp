@@ -7,14 +7,14 @@ import { useApp } from "../../context/AppContext";
 import { toast } from "react-toastify";
 import BackButton from "../../components/user/BackButton";
 function PaymentStatus() {
-  const { fetchUserProfile } = useApp();
+  const { fetchUserProfile, setLoading } = useApp();
   const navigate = useNavigate();
   const location = useLocation();
   const amount = location.state?.amount;
   const [screenshot, setScreenshot] = useState(null);
   const [screenshotFile, setScreenshotFile] = useState(null);
 
-  const walletAddress = "TWNMafbkUJ2oG8bi3N7CJoMZABdeCyY9er";
+  const walletAddress = "0x745af92A3a77e4da1436AC8313b2457dCb3f015a";
 
   const handleUpload = (e) => {
     const file = e.target.files[0];
@@ -25,35 +25,45 @@ function PaymentStatus() {
   };
 
   const submitPayment = async () => {
-    const formData = new FormData();
-
-    formData.append("amount", amount);
-    formData.append("walletAddress", walletAddress);
-    formData.append("screenshot", screenshotFile); // IMPORTANT: actual file, not blob
-
+    if (!screenshotFile) {
+      return toast.error("Please upload the payment screenshot.");
+    }
+    const confirmed = window.confirm(
+      "Only send Tether USD (ERC20) assets to this address. Other assets will be lost forever.\n\nDo you want to continue?",
+    );
+    if (!confirmed) return;
+    setLoading(true);
     try {
+      const formData = new FormData();
+      formData.append("amount", amount);
+      formData.append("walletAddress", walletAddress);
+      formData.append("screenshot", screenshotFile);
+
       const { data } = await axios.post(`${baseUrl}/payments`, formData, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
       });
+
       if (data.success) {
-        await fetchUserProfile();
+        toast.success("Payment submitted successfully.");
+        fetchUserProfile();
         navigate("/recharge-history");
+      } else {
+        toast.error(data.message || "Submission failed.");
       }
     } catch (error) {
-      if (error.response) {
-        console.log("Backend Error:", error.response.data);
-        console.log("Status:", error.response.status);
-      } else {
-        console.log("Network Error:", error.message);
-      }
+      console.error(error);
+
+      toast.error(error.response?.data?.message || "Something went wrong.");
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100">
-      <div className="w-full max-w-2xl bg-white shadow-lg p-6">
+      <div className="w-full max-w-2xl bg-white shadow-lg p-4">
         <BackButton />
         {/* Title */}
         <h1 className="text-2xl font-bold text-center">Payment Status</h1>
@@ -82,7 +92,7 @@ function PaymentStatus() {
 
         {/* Wallet */}
         <div className="border border-slate-300 p-4 bg-gray-50 mb-5">
-          <p className="text-sm text-gray-500 mb-2">Wallet Address</p>
+          <p className="text-sm text-gray-500 mb-1">ERC20 Wallet Address</p>
 
           <div className="flex justify-between items-center gap-2">
             <p className="text-xs break-all text-gray-700 flex-1">
@@ -161,7 +171,7 @@ function PaymentStatus() {
         {/* Back */}
         <button
           onClick={() => navigate("/dashboard")}
-          className="w-full mt-3 border border-slate-300 p-4 bg-gray-50  py-3 rounded-lg hover:bg-gray-50 duration-300 cursor-pointer"
+          className="w-full mt-3 border border-slate-300 p-4 bg-gray-50  py-3 hover:bg-gray-50 duration-300 cursor-pointer"
         >
           Back to Dashboard
         </button>

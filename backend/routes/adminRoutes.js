@@ -8,6 +8,7 @@ const {
   getAllUsersAdmin,
   adminLogout,
   changeAdminPassword,
+  changePhoneNumber,
 } = require("../controllers/adminController");
 const authMiddleware = require("../middleware/authMiddleware");
 const adminMiddleware = require("../middleware/adminMiddleware");
@@ -19,6 +20,12 @@ router.patch(
   authMiddleware,
   adminMiddleware,
   changeAdminPassword,
+);
+router.patch(
+  "/change-phone-number",
+  authMiddleware,
+  adminMiddleware,
+  changePhoneNumber,
 );
 router.put("/logout", authMiddleware, adminMiddleware, adminLogout);
 // for getting users of an admin

@@ -28,76 +28,76 @@ function WithdrawalHistory() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 p-6">
-      <div className="max-w-450 mx-auto">
+    <div className="min-h-screen bg-gray-100 p-4">
+      <div className="max-w-7xl mx-auto">
         {/* Header */}
         <BackButton />
-        <h1 className="text-2xl font-bold text-center mb-8 text-gray-800">
+        <h1 className="text-2xl font-bold text-center mb-4 text-gray-800">
           Withdrawal History
         </h1>
 
         {/* Empty state */}
         {withdrawals.length === 0 ? (
-          <div className="text-center py-20 bg-white shadow-lg">
-            <p className="text-gray-500">No withdrawals found</p>
+          <div className="bg-white border border-slate-300 p-12 text-center">
+            <Clock size={40} className="mx-auto text-gray-300 mb-3" />
+            <p className="font-semibold text-slate-700">
+              No Withdrawal History
+            </p>
+            <p className="text-sm text-gray-500 mt-1">
+              Your withdrawal requests will appear here.
+            </p>
           </div>
         ) : (
-          <div className="space-y-4">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
             {withdrawals.map((w) => (
               <div
                 key={w._id}
-                className="bg-white shadow-lg p-5 flex flex-col md:flex-row md:items-center md:justify-between gap-4 hover:shadow-lg transition"
+                className="bg-white cursor-pointer border border-slate-300 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-300 overflow-hidden"
               >
-                {/* LEFT */}
-                <div className="space-y-1">
-                  <p className="font-semibold text-gray-800">
-                    {w.transactionId || "WITHDRAWAL TX"}
-                  </p>
+                {/* Header */}
+                <div className="bg-linear-to-r from-blue-600 to-cyan-500 px-4 py-3 flex items-center justify-between">
+                  <div>
+                    <p className="text-xs text-blue-100 uppercase tracking-wider">
+                      Withdrawal
+                    </p>
 
-                  <p className="text-sm text-gray-600">
-                    Amount:{" "}
-                    <span className="font-semibold text-black">
-                      ${w.amount} USDT
-                    </span>
-                  </p>
-
-                  {/* WALLET ADDRESS */}
-                  <div className="text-xs text-gray-500 flex items-center gap-2">
-                    <span className="font-medium text-gray-700">
-                      Wallet Address:
-                    </span>
-
-                    <span className="break-all">
-                      {w.walletAddress || "N/A"}
-                    </span>
+                    <h3 className="text-2xl font-bold text-white">
+                      ${w.amount}
+                      <span className="text-sm font-medium ml-1">USDT</span>
+                    </h3>
                   </div>
 
-                  <p className="text-xs text-gray-400">
-                    created At: {new Date(w.createdAt).toLocaleString()}
-                  </p>
+                  {statusUI[w.status] || statusUI.pending}
                 </div>
 
-                {/* RIGHT */}
-                <div className="flex flex-col items-end gap-2">
-                  {statusUI[w.status] || statusUI.pending}
-
-                  {w.status === "pending" && (
-                    <p className="text-xs text-yellow-600">
-                      Waiting for approval
+                <div className="p-4 space-y-4">
+                  {/* Transaction */}
+                  <div className="bg-slate-50 border border-slate-200 p-3">
+                    <p className="text-xs font-semibold text-blue-600 uppercase mb-1">
+                      Transaction ID
                     </p>
-                  )}
 
-                  {w.status === "approved" && (
-                    <p className="text-xs text-green-600">
-                      Withdrawal has been approved
+                    <p className="text-sm text-slate-700 break-all">
+                      {w.transactionId || "WITHDRAWAL TX"}
                     </p>
-                  )}
+                  </div>
+                  {/* Wallet */}
+                  <div className="bg-slate-50 border border-slate-200 p-3">
+                    <p className="text-xs font-semibold text-green-600 uppercase mb-1">
+                      Wallet Address
+                    </p>
 
-                  {w.status === "rejected" && (
-                    <p className="text-xs text-red-600">
-                      Withdrawal request was rejected
+                    <p className="text-sm text-slate-700 break-all font-mono">
+                      {w.walletAddress || "N/A"}
                     </p>
-                  )}
+                  </div>{" "}
+                  <span className="text-xs text-slate-400">#{w._id}</span>
+                  {/* Footer */}
+                  <div className="flex items-center justify-between border-t border-slate-300 pt-3">
+                    <span className="text-xs text-slate-500">
+                      {new Date(w.createdAt).toLocaleString()}
+                    </span>
+                  </div>
                 </div>
               </div>
             ))}

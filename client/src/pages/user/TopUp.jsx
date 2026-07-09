@@ -22,27 +22,26 @@ function TopUp() {
           Account Top-Up
         </h1>
         <p className="text-center text-gray-500 mb-6">
-          Select an amount and send payment via USDT-TRC20
+          Select an amount and send payment via USDT-ERC20
         </p>
 
         {/* Payment Method */}
-        <div className="bg-gray-50 p-4 rounded-lg border mb-5">
+        <div className="bg-gray-50 p-4 border border-slate-300 mb-5">
           <p className="text-sm text-gray-500 mb-1">Payment Method</p>
-          <p className="font-semibold text-green-600">
-            💰 USDT (TRC20) — Tether Network
+          <p className="font-semibold text-blue-600">
+            💰 USDT (ERC20) — Ethereum Network
           </p>
         </div>
-
         {/* Quick Amounts */}
         <div className="mb-5">
           <p className="text-sm text-gray-500 mb-3">Quick Amounts</p>
 
-          <div className="grid grid-cols-3 sm:grid-cols-4 gap-3">
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
             {quickAmounts.map((amt) => (
               <button
                 key={amt}
                 onClick={() => setAmount(amt)}
-                className={`p-3 rounded-lg border text-sm font-semibold transition
+                className={`p-3 border border-slate-300 text-sm font-semibold transition
                   ${
                     amount === amt
                       ? "border-blue-500 bg-blue-50"
@@ -59,7 +58,7 @@ function TopUp() {
         <input
           type="number"
           placeholder="Or enter custom amount"
-          className="w-full p-3 border rounded-lg mb-5 focus:outline-none focus:border-blue-500"
+          className="w-full p-3 border border-slate-300 mb-5 focus:outline-none focus:border-blue-500"
           value={amount || ""}
           required
           onChange={(e) => setAmount(e.target.value)}
@@ -76,7 +75,7 @@ function TopUp() {
         <button
           onClick={() => navigate("/paymentStatus", { state: { amount } })}
           disabled={!amount}
-          className="w-full flex items-center justify-center gap-2 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-semibold transition cursor-pointer duration-300 disabled:bg-blue-400 disabled:cursor-not-allowed"
+          className="w-full flex items-center justify-center gap-2 py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold transition cursor-pointer duration-300 disabled:bg-blue-400 disabled:cursor-not-allowed"
         >
           <Zap size={18} />
           Confirm Top-Up

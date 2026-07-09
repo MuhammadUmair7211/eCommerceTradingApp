@@ -12,9 +12,16 @@ import { useState } from "react";
 
 function AdminProfile() {
   const { admin } = useApp();
-  const [showEditButton, setShowEditButton] = useState(true);
-  const [showInput, setShowInput] = useState(false);
-  const [inputValue, setInputValue] = useState("");
+
+  // for password change
+  const [showPasswordEditButton, setShowPasswordEditButton] = useState(true);
+  const [showPasswordInput, setShowPasswordInput] = useState(false);
+  const [inputPasswordValue, setInputPasswordValue] = useState("");
+
+  // for phone number change
+  const [showPhoneEditButton, setShowPhoneEditButton] = useState(true);
+  const [showPhoneInput, setShowPhoneInput] = useState(false);
+  const [phoneInputValue, setPhoneInputValue] = useState("");
 
   const profileItems = [
     {
@@ -55,9 +62,14 @@ function AdminProfile() {
     },
   ];
   const handleChangePassword = () => {
-    setShowEditButton((prev) => !prev);
-    setShowInput((prev) => !prev);
-    setInputValue(admin?.password);
+    setShowPasswordEditButton((prev) => !prev);
+    setShowPasswordInput((prev) => !prev);
+    setInputPasswordValue(admin?.password);
+  };
+  const handleChangePhoneNumber = () => {
+    setShowPhoneEditButton((prev) => !prev);
+    setShowPhoneInput((prev) => !prev);
+    setPhoneInputValue(admin?.phoneNumber);
   };
   return (
     <div className="min-h-[60vh] bg-gary-100 shadow-lg p-4">
@@ -102,13 +114,20 @@ function AdminProfile() {
               icon={item.icon}
               label={item.label}
               value={item.value}
-              onClick={handleChangePassword}
-              showEditButton={showEditButton}
-              showInput={showInput}
-              inputValue={inputValue}
-              setInputValue={setInputValue}
-              setShowInput={setShowInput}
-              setShowEditButton={setShowEditButton}
+              onPasswordClick={handleChangePassword}
+              onPhoneClick={handleChangePhoneNumber}
+              showPasswordEditButton={showPasswordEditButton}
+              showPasswordInput={showPasswordInput}
+              inputPasswordValue={inputPasswordValue}
+              setInputPasswordValue={setInputPasswordValue}
+              setShowPasswordInput={setShowPasswordInput}
+              setShowPasswordEditButton={setShowPasswordEditButton}
+              showPhoneEditButton={showPhoneEditButton}
+              showPhoneInput={showPhoneInput}
+              phoneInputValue={phoneInputValue}
+              setShowPhoneEditButton={setShowPhoneEditButton}
+              setShowPhoneInput={setShowPhoneInput}
+              setPhoneInputValue={setPhoneInputValue}
             />
           ))}
 

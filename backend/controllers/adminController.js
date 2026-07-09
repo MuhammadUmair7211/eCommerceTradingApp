@@ -187,6 +187,48 @@ const changeAdminPassword = async (req, res) => {
   }
 };
 
+// change admin phone number
+const changePhoneNumber = async (req, res) => {
+  try {
+    const { phoneNumber } = req.body;
+
+    if (!phoneNumber) {
+      return res.status(400).json({
+        success: false,
+        message: "phoneNumber is required",
+      });
+    }
+    const admin = await Admin.findById(req.user.id);
+
+    if (!admin) {
+      return res.status(404).json({
+        success: false,
+        message: "admin not found",
+      });
+    }
+
+    // Don't update if the password hasn't changed
+    if (admin.phoneNumber === phoneNumber) {
+      return res.status(400).json({
+        success: false,
+        message:
+          "New phoneNumber must be different from the current phoneNumber",
+      });
+    }
+
+    admin.phoneNumber = phoneNumber;
+    await admin.save();
+    res.status(200).json({
+      success: true,
+      message: "phoneNumber changed successfully",
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
 // const admin logout
 const adminLogout = async (req, res) => {
   try {
@@ -213,4 +255,5 @@ module.exports = {
   getAllUsersAdmin,
   adminLogout,
   changeAdminPassword,
+  changePhoneNumber,
 };
