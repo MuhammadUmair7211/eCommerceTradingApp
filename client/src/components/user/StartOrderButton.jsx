@@ -34,10 +34,9 @@ export default function StartOrderButton() {
       .catch((err) => console.error(err));
   }, []);
 
-
   useEffect(() => {
     if (cycleLocked || !user?.currentCycleOrders || !user?.balance) return;
-    const pool = user?.balance * 0.125;
+    const pool = user?.balance * 0.12;
     const parts = Number(user?.currentCycleOrders);
     const weights = Array.from({ length: parts }, () => Math.random());
     const sum = weights.reduce((a, b) => a + b, 0);
