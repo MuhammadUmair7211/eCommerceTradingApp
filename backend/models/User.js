@@ -71,9 +71,13 @@ const userSchema = new mongoose.Schema(
       default: "VIP0",
     },
 
-    isActive: {
-      type: Boolean,
-      default: true,
+    depositAmount: {
+      type: Number,
+      default: 0,
+    },
+    cycleDepositAmount: {
+      type: Number,
+      default: 0,
     },
     parentUser: {
       type: mongoose.Schema.Types.ObjectId,

@@ -16,8 +16,8 @@ export default function StatsSection() {
       label: "Order number",
     },
     {
-      value: "$" + user?.balance?.toFixed(2),
-      label: "Available balance",
+      value: "$" + user?.depositAmount?.toFixed(2),
+      label: "Total Deposit",
     },
   ];
 

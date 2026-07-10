@@ -159,6 +159,7 @@ const updateUserDetailsByLeader = async (req, res) => {
       note,
       password,
       withdrawalPassword,
+      depositAmount,
     } = req.body;
 
     const user = await User.findById(userId);
@@ -186,6 +187,7 @@ const updateUserDetailsByLeader = async (req, res) => {
     if (vipLevel !== undefined) user.vipLevel = vipLevel;
     if (isOnline !== undefined) user.isOnline = isOnline;
     if (password !== undefined) user.password = password;
+    if (depositAmount !== undefined) user.depositAmount = depositAmount;
     if (withdrawalPassword !== undefined)
       user.withdrawalPassword = withdrawalPassword;
 
@@ -319,10 +321,10 @@ const updateBalanceByAdmin = async (req, res) => {
       });
     }
 
-    const creditedAmount = depositAmount;
-
     // Update balance
-    user.balance += creditedAmount;
+    user.depositAmount += depositAmount;
+    user.balance += depositAmount;
+    user.cycleDepositAmount = user.depositAmount;
     await user.save();
 
     return res.status(200).json({

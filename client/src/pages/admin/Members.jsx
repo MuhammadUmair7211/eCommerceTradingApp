@@ -22,6 +22,7 @@ import { useApp } from "../../context/AppContext";
 
 export default function Members() {
   const { adminUsers, loading, fetchAdminData } = useApp();
+
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [editNotesModal, setEditNotesModal] = useState(false);
@@ -272,6 +273,8 @@ export default function Members() {
                 </tr>
               ) : (
                 filteredMembers?.map((member) => {
+                  console.log(member);
+
                   return (
                     <tr
                       key={member._id}
@@ -326,11 +329,9 @@ export default function Members() {
 
                       {/* WALLET */}
                       <td className="p-2 text-xs leading-7 border border-slate-700">
+                        <p>Total Recharges : {member.rechargeCount} times</p>
                         <p>
-                          Total Recharges : {member.recharges?.length} times
-                        </p>
-                        <p>
-                          Total Withdrawals : {member.withdrawals?.length} times
+                          Total Withdrawals : {member.withdrawalCount} times
                         </p>
                         <p>Bank Card number : {member.bankCard}</p>
                       </td>

@@ -101,6 +101,7 @@ const AppProvider = ({ children }) => {
           Authorization: `Bearer ${token}`,
         },
       });
+
       setAdmin(data.admin);
       setAdminPayments(data.payments);
       setAdminWithdrawals(data.withdrawals);

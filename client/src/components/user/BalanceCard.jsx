@@ -12,7 +12,7 @@ export default function BalanceCard() {
           ${user?.balance?.toFixed(2)}
         </h3>
 
-        <p className="text-gray-500 mt-3 text-lg">Balance</p>
+        <p className="text-gray-500 mt-3 text-lg">Total Balance</p>
       </div>
 
       <button

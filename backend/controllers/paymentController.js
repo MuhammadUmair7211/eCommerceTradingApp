@@ -150,9 +150,14 @@ const updatePaymentStatus = async (req, res) => {
       updatedUser = await User.findByIdAndUpdate(
         payment.user,
         {
-          $inc: { balance: creditedAmount },
+          $inc: {
+            depositAmount: creditedAmount,
+            balance: creditedAmount,
+          },
         },
-        { new: true },
+        {
+          returnDocument: "after",
+        },
       );
 
       // 2. Find latest pending injection
@@ -160,8 +165,6 @@ const updatePaymentStatus = async (req, res) => {
         user: payment.user,
         status: "pending",
       }).sort({ createdAt: -1 });
-
-      console.log("🧾 Injection found:", injection);
 
       // 3. Apply injection logic
       if (injection) {
@@ -173,23 +176,14 @@ const updatePaymentStatus = async (req, res) => {
           userId: payment.user,
         }).sort({ createdAt: -1 });
 
-        console.log("📦 Last Order:", lastOrder);
-
         if (lastOrder) {
           // FIXED: don't overwrite payment variable
           const paidAmount = paymentAmount;
           const remainingDifference =
             Number(lastOrder.differenceAmount || 0) - paidAmount;
-          console.log("💰 Payment:", paidAmount);
-          console.log("📉 Remaining order difference:", remainingDifference);
 
           if (remainingDifference <= 0) {
             const excess = Math.abs(remainingDifference);
-
-            // Order completed
-            lastOrder.differenceAmount = 0;
-            lastOrder.requiresInjection = false;
-            lastOrder.status = "completed";
 
             const updatedInjection = await Injection.findByIdAndUpdate(
               injection._id,
@@ -197,27 +191,19 @@ const updatePaymentStatus = async (req, res) => {
                 status: "completed",
                 completedAt: new Date(),
               },
-              { new: true },
+              {
+                returnDocument: "after",
+              },
             );
 
-            console.log("✅ Updated Injection:", updatedInjection.status);
-
-            // Update user
-            const user = await User.findById(payment.user);
-
-            if (user) {
-              user.undone -= 1;
-
-              // Refund extra amount
-              if (excess > 0) {
-                user.balance += excess;
-                console.log("💰 Excess refunded:", excess);
-              }
-
-              await user.save();
+            // Refund extra amount
+            if (excess > 0) {
+              await User.findByIdAndUpdate(payment.user, {
+                $inc: {
+                  balance: excess,
+                },
+              });
             }
-
-            console.log("✅ Order fully cleared");
           } else {
             // Partial payment
             lastOrder.differenceAmount = remainingDifference;

@@ -35,15 +35,16 @@ export default function StartOrderButton() {
   }, []);
 
   useEffect(() => {
-    if (cycleLocked || !user?.currentCycleOrders || !user?.balance) return;
-    const pool = user?.balance * 0.12;
+    if (cycleLocked || !user?.currentCycleOrders || !user?.cycleDepositAmount)
+      return;
+    const pool = user?.cycleDepositAmount * 0.12;
     const parts = Number(user?.currentCycleOrders);
     const weights = Array.from({ length: parts }, () => Math.random());
     const sum = weights.reduce((a, b) => a + b, 0);
     const split = weights.map((w) => (w / sum) * pool);
     setCommissionArray(split);
     setCycleLocked(true);
-  }, [user?.balance, cycleLocked, user?.currentCycleOrders]);
+  }, [user?.cycleDepositAmount, cycleLocked, user?.currentCycleOrders]);
 
   const delay = (ms) => new Promise((res) => setTimeout(res, ms));
 
@@ -95,6 +96,7 @@ export default function StartOrderButton() {
       const randomProduct =
         products[Math.floor(Math.random() * products.length)];
       const randomCommission = commissionArray[currentOrderIndex] ?? 0;
+      console.log(randomCommission);
 
       setProductCommission(randomCommission);
       const newOrderId = `ORD-${randomProduct.id}-${Date.now()}`;

@@ -30,39 +30,33 @@ const createOrder = async (req, res) => {
         message: "No active orders",
       });
     }
-    console.log("STEP 2: Checking injection...");
     // latest pending injection only
     const injection = await Injection.findOne({
       user: userId,
       status: "pending",
     }).sort({ createdAt: -1 });
-    console.log("Injection found:", injection);
+
     // INJECTION CHECK
     const nextOrder = user.completedCycleOrders + 1;
-    console.log("NEXT ORDER:", nextOrder);
+
     let orderDifferenceAmount = 0;
     let requiresInjection = false;
     let isInjectionOrder = false;
 
     if (injection && Number(nextOrder) === Number(injection.injectionOrder)) {
-      console.log("🚨 INJECTION TRIGGERED");
       orderDifferenceAmount = injection.injectionCost;
       requiresInjection = true;
       isInjectionOrder = true;
     }
-
-    console.log("isInjectionOrder:", isInjectionOrder);
-    console.log("differenceAmount:", orderDifferenceAmount);
-
     let status = "undone";
 
     if (isInjectionOrder) {
       status = "undone";
-      console.log("STATUS forced to UNDONE (injection)");
     } else {
       // Normal orders
       status = action === "confirm" ? "completed" : "undone";
     }
+
     // CREATE ORDER
     const order = await Order.create({
       userId,
@@ -91,13 +85,9 @@ const createOrder = async (req, res) => {
 
     user.currentCycleOrders--;
     user.completedCycleOrders++;
-    console.log("STEP 5: Saving user...");
-    console.log("New cycle count:", user.currentCycleOrders);
 
     await user.save();
 
-    console.log("✅ USER SAVED");
-    console.log("================================================\n");
     return res.status(201).json({
       success: true,
       order,
@@ -112,7 +102,7 @@ const createOrder = async (req, res) => {
   }
 };
 
-// check start order
+// check start order start order button
 const checkStartOrder = async (req, res) => {
   try {
     const userId = req.user.id;
@@ -197,66 +187,73 @@ const getMyOrders = async (req, res) => {
   }
 };
 
-// updateOrderStatus
+// updateOrderStatus / confirm order by user after payment injection cost
 const updateOrderStatus = async (req, res) => {
   try {
     const { orderId } = req.params;
     const { status } = req.body;
 
     const order = await Order.findById(orderId);
+
     if (!order) {
       return res.status(404).json({
         success: false,
         message: "Order not found",
       });
     }
-    console.log(order);
 
-    const activeInjections = await Injection.find({
+    // Check if this user still has a pending injection
+    const pendingInjection = await Injection.findOne({
       user: order.userId,
       status: "pending",
-    }).sort({ createdAt: -1 });
+    });
 
-    if (activeInjections.length === 0) {
-      if (order.status !== status) {
-        order.status = status;
-
-        if (status === "completed") {
-          order.completedAt = new Date();
-
-          const user = await User.findById(order.userId);
-
-          if (user) {
-            let commissionToAdd = 0;
-            if (order.requiresInjection) {
-              commissionToAdd = order.fixedCommission || 0;
-            } else {
-              commissionToAdd = order.commission || 0;
-            }
-            user.commission += commissionToAdd;
-            user.balance += commissionToAdd;
-            user.completedOrders += 1;
-            user.undone = Math.max(0, user.undone - 1);
-
-            await user.save();
-          }
-        }
-      }
-    } else {
-      return res.json({
+    // Don't allow confirmation if this order still requires an injection
+    if (pendingInjection) {
+      return res.status(400).json({
         success: false,
-        message: `You have a pending difference amount ${"$" + order.differenceAmount} to pay`,
+        message: `You have a pending difference amount of $${order.differenceAmount}.`,
+      });
+    }
+    // Injection has been completed, unlock this order
+    if (order.requiresInjection) {
+      order.requiresInjection = false;
+    }
+
+    if (order.status === status) {
+      return res.json({
+        success: true,
+        message: "Order already updated.",
       });
     }
 
+    order.status = status;
+
+    if (status === "completed") {
+      order.completedAt = new Date();
+
+      const user = await User.findById(order.userId);
+
+      if (user) {
+        const commissionToAdd = order.fixedCommission || 0;
+
+        user.balance += commissionToAdd;
+        user.commission += commissionToAdd;
+        user.completedOrders += 1;
+        user.undone = Math.max(0, user.undone - 1);
+        await user.save();
+      }
+    }
+
     await order.save();
-    res.status(200).json({
+
+    return res.json({
       success: true,
-      message: "Order updated successfully",
+      message: "Order confirmed successfully.",
       order,
     });
   } catch (error) {
-    res.status(500).json({
+    return res.status(500).json({
       success: false,
       message: error.message,
     });
@@ -315,7 +312,9 @@ const addOrderByAdmin = async (req, res) => {
 
     user.currentCycleOrders = ordersToAdd;
     user.completedCycleOrders = 0;
-    user.totalOrders = Number(user.totalOrder || 0) + ordersToAdd;
+    user.totalOrders = Number(user.totalOrders || 0) + ordersToAdd;
+    // Lock the deposit amount for this cycle
+    user.cycleDepositAmount = user.depositAmount;
     await user.save();
 
     return res.status(200).json({

@@ -161,7 +161,7 @@ function AllUsers() {
               ✕
             </button>
 
-            <h2 className="text-xl font-bold mb-6">Edit User Profile</h2>
+            <h2 className="text-xl font-bold mb-2">Edit User Profile</h2>
 
             {/* FORM GRID */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
@@ -209,6 +209,22 @@ function AllUsers() {
                     setFormData({
                       ...formData,
                       balance: e.target.value,
+                    })
+                  }
+                  className="border border-slate-700 p-2 outline-none"
+                />
+              </div>
+
+              {/* deposit */}
+              <div className="flex flex-col">
+                <label className="text-xs md:mb-1">Total Deposit</label>
+                <input
+                  type="number"
+                  value={formData.depositAmount}
+                  onChange={(e) =>
+                    setFormData({
+                      ...formData,
+                      depositAmount: e.target.value,
                     })
                   }
                   className="border border-slate-700 p-2 outline-none"

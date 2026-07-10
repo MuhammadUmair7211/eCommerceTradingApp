@@ -92,6 +92,28 @@ const getLoginAdminDetails = async (req, res) => {
       Withdrawal.find({ adminId }).populate("userId").sort({ createdAt: -1 }),
     ]);
 
+    const usersWithCounts = users.map((user) => {
+      const rechargeCount = payments.filter(
+        (payment) =>
+          payment.user &&
+          payment.user._id.toString() === user._id.toString() &&
+          payment.status === "approved",
+      ).length;
+
+      const withdrawalCount = withdrawals.filter(
+        (withdrawal) =>
+          withdrawal.userId &&
+          withdrawal.userId._id.toString() === user._id.toString() &&
+          withdrawal.status === "approved",
+      ).length;
+
+      return {
+        ...user.toObject(),
+        rechargeCount,
+        withdrawalCount,
+      };
+    });
+
     if (!admin) {
       return res.status(404).json({
         success: false,
@@ -102,7 +124,7 @@ const getLoginAdminDetails = async (req, res) => {
     res.status(200).json({
       success: true,
       admin,
-      users,
+      users: usersWithCounts,
       payments,
       withdrawals,
     });
