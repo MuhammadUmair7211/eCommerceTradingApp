@@ -58,7 +58,6 @@ export default function StartOrderButton() {
           Authorization: `Bearer ${token}`,
         },
       });
-      console.log(data);
 
       if (!data.success) {
         toast.error(data.message);
@@ -96,7 +95,6 @@ export default function StartOrderButton() {
       const randomProduct =
         products[Math.floor(Math.random() * products.length)];
       const randomCommission = commissionArray[currentOrderIndex] ?? 0;
-      console.log(randomCommission);
 
       setProductCommission(randomCommission);
       const newOrderId = `ORD-${randomProduct.id}-${Date.now()}`;
