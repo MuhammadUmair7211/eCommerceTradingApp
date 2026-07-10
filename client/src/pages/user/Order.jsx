@@ -74,15 +74,6 @@ const Orders = () => {
                         ? "✓ completed"
                         : "⏳ undone"}
                     </span>
-
-                    {order?.status !== "undone" && (
-                      <button
-                        onClick={() => handleDeleteOrders(order._id)}
-                        className="absolute top-3 right-3 text-[11px] bg-red-500 hover:bg-red-600 duration-300 cursor-pointer text-white px-3 py-1 rounded-full shadow-sm"
-                      >
-                        Remove
-                      </button>
-                    )}
                   </div>
 
                   <p className="text-xs text-gray-500">

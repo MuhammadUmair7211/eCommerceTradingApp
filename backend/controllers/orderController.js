@@ -236,7 +236,7 @@ const updateOrderStatus = async (req, res) => {
             user.commission += commissionToAdd;
             user.balance += commissionToAdd;
             user.completedOrders += 1;
-            user.undone -= 1;
+            user.undone = Math.max(0, user.undone - 1);
 
             await user.save();
           }

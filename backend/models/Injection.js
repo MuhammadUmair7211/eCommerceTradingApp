@@ -10,6 +10,7 @@ const injectionSchema = new mongoose.Schema(
 
     injectionOrder: {
       type: Number,
+      required: true,
     },
 
     injectionCost: {

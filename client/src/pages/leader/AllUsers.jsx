@@ -204,7 +204,7 @@ function AllUsers() {
                 <label className="text-xs md:mb-1">Balance</label>
                 <input
                   type="number"
-                  value={formData.balance?.toFixed(2) || 0}
+                  value={formData.balance}
                   onChange={(e) =>
                     setFormData({
                       ...formData,
@@ -236,7 +236,7 @@ function AllUsers() {
                 <label className="text-xs md:mb-1">Commission</label>
                 <input
                   type="number"
-                  value={formData.commission?.toFixed(2) || 0}
+                  value={formData.commission}
                   onChange={(e) =>
                     setFormData({
                       ...formData,
