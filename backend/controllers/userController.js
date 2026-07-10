@@ -319,9 +319,7 @@ const updateBalanceByAdmin = async (req, res) => {
       });
     }
 
-    // Add 12% bonus
-    const bonus = depositAmount * 0.12;
-    const creditedAmount = depositAmount + bonus;
+    const creditedAmount = depositAmount;
 
     // Update balance
     user.balance += creditedAmount;
