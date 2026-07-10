@@ -328,10 +328,6 @@ const updateBalanceByAdmin = async (req, res) => {
     return res.status(200).json({
       success: true,
       message: "Balance updated successfully",
-      depositAmount,
-      bonus,
-      creditedAmount,
-      balance: user.balance,
       user,
     });
   } catch (error) {
