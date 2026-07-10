@@ -1,6 +1,16 @@
 import axios from "axios";
-import { Headset, Menu, Plus, RefreshCcw, X } from "lucide-react";
-import { useEffect, useState } from "react";
+import {
+  ArrowUpCircle,
+  Headset,
+  LogOut,
+  Menu,
+  Plus,
+  RefreshCw,
+  Users,
+  Wallet,
+  X,
+} from "lucide-react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { baseUrl } from "../../../../config/config";
 import { toast } from "react-toastify";
@@ -10,9 +20,6 @@ const Header = ({ addAdminModal, setAddAdminModal }) => {
   const { allUsers, allPayments, allWithdrawals, allSupports, getLeaderData } =
     useApp();
 
-  useEffect(() => {
-    getLeaderData();
-  }, []);
   const navigate = useNavigate();
   const [menu, setMenu] = useState(false);
 
@@ -49,58 +56,78 @@ const Header = ({ addAdminModal, setAddAdminModal }) => {
   // NAV BUTTONS (ONE SOURCE ONLY)
   const navButtons = (
     <>
+      {/* Refresh */}
       <button
         onClick={getLeaderData}
-        className="group flex items-center justify-center w-10 h-10 rounded-full 
-             bg-white/10 hover:bg-white/20 
-             border border-white/10 hover:border-white/30
-             shadow-sm hover:shadow-md
-             transition-all duration-300 ease-out
-             active:scale-95 cursor-pointer"
-        title="Refresh data"
+        className="flex items-center gap-2 p-2 border border-cyan-500/30 bg-cyan-500/10 text-cyan-400 hover:bg-cyan-500 hover:text-white transition-all duration-300 cursor-pointer shadow-sm group"
       >
-        <RefreshCcw
+        <RefreshCw
           size={18}
-          className="text-gray-300 group-hover:text-slate-300 group-hover:rotate-180 transition-all duration-500"
+          className="group-hover:rotate-360 transition-transform duration-500"
         />
+        <span className="hidden lg:block font-medium">Refresh</span>
       </button>
+
+      {/* Support */}
       <button
         onClick={() => navigate("/leader-dashboard/support")}
-        className="relative flex items-center justify-center gap-2 px-4 py-2 border border-purple-500 text-purple-600 bg-purple-50 hover:bg-purple-500 hover:text-white transition duration-300 cursor-pointer"
+        className="relative flex items-center gap-2 p-2 border border-purple-500/30 bg-purple-500/10 text-purple-400 hover:bg-purple-500 hover:text-white transition-all duration-300 cursor-pointer shadow-sm group"
       >
-        <Headset size={18} />
-        Support
-        <span className="absolute -top-2 -right-2 bg-purple-600 text-white text-xs w-5 h-5 flex items-center justify-center rounded-full ">
+        <Headset
+          size={18}
+          className="group-hover:rotate-360 transition-transform duration-500"
+        />
+        <span className="hidden lg:block font-medium">Support</span>
+
+        <span className="absolute -top-2 -right-2 min-w-5.5 h-5.5 px-1 rounded-full bg-purple-600 text-white text-xs font-semibold flex items-center justify-center">
           {allSupports?.length}
         </span>
       </button>
 
+      {/* Recharges */}
       <button
         onClick={() => navigate("/leader-dashboard/recharges")}
-        className="relative px-4 py-2 border border-blue-500 text-blue-600 bg-blue-50 hover:bg-blue-500 hover:text-white transition duration-300 cursor-pointer"
+        className="relative flex items-center gap-2 p-2 border border-blue-500/30 bg-blue-500/10 text-blue-400 hover:bg-blue-500 hover:text-white transition-all duration-300 cursor-pointer group shadow-sm"
       >
-        Recharges
-        <span className="absolute -top-2 -right-2 bg-blue-600 text-white text-xs w-5 h-5 flex items-center justify-center rounded-full">
+        <Wallet
+          size={18}
+          className="group-hover:rotate-360 transition-transform duration-500"
+        />
+        <span className="hidden lg:block font-medium">Recharges</span>
+
+        <span className="absolute -top-2 -right-2 min-w-5.5 h-5.5 px-1 rounded-full bg-blue-600 text-white text-xs font-semibold flex items-center justify-center">
           {pendingRecharges?.length}
         </span>
       </button>
 
+      {/* Withdrawals */}
       <button
         onClick={() => navigate("/leader-dashboard/withdraws")}
-        className="relative px-4 py-2 border border-emerald-500 text-emerald-600 bg-emerald-50 hover:bg-emerald-500 hover:text-white transition duration-300 cursor-pointer"
+        className="relative flex items-center gap-2 p-2 border border-emerald-500/30 bg-emerald-500/10 text-emerald-400 hover:bg-emerald-500 hover:text-white transition-all duration-300 cursor-pointer shadow-sm group"
       >
-        Withdrawals
-        <span className="absolute -top-2 -right-2 bg-emerald-600 text-white text-xs w-5 h-5 flex items-center justify-center rounded-full">
+        <ArrowUpCircle
+          size={18}
+          className="group-hover:rotate-360 transition-transform duration-500"
+        />
+        <span className="hidden lg:block font-medium">Withdrawals</span>
+
+        <span className="absolute -top-2 -right-2 min-w-5.5 h-5.5 px-1 rounded-full bg-emerald-600 text-white text-xs font-semibold flex items-center justify-center">
           {pendingWithdrawals?.length}
         </span>
       </button>
 
+      {/* Users */}
       <button
         onClick={() => navigate("/leader-dashboard/all-users")}
-        className="relative px-4 py-2 border border-orange-500 text-orange-600 bg-orange-50 hover:bg-orange-500 hover:text-white transition duration-300 cursor-pointer"
+        className="relative flex items-center gap-2 p-2 border border-orange-500/30 bg-orange-500/10 text-orange-400 hover:bg-orange-500 hover:text-white transition-all duration-300 cursor-pointer shadow-sm group"
       >
-        Users
-        <span className="absolute -top-2 -right-2 bg-orange-600 text-white text-xs w-5 h-5 flex items-center justify-center rounded-full">
+        <Users
+          size={18}
+          className="group-hover:rotate-360 transition-transform duration-500"
+        />
+        <span className="hidden lg:block font-medium">Users</span>
+
+        <span className="absolute -top-2 -right-2 min-w-5.5 h-5.5 px-1 rounded-full bg-orange-600 text-white text-xs font-semibold flex items-center justify-center">
           {allUsers?.length}
         </span>
       </button>
@@ -120,22 +147,34 @@ const Header = ({ addAdminModal, setAddAdminModal }) => {
         </div>
 
         {/* DESKTOP MENU */}
-        <div className="hidden lg:flex items-center gap-3">
-          <div className="flex flex-wrap gap-3">{navButtons}</div>
+        <div className="hidden lg:flex items-center justify-end gap-3">
+          {/* Navigation Buttons */}
+          <div className="flex flex-wrap items-center gap-3">{navButtons}</div>
+          {/* Divider */}
 
+          <div className="h-8 w-px bg-slate-700" />
+          {/* Add Admin */}
           <button
             onClick={() => setAddAdminModal(!addAdminModal)}
-            className="flex items-center gap-2 border border-blue-200 bg-blue-600 hover:bg-blue-500 text-white px-4 py-2 duration-300 cursor-pointer"
+            className="group flex items-center gap-2 border border-blue-500/30 bg-blue-500/10 p-2 font-medium text-blue-400 shadow-sm transition-all duration-300 hover:bg-blue-500 hover:text-white hover:shadow-blue-500/20 cursor-pointer"
           >
-            <Plus size={18} />
-            Add Admin
+            <Plus
+              size={18}
+              className="transition-transform duration-300 group-hover:rotate-90"
+            />
+            <span>Add Admin</span>
           </button>
 
+          {/* Logout */}
           <button
             onClick={handleLogout}
-            className="px-4 py-2 bg-red-500 text-white duration-300 cursor-pointer hover:bg-red-600"
+            className="group flex items-center gap-2 border border-red-500/30 bg-red-500/10 p-2 font-medium text-red-400 shadow-sm transition-all duration-300 hover:bg-red-500 hover:text-white hover:shadow-red-500/20 cursor-pointer"
           >
-            Logout
+            <LogOut
+              size={18}
+              className="transition-transform duration-300 group-hover:translate-x-1"
+            />
+            <span>Logout</span>
           </button>
         </div>
 

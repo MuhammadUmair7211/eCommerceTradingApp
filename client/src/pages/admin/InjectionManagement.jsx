@@ -3,6 +3,7 @@ import { useParams } from "react-router-dom";
 import axios from "axios";
 import { toast } from "react-toastify";
 import { baseUrl } from "../../../config/config";
+import { Crown, FileText, Lock, Phone, User, Wallet } from "lucide-react";
 const InjectionManagement = () => {
   const [user, setUser] = useState(null);
   const { id } = useParams();
@@ -174,8 +175,9 @@ const InjectionManagement = () => {
     }
   };
   return (
-    <div>
-      <div className="bg-slate-900 text-gray-300 flex items-center justify-between p-4">
+    <div className="bg-slate-800 text-slate-300 border border-slate-700 overflow-hidden p-2">
+      {/* header */}
+      <div className="border border-slate-700 flex flex-wrap items-center justify-between p-2">
         <h2 className="font-semibold text-lg">
           UID: {user?.myInvitationCode} Vaccination Plan
         </h2>
@@ -187,174 +189,251 @@ const InjectionManagement = () => {
           Add Injection
         </button>
       </div>
-      <div className="border border-slate-700 p-4 text-sm leading-7">
-        <p>
-          <strong>Injection:</strong> This refers to increasing the amount on a
-          user's fixed order. Calculation method: User's principal × Additional
-          amount × Injection increment = Order amount.
-        </p>
 
-        <div className="mt-3 grid grid-cols-2 md:grid-cols-3 gap-3">
-          <p>
-            <strong>Username:</strong> {user?.username}
+      {/* Information Card */}
+      <div className="mt-2 border border-slate-700 bg-slate-900/40 overflow-hidden">
+        {/* Description */}
+        <div className="border-b border-slate-700 bg-slate-800/40 p-4">
+          <p className="text-sm leading-7 text-slate-300">
+            <span className="font-semibold text-white">Injection:</span>{" "}
+            Increases the amount of a user's fixed order.
+            <br />
+            <span className="font-semibold text-white">Calculation:</span>{" "}
+            Principal × Additional Amount × Injection Increment = Order Amount
           </p>
-          <p>
-            <strong>Mobile:</strong> {user?.phoneNumber}
-          </p>
-          <p>
-            <strong>Level:</strong> {user?.vipLevel}
-          </p>
-          <p>
-            <strong>Balance: </strong>
-            {"$" + user?.balance.toFixed(2)}
-          </p>
-          <p>
-            <strong>Frozen:</strong> {"$" + user?.frozenAmount.toFixed(2)}
-          </p>
-          <p>
-            <strong>Remarks:</strong> {user?.note || "no note"}
-          </p>
+        </div>
+
+        {/* User Details */}
+        <div className="grid gap-2 p-2 sm:grid-cols-2 lg:grid-cols-3">
+          {/* Username */}
+          <div className="border border-slate-700 bg-slate-800/50 p-4">
+            <div className="flex items-center gap-3">
+              <div className="flex h-12 w-12 items-center justify-center rounded-full bg-blue-600 text-lg font-bold text-white">
+                {user?.username?.[0]?.toUpperCase() || "N"}
+              </div>
+
+              <div>
+                <p className="flex items-center gap-1 text-xs uppercase tracking-wide text-slate-400">
+                  <User size={14} className="text-blue-400" />
+                  Username
+                </p>
+                <p className="mt-1 font-semibold text-white">
+                  {user?.username || "N/A"}
+                </p>
+              </div>
+            </div>
+          </div>
+
+          {/* Phone */}
+          <div className="border border-slate-700 bg-slate-800/50 p-4">
+            <p className="flex items-center gap-2 text-xs uppercase tracking-wide text-slate-400">
+              <Phone size={15} className="text-green-400" />
+              Phone Number
+            </p>
+            <p className="mt-2 font-semibold text-white">
+              {user?.phoneNumber || "N/A"}
+            </p>
+          </div>
+
+          {/* VIP */}
+          <div className="border border-slate-700 bg-slate-800/50 p-4">
+            <p className="flex items-center gap-2 text-xs uppercase tracking-wide text-slate-400">
+              <Crown size={15} className="text-yellow-400" />
+              VIP Level
+            </p>
+            <p className="mt-2 font-semibold text-yellow-400">
+              {user?.vipLevel || "N/A"}
+            </p>
+          </div>
+
+          {/* Balance */}
+          <div className="border border-slate-700 bg-slate-800/50 p-4">
+            <p className="flex items-center gap-2 text-xs uppercase tracking-wide text-slate-400">
+              <Wallet size={15} className="text-emerald-400" />
+              Balance
+            </p>
+            <p className="mt-2 text-lg font-bold text-emerald-400">
+              ${(user?.balance ?? 0).toFixed(2)}
+            </p>
+          </div>
+
+          {/* Frozen */}
+          <div className="border border-slate-700 bg-slate-800/50 p-4">
+            <p className="flex items-center gap-2 text-xs uppercase tracking-wide text-slate-400">
+              <Lock size={15} className="text-red-400" />
+              Frozen Amount
+            </p>
+            <p className="mt-2 text-lg font-bold text-red-400">
+              ${(user?.frozenAmount ?? 0).toFixed(2)}
+            </p>
+          </div>
+
+          {/* Remarks */}
+          <div className="border border-slate-700 bg-slate-800/50 p-4">
+            <p className="flex items-center gap-2 text-xs uppercase tracking-wide text-slate-400">
+              <FileText size={15} className="text-purple-400" />
+              Remarks
+            </p>
+            <p className="mt-2 font-medium text-slate-200">
+              {user?.note || "No remarks"}
+            </p>
+          </div>
         </div>
       </div>
-      <div className="mt-2 border border-slate-700 overflow-hidden">
-        <div className="overflow-x-auto">
-          <table className="w-full min-w-450">
-            <thead className="border border-slate-700">
-              <tr className="align-center hover:bg-slate-800 duration-300">
-                {headers.map((t, index) => (
-                  <th
-                    key={index}
-                    className="px-4 py-3 text-center text-xs font-bold uppercase tracking-wider"
+
+      {/* table */}
+      <div className="overflow-x-auto mt-2">
+        <table className="w-full min-w-450 cursor-pointer">
+          <thead className="border border-slate-700">
+            <tr className="align-center hover:bg-slate-900 duration-300">
+              {headers.map((t, index) => (
+                <th
+                  key={index}
+                  className="p-4 text-left border border-slate-700"
+                >
+                  {t}
+                </th>
+              ))}
+            </tr>
+          </thead>
+
+          <tbody>
+            {injections?.length > 0 ? (
+              injections?.map((item, index) => {
+                return (
+                  <tr
+                    key={item._id}
+                    className="border border-slate-700 align-middle text-center hover:bg-gray-900 duration-300"
                   >
-                    {t}
-                  </th>
-                ))}
-              </tr>
-            </thead>
+                    <td className="p-2 text-xs leading-7 border border-slate-700">
+                      {index + 1}
+                    </td>
 
-            <tbody className="text-gray-600">
-              {injections?.length > 0 ? (
-                injections?.map((item, index) => {
-                  return (
-                    <tr
-                      key={item._id}
-                      className="border-t border-slate-700 text-center hover:bg-gray-800 duration-300"
-                    >
-                      <td className="p-3 text-sm">{index + 1}</td>
+                    <td className="p-2 text-xs leading-7 border border-slate-700">
+                      {item?.user.myInvitationCode}
+                    </td>
 
-                      <td className="p-3 text-sm">
-                        {item?.user.myInvitationCode}
-                      </td>
+                    <td className="p-2 text-xs leading-7 border border-slate-700">
+                      {item.injectionOrder}
+                    </td>
 
-                      <td className="p-3 text-sm">{item.injectionOrder}</td>
+                    <td className="p-2 text-xs text-yellow-500 font-bold leading-7 border border-slate-700">
+                      {item?.commissionRate || 0}%
+                    </td>
 
-                      <td className="p-3 text-sm">
-                        {item?.commissionRate || 0}%
-                      </td>
+                    <td className="p-2 text-xs text-red-500 font-bold leading-7 border border-slate-700">
+                      ${item?.injectionCost || 0}
+                    </td>
 
-                      <td className="p-3 text-sm text-red-500 font-medium">
-                        ${item?.injectionCost || 0}
-                      </td>
+                    <td className="p-2 text-xs text-green-500 font-bold leading-7 border border-slate-700">
+                      ${item?.fixedCommission || 0}
+                    </td>
 
-                      <td className="p-3 text-sm text-green-600 font-medium">
-                        ${item?.fixedCommission || 0}
-                      </td>
+                    <td className="p-2 text-xs text-center align-middle border border-slate-700">
+                      $
+                      {(
+                        (item?.user?.balance ?? 0) - (item?.injectionCost ?? 0)
+                      ).toFixed(2)}
+                    </td>
 
-                      <td className="p-3 text-sm">filterData?.difference</td>
+                    <td className="p-2 text-xs leading-7 border border-slate-700">
+                      <span
+                        className={`px-3 py-1 rounded-full text-xs font-semibold ${
+                          item?.status === "completed"
+                            ? "bg-green-100 text-green-700"
+                            : "bg-yellow-100 text-yellow-700"
+                        }`}
+                      >
+                        {item?.status}
+                      </span>
+                    </td>
 
-                      <td className="p-3">
-                        <span
-                          className={`px-3 py-1 rounded-full text-xs font-semibold ${
-                            item?.status === "completed"
-                              ? "bg-green-100 text-green-700"
-                              : "bg-yellow-100 text-yellow-700"
-                          }`}
-                        >
-                          {item?.status}
+                    <td className="p-2 text-xs leading-7 border border-slate-700">
+                      TASK-{item._id}
+                    </td>
+
+                    <td className="p-2 text-xs leading-7 border border-slate-700">
+                      {item?.status === "completed" && item?.completedAt && (
+                        <span className="text-green-600">
+                          {new Date(item?.completedAt).toLocaleString()}
                         </span>
-                      </td>
+                      )}
 
-                      <td className="p-3 text-sm font-medium">
-                        TASK-{item.id}
-                      </td>
+                      {item?.status === "rejected" && item?.rejectedAt && (
+                        <span className="text-red-600">
+                          {new Date(item?.rejectedAt).toLocaleString()}
+                        </span>
+                      )}
 
-                      <td className="p-3 text-sm">
-                        {item?.status === "completed" && item?.completedAt && (
-                          <span className="text-green-600">
-                            {new Date(item.completedAt).toLocaleString()}
-                          </span>
-                        )}
+                      {item?.status === "pending" && (
+                        <span className="text-gray-400">-</span>
+                      )}
+                    </td>
 
-                        {item?.status === "rejected" && item?.rejectedAt && (
-                          <span className="text-red-600">
-                            {new Date(item.rejectedAt).toLocaleString()}
-                          </span>
-                        )}
+                    <td className="p-2 text-xs leading-7 border border-slate-700">
+                      {new Date(item?.createdAt).toLocaleString()}
+                    </td>
 
-                        {item?.status === "pending" && (
-                          <span className="text-gray-400">-</span>
-                        )}
-                      </td>
+                    <td className="p-2 text-xs leading-7 border border-slate-700">
+                      <select
+                        disabled={
+                          item?.status === "completed" ||
+                          item?.status === "rejected"
+                        }
+                        onChange={(e) => {
+                          const value = e.target.value;
 
-                      <td className="p-3 text-sm">
-                        {new Date(item?.createdAt).toLocaleString()}
-                      </td>
-
-                      <td className="p-3">
-                        <select
-                          disabled={
-                            item?.status === "completed" ||
-                            item?.status === "rejected"
+                          if (value === "completed") {
+                            handleInjectionTaskComplete(item);
                           }
-                          onChange={(e) => {
-                            const value = e.target.value;
 
-                            if (value === "completed") {
-                              handleInjectionTaskComplete(item);
-                            }
+                          if (value === "delete") {
+                            handleInjectionDelete(item);
+                          }
+                          if (value === "rejected") {
+                            handleInjectionReject(item);
+                          }
 
-                            if (value === "delete") {
-                              handleInjectionDelete(item);
-                            }
-                            if (value === "rejected") {
-                              handleInjectionReject(item);
-                            }
-
-                            e.target.value = "";
-                          }}
-                          className={`border rounded-lg px-2 py-1 text-xs cursor-pointer bg-white ${
-                            item?.status === "completed" ||
-                            item?.status === "rejected"
-                              ? "opacity-50 cursor-not-allowed"
-                              : ""
-                          }`}
-                        >
-                          <option value="">Select</option>
-                          <option value="completed">Complete</option>
-                          <option value="rejected">Reject</option>
-                        </select>
-                      </td>
-                      <td>
-                        <button
-                          className="bg-red-500 text-white px-2 py-1 border-none cursor-pointer duration-300 hover:bg-red-600"
-                          onClick={() => handleInjectionDelete(item)}
-                        >
-                          delete injection
-                        </button>
-                      </td>
-                    </tr>
-                  );
-                })
-              ) : (
-                <tr>
-                  <td colSpan={12} className="text-center py-10 text-gray-500">
-                    No injections found
-                  </td>
-                </tr>
-              )}
-            </tbody>
-          </table>
-        </div>
+                          e.target.value = "";
+                        }}
+                        className={`border border-slate-700 px-2 py-1 text-xs cursor-pointer ${
+                          item?.status === "completed" ||
+                          item?.status === "rejected"
+                            ? "opacity-50 cursor-not-allowed"
+                            : ""
+                        }`}
+                      >
+                        <option value="" className="bg-slate-900">
+                          Select
+                        </option>
+                        <option value="completed" className="bg-slate-900">
+                          Complete
+                        </option>
+                        <option value="rejected" className="bg-slate-900">
+                          Reject
+                        </option>
+                      </select>
+                    </td>
+                    <td className="p-2 text-xs leading-7 border border-slate-700">
+                      <button
+                        className="bg-red-500 text-white px-2 py-1 border-none cursor-pointer duration-300 hover:bg-red-600"
+                        onClick={() => handleInjectionDelete(item)}
+                      >
+                        delete injection
+                      </button>
+                    </td>
+                  </tr>
+                );
+              })
+            ) : (
+              <tr>
+                <td colSpan={12} className="text-center py-10 text-gray-500">
+                  No injections found
+                </td>
+              </tr>
+            )}
+          </tbody>
+        </table>
       </div>
       {injectionModal && (
         <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50 p-4">

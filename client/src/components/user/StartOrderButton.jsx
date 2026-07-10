@@ -58,6 +58,8 @@ export default function StartOrderButton() {
           Authorization: `Bearer ${token}`,
         },
       });
+      console.log(data);
+
       if (!data.success) {
         toast.error(data.message);
         return;
@@ -65,23 +67,19 @@ export default function StartOrderButton() {
       if (!data.canStart) {
         switch (data.reason) {
           case "LOW_BALANCE":
-            toast.error("Your account balance is insufficient.");
+            toast.error(data.message);
             return;
 
           case "NO_ORDERS":
-            toast.error("You have reached the maximum order limit.");
+            toast.error(data.message);
             return;
 
           case "INJECTION_REQUIRED":
             setSelectedInjection(data.injection);
             setLastOrder(data.lastOrder);
             setInjectionModal(true);
-
-            toast.error(
-              `Your account balance is not enough. There is a gap of $${data.injection.injectionCost}`,
-            );
+            toast.error(data.message);
             return;
-
           default:
             toast.error("Unable to start order.");
             return;
@@ -129,7 +127,6 @@ export default function StartOrderButton() {
       );
     } catch (error) {
       console.log(error);
-
       toast.error(error.response?.data?.message || "Something went wrong.");
     } finally {
       setLoader(false);

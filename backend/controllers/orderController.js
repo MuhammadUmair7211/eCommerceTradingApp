@@ -124,12 +124,22 @@ const checkStartOrder = async (req, res) => {
       });
     }
 
+    if (user?.balance <= 0) {
+      return res.json({
+        success: true,
+        canStart: false,
+        reason: "LOW_BALANCE",
+        message: "Your account balance is insufficient.",
+      });
+    }
+
     // No orders left
     if (user.currentCycleOrders <= 0) {
       return res.json({
         success: true,
         canStart: false,
         reason: "NO_ORDERS",
+        message: "You currently have no orders to continue.",
       });
     }
 
@@ -150,21 +160,12 @@ const checkStartOrder = async (req, res) => {
           success: true,
           canStart: false,
           reason: "INJECTION_REQUIRED",
+          message: `Your account balance is not enough. There is a gap of $${injection.injectionCost}`,
           injection,
           lastOrder,
         });
       }
     }
-
-    // Low balance
-    if (user.balance <= 0) {
-      return res.json({
-        success: true,
-        canStart: false,
-        reason: "LOW_BALANCE",
-      });
-    }
-
     return res.json({
       success: true,
       canStart: true,

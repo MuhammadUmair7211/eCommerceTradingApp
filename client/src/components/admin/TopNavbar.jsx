@@ -71,8 +71,8 @@ function TopNavbar() {
   );
 
   return (
-    <header className="sticky top-0 z-50 bg-slate-900 border-b border-slate-800">
-      <div className="flex items-center justify-between h-20 px-4 lg:px-8">
+    <header className="mx-2 sticky top-0 z-50 bg-slate-900">
+      <div className="border border-slate-700 flex items-center justify-between p-4">
         {/* Header */}
         <div className="flex items-center gap-4">
           <div className="relative">

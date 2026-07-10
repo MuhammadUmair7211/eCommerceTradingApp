@@ -1,7 +1,7 @@
 import { useState } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
-import { CheckCircle, Clock, XCircle } from "lucide-react";
+import { CheckCircle, Clock, Wallet, XCircle } from "lucide-react";
 import { baseUrl } from "../../../config/config";
 import Pagination from "./components/Pagination";
 import { useApp } from "../../context/AppContext";
@@ -37,43 +37,65 @@ function Withdraws() {
   };
 
   return (
-    <div className="p-4 md:p-6 bg-slate-900 min-h-screen text-slate-300">
+    <div className="p-4 bg-slate-800 min-h-screen text-slate-300">
       <BackButton />
       <h1 className="text-xl font-bold text-white mb-4">Withdrawal History</h1>
 
-      <div className="bg-slate-900 border border-slate-800 overflow-x-auto">
-        <table className="min-w-full text-sm">
+      <div className="border border-slate-700 overflow-x-auto">
+        <table className="min-w-full text-sm cursor-pointer">
           {/* HEADER */}
-          <thead className="bg-slate-800 text-slate-300 border-b border-slate-700">
-            <tr>
-              <th className="p-3 text-left">Details</th>
-              <th className="p-3 text-left">Amount</th>
-              <th className="p-3 text-left">Status</th>
-              <th className="p-3 text-center">Action</th>
+          <thead className="border border-slate-700">
+            <tr className="align-middle hover:bg-slate-900 duration-300">
+              <th className="p-4 text-left border border-slate-700">Details</th>
+              <th className="p-4 text-center border border-slate-700">
+                Amount
+              </th>
+              <th className="p-4 text-center border border-slate-700">
+                Status
+              </th>
+              <th className="p-4 text-center border border-slate-700">
+                Action
+              </th>
             </tr>
           </thead>
 
           <tbody>
             {loading ? (
               <tr>
-                <td colSpan="4" className="p-4 text-center text-slate-400">
-                  Loading...
+                <td colSpan={5} className="py-12">
+                  <div className="flex flex-col items-center justify-center gap-3">
+                    <div className="h-8 w-8 animate-spin rounded-full border-4 border-slate-700 border-t-cyan-500"></div>
+                    <p className="text-sm text-slate-400 font-medium">
+                      Loading data...
+                    </p>
+                  </div>
                 </td>
               </tr>
             ) : allWithdrawals.length === 0 ? (
               <tr>
-                <td colSpan="4" className="p-4 text-center text-slate-500">
-                  No withdrawal records found
+                <td colSpan={4} className="py-14">
+                  <div className="flex flex-col items-center justify-center">
+                    <div className="flex h-16 w-16 items-center justify-center rounded-full border border-slate-700 bg-slate-800">
+                      <Wallet size={30} className="text-slate-400" />
+                    </div>
+
+                    <h3 className="mt-4 text-lg font-semibold text-slate-300">
+                      No Withdrawal Records
+                    </h3>
+                    <p className="mt-1 text-sm text-slate-500">
+                      There are no withdrawal requests to display.
+                    </p>
+                  </div>
                 </td>
               </tr>
             ) : (
               paginatedWithdrawals.map((w) => (
                 <tr
                   key={w._id}
-                  className="border-b border-slate-800 hover:bg-slate-800/60 transition"
+                  className="border border-slate-700 align-middle hover:bg-slate-900 duration-300"
                 >
                   {/* DETAILS */}
-                  <td className="p-3">
+                  <td className="p-2 border border-slate-700">
                     <div className="text-white font-medium">
                       User: {w.userId?.username || "N/A"}
                     </div>
@@ -92,12 +114,12 @@ function Withdraws() {
                   </td>
 
                   {/* AMOUNT */}
-                  <td className="p-3 font-semibold text-red-400">
+                  <td className="p-2 text-red-500 text-center border border-slate-700">
                     ${w.amount}
                   </td>
 
                   {/* STATUS */}
-                  <td className="p-3">
+                  <td className="p-2 text-center border border-slate-700">
                     <span
                       className={`px-2 py-1 rounded-full text-xs ${
                         w.status === "approved"
@@ -112,7 +134,7 @@ function Withdraws() {
                   </td>
 
                   {/* ACTION */}
-                  <td className="p-3 text-center">
+                  <td className="p-2 border border-slate-700">
                     <div className="flex items-center justify-center gap-2">
                       {w.status === "approved" && (
                         <CheckCircle className="w-4 h-4 text-green-400" />

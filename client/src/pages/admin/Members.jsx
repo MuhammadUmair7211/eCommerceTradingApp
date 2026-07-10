@@ -5,6 +5,7 @@ import {
   ShieldCheck,
   User,
   Users,
+  Users2,
   Wallet,
   X,
 } from "lucide-react";
@@ -242,14 +243,31 @@ export default function Members() {
               {/* LOADING STATE (FIXED - NO DIV INSIDE TBODY ISSUE) */}
               {loading ? (
                 <tr>
-                  <td colSpan="9" className="text-center p-10">
-                    Loading members...
+                  <td colSpan={5} className="py-12">
+                    <div className="flex flex-col items-center justify-center gap-3">
+                      <div className="h-8 w-8 animate-spin rounded-full border-4 border-slate-700 border-t-cyan-500"></div>
+                      <p className="text-sm text-slate-400 font-medium">
+                        Loading members...
+                      </p>
+                    </div>
                   </td>
                 </tr>
               ) : filteredMembers.length === 0 ? (
                 <tr>
-                  <td colSpan="9" className="text-center p-10">
-                    No members found
+                  <td colSpan={9} className="py-14">
+                    <div className="flex flex-col items-center justify-center">
+                      <div className="flex h-16 w-16 items-center justify-center rounded-full border border-slate-700 bg-slate-800">
+                        <Users2 size={30} className="text-slate-400" />
+                      </div>
+
+                      <h3 className="mt-4 text-lg font-semibold text-slate-300">
+                        No Members Found
+                      </h3>
+
+                      <p className="mt-1 text-sm text-slate-500">
+                        There are currently no members to display.
+                      </p>
+                    </div>
                   </td>
                 </tr>
               ) : (

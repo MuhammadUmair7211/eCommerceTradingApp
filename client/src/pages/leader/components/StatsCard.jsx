@@ -83,8 +83,11 @@ function StatsCard() {
 
   return (
     <div className="mt-4 grid grid-cols-1 gap-5 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-5">
-      {dashboardData.map((item) => (
-        <div className="group border border-slate-700 cursor-pointer bg-slate-800 p-5 transition-all duration-300 hover:-translate-y-1 hover:border-cyan-500 hover:shadow-xl hover:shadow-cyan-500/10">
+      {dashboardData.map((item, index) => (
+        <div
+          key={index}
+          className="group border border-slate-700 cursor-pointer bg-slate-800 p-5 transition-all duration-300 hover:-translate-y-1 hover:border-cyan-500 hover:shadow-xl hover:shadow-cyan-500/10"
+        >
           <div className="flex items-center justify-between">
             <div>
               <p className="text-xs uppercase tracking-[0.2em] text-slate-500">

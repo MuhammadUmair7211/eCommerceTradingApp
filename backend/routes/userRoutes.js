@@ -37,7 +37,9 @@ router.put("/logout", authMiddleware, logoutUser);
 router.get("/all-users", getAllUsers);
 router.get("/:id", getUserById);
 router.put("/:id", updateUser);
-router.delete("/:id", deleteUser);
+
+// delete user by leader
+router.delete("/delete-user/:id", deleteUser);
 router.patch("/update-users-leader/:id", updateUserDetailsByLeader);
 
 module.exports = router;

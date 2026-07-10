@@ -66,7 +66,7 @@ function TopUp() {
 
         {/* Instructions */}
         <div className="text-xs text-gray-500 space-y-1 mb-5">
-          <p>• Send exact amount in USDT (TRC20 network only)</p>
+          <p>• Send exact amount in USDT (ERC20) — Ethereum Network</p>
           <p>• Wrong network may result in loss of funds</p>
           <p>• Top-up will reflect after blockchain confirmation</p>
         </div>

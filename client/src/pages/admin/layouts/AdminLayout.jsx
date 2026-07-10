@@ -7,7 +7,7 @@ const AdminLayout = () => {
     <div className="min-h-screen bg-slate-900 text-slate-300">
       <TopNavbar />
       <SubNavbar />
-      <div className="p-4">
+      <div className="px-2">
         <Outlet />
       </div>
     </div>

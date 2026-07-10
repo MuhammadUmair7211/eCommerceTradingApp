@@ -6,7 +6,6 @@ import { useNavigate } from "react-router-dom";
 import { baseUrl } from "../../../config/config";
 import { useApp } from "../../context/AppContext";
 function BankAddress() {
-  const [network] = useState("USDT - TRC20");
   const { user, fetchUserProfile } = useApp();
   const navigate = useNavigate();
   const [bankCardAddress, setBankCardAddress] = useState(
@@ -57,7 +56,9 @@ function BankAddress() {
               <button className="w-full flex items-center justify-between px-6 py-5 hover:bg-blue-50 duration-300 cursor-pointer">
                 <div>
                   <p className="text-sm text-gray-500">Network</p>
-                  <p className="font-semibold text-gray-800">{network}</p>
+                  <p className="font-semibold text-gray-800">
+                    USDT (ERC20) — Ethereum Network
+                  </p>
                 </div>
 
                 <ChevronRight className="text-gray-400" size={20} />
@@ -78,7 +79,7 @@ function BankAddress() {
                   value={bankCardAddress}
                   required
                   onChange={(e) => setBankCardAddress(e.target.value)}
-                  placeholder="Enter your USDT TRC20 wallet address"
+                  placeholder="Enter your USDT (ERC20) wallet address"
                   className="w-full outline-none border border-gray-200 px-4 py-3  duration-300"
                 />
               </div>

@@ -5,6 +5,7 @@ import { useApp } from "../../context/AppContext";
 import BackButton from "../../components/user/BackButton";
 const Orders = () => {
   const { orders, setOrders, loading } = useApp();
+
   // confirm order
   const handleConfirmOrder = async (orderId) => {
     try {
@@ -24,25 +25,6 @@ const Orders = () => {
     } catch (error) {
       console.error(error);
       toast.error(error.response?.data?.message || "Failed to update order");
-    }
-  };
-
-  // delete order
-  const handleDeleteOrders = async (orderId) => {
-    try {
-      const confirm = window.confirm(
-        "Are you sure you want to delete this order?",
-      );
-      if (!confirm) return;
-      const { data } = await axios.delete(`${baseUrl}/orders/${orderId}`);
-
-      if (data.success) {
-        toast.success("Order deleted successfully");
-        setOrders((prev) => prev.filter((order) => order._id !== orderId));
-      }
-    } catch (error) {
-      console.error(error);
-      toast.error(error.response?.data?.message || "Failed to delete order");
     }
   };
 

@@ -28,10 +28,16 @@ const InfoRow = ({ icon, label, value, valueClass = "" }) => (
   </div>
 );
 
-const UserCard = ({ user, adminUsername, onClick, showEditButton }) => {
+const UserCard = ({
+  user,
+  adminUsername,
+  onEditClick,
+  onDeleteClick,
+  showEditButton,
+}) => {
   return (
     <div
-      onClick={onClick}
+      onClick={onEditClick}
       className={`${showEditButton ? "" : "hover:-translate-y-1"} relative group flex flex-col justify-between overflow-hidden border border-slate-700 bg-slate-800 shadow-lg transition-all duration-300 cursor-pointer hover:border-slate-400 hover:shadow-2xl`}
     >
       {/* Header */}
@@ -120,15 +126,29 @@ const UserCard = ({ user, adminUsername, onClick, showEditButton }) => {
       {showEditButton && (
         <>
           {/* HOVER OVERLAY */}
-          <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition flex items-center justify-center">
+          <div
+            onClick={(e) => {
+              e.stopPropagation();
+            }}
+            className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition flex flex-wrap items-center justify-center gap-2"
+          >
             <button
               onClick={(e) => {
                 e.stopPropagation();
-                onClick?.();
+                onEditClick?.();
               }}
               className="px-5 py-2 bg-blue-600 text-white font-medium hover:bg-blue-700 transition duration-300 cursor-pointer"
             >
               Edit Profile
+            </button>
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                onDeleteClick?.(user?._id);
+              }}
+              className="px-5 py-2 bg-red-600 text-white font-medium hover:bg-red-700 transition duration-300 cursor-pointer"
+            >
+              Delete User
             </button>
           </div>
         </>

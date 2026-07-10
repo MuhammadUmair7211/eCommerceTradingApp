@@ -17,7 +17,7 @@ function AllUsers() {
 
   // 🔍 SEARCH FILTER
   const filteredUsers = useMemo(() => {
-    return allUsers.filter((u) => {
+    return allUsers?.filter((u) => {
       const q = search.toLowerCase();
 
       return (
@@ -28,13 +28,14 @@ function AllUsers() {
       );
     });
   }, [allUsers, search]);
-  const totalPages = Math.ceil(filteredUsers.length / itemsPerPage);
+  const totalPages = Math.ceil(filteredUsers?.length / itemsPerPage);
 
-  const paginatedUsers = filteredUsers.slice(
+  const paginatedUsers = filteredUsers?.slice(
     (currentPage - 1) * itemsPerPage,
     currentPage * itemsPerPage,
   );
 
+  // handle edit user form by leader
   const handleFormSubmit = async (e, id) => {
     e.preventDefault();
     try {
@@ -58,6 +59,26 @@ function AllUsers() {
     }
   };
 
+  // handle delete user for leader
+  const handleDeleteUserByLeader = async (id) => {
+    const confirmed = window.confirm(
+      "Are you sure you want to delete this user?",
+    );
+
+    if (!confirmed) return;
+    try {
+      const { data } = await axios.delete(`${baseUrl}/users/delete-user/${id}`);
+      if (data.success) {
+        toast.success(data.message);
+        getLeaderData();
+      } else {
+        toast.error(data.message);
+      }
+    } catch (error) {
+      console.error(error);
+      alert(error.response?.data?.message || "Failed to delete user");
+    }
+  };
   return (
     <>
       <div className="min-h-screen p-4 bg-slate-900 text-slate-300">
@@ -75,9 +96,20 @@ function AllUsers() {
           className="border border-slate-700 px-3 py-3 w-full shadow-lg outline-none"
         />
         {loading ? (
-          <div className="text-center ">Loading...</div>
+          <div className="flex flex-col items-center justify-center py-16">
+            <div className="h-10 w-10 animate-spin rounded-full border-4 border-slate-700 border-t-blue-500"></div>
+            <p className="mt-4 text-sm text-slate-400">Loading users...</p>
+          </div>
         ) : paginatedUsers?.length === 0 ? (
-          <div className="text-center ">No users found</div>
+          <div className="flex flex-col items-center justify-center rounded-xl border border-slate-700 bg-slate-800/40 py-16">
+            <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-slate-700">
+              👥
+            </div>
+            <h3 className="text-lg font-semibold text-white">No Users Found</h3>
+            <p className="mt-2 text-sm text-slate-400">
+              There are no users to display at the moment.
+            </p>
+          </div>
         ) : (
           <div className="bg-slate-900 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-2">
             {paginatedUsers?.map((user) => {
@@ -87,10 +119,11 @@ function AllUsers() {
                   user={user}
                   adminUsername={user?.adminId?.username}
                   showEditButton={true}
-                  onClick={() => {
+                  onEditClick={() => {
                     setSelectedUser(user);
                     setFormData(user);
                   }}
+                  onDeleteClick={(id) => handleDeleteUserByLeader(id)}
                 />
               );
             })}
@@ -102,7 +135,7 @@ function AllUsers() {
           currentPage={currentPage}
           totalPages={totalPages}
           itemsPerPage={itemsPerPage}
-          totalItems={allUsers.length}
+          totalItems={allUsers?.length}
           setCurrentPage={setCurrentPage}
         />
       </div>
@@ -117,7 +150,7 @@ function AllUsers() {
           {/* MODAL */}
           <form
             onSubmit={(e) => handleFormSubmit(e, selectedUser?._id)}
-            className="relative bg-slate-800 text-slate-400 w-full max-w-6xl shadow-2xl p-6 z-10"
+            className="relative bg-slate-800 text-slate-300 w-full max-w-6xl shadow-2xl p-6 z-10"
           >
             {/* CLOSE BUTTON */}
             <button
@@ -131,12 +164,10 @@ function AllUsers() {
             <h2 className="text-xl font-bold mb-6">Edit User Profile</h2>
 
             {/* FORM GRID */}
-            <div className="grid grid-cols-2 gap-4 text-sm">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
               {/* Username */}
               <div className="flex flex-col">
-                <label className="text-xs text-gray-500 md:mb-1">
-                  Username
-                </label>
+                <label className="text-xs md:mb-1">Username</label>
                 <input
                   name="username"
                   value={formData.username || ""}
@@ -146,16 +177,14 @@ function AllUsers() {
                       username: e.target.value,
                     })
                   }
-                  className="border p-2 rounded focus:ring-2 focus:ring-blue-300 outline-none"
+                  className="border border-slate-700 p-2 outline-none"
                   placeholder="Enter username"
                 />
               </div>
 
               {/* Phone */}
               <div className="flex flex-col">
-                <label className="text-xs text-gray-500 md:mb-1">
-                  phone number
-                </label>
+                <label className="text-xs md:mb-1">phone number</label>
                 <input
                   name="phoneNumber"
                   value={formData.phoneNumber || ""}
@@ -165,32 +194,30 @@ function AllUsers() {
                       phoneNumber: e.target.value,
                     })
                   }
-                  className="border p-2 rounded focus:ring-2 focus:ring-blue-300 outline-none"
+                  className="border border-slate-700 p-2 outline-none"
                   placeholder="Enter phone"
                 />
               </div>
 
               {/* Balance */}
               <div className="flex flex-col">
-                <label className="text-xs text-gray-500 md:mb-1">Balance</label>
+                <label className="text-xs md:mb-1">Balance</label>
                 <input
                   type="number"
-                  value={formData.balance || 0}
+                  value={formData.balance?.toFixed(2) || 0}
                   onChange={(e) =>
                     setFormData({
                       ...formData,
                       balance: e.target.value,
                     })
                   }
-                  className="border p-2 rounded hover:border-blue-400 transition duration-300"
+                  className="border border-slate-700 p-2 outline-none"
                 />
               </div>
 
               {/* Bank Card */}
               <div className="flex flex-col">
-                <label className="text-xs text-gray-500 md:mb-1">
-                  Bank Card
-                </label>
+                <label className="text-xs md:mb-1">Bank Card</label>
                 <input
                   value={formData.bankCard || ""}
                   onChange={(e) =>
@@ -199,34 +226,30 @@ function AllUsers() {
                       bankCard: e.target.value,
                     })
                   }
-                  className="border p-2 rounded hover:border-blue-400 transition duration-300"
+                  className="border border-slate-700 p-2 outline-none"
                   placeholder="Card number"
                 />
               </div>
 
               {/* Commission */}
               <div className="flex flex-col">
-                <label className="text-xs text-gray-500 md:mb-1">
-                  Commission
-                </label>
+                <label className="text-xs md:mb-1">Commission</label>
                 <input
                   type="number"
-                  value={formData.commission || 0}
+                  value={formData.commission?.toFixed(2) || 0}
                   onChange={(e) =>
                     setFormData({
                       ...formData,
                       commission: e.target.value,
                     })
                   }
-                  className="border p-2 rounded hover:border-blue-400 transition duration-300"
+                  className="border border-slate-700 p-2 outline-none"
                 />
               </div>
 
               {/* Completed Orders */}
               <div className="flex flex-col">
-                <label className="text-xs text-gray-500 md:mb-1">
-                  completed orders
-                </label>
+                <label className="text-xs md:mb-1">completed orders</label>
                 <input
                   type="number"
                   value={formData.completedOrders || 0}
@@ -236,13 +259,13 @@ function AllUsers() {
                       completedOrders: e.target.value,
                     })
                   }
-                  className="border p-2 rounded hover:border-blue-400 transition duration-300"
+                  className="border border-slate-700 p-2 outline-none"
                 />
               </div>
 
               {/* Joined */}
               <div className="flex flex-col">
-                <label className="text-xs text-gray-500 md:mb-1">Joined</label>
+                <label className="text-xs md:mb-1">Joined</label>
 
                 <input
                   type="date"
@@ -257,15 +280,13 @@ function AllUsers() {
                       createdAt: e.target.value,
                     })
                   }
-                  className="border p-2 rounded hover:border-blue-400 transition duration-300 cursor-pointer"
+                  className="border border-slate-700 p-2 outline-none"
                 />
               </div>
 
               {/* Difference */}
               <div className="flex flex-col">
-                <label className="text-xs text-gray-500 md:mb-1">
-                  Difference
-                </label>
+                <label className="text-xs md:mb-1">Difference</label>
                 <input
                   type="number"
                   value={formData.difference || 0}
@@ -275,15 +296,13 @@ function AllUsers() {
                       difference: e.target.value,
                     })
                   }
-                  className="border p-2 rounded hover:border-blue-400 transition duration-300"
+                  className="border border-slate-700 p-2 outline-none"
                 />
               </div>
 
               {/* Frozen Amount */}
               <div className="flex flex-col">
-                <label className="text-xs text-gray-500 md:mb-1">
-                  Frozen Amount
-                </label>
+                <label className="text-xs md:mb-1">Frozen Amount</label>
                 <input
                   type="number"
                   value={formData.frozenAmount || 0}
@@ -293,15 +312,13 @@ function AllUsers() {
                       frozenAmount: e.target.value,
                     })
                   }
-                  className="border p-2 rounded hover:border-blue-400 transition duration-300"
+                  className="border border-slate-700 p-2 outline-none"
                 />
               </div>
 
               {/* Invitation Code */}
               <div className="flex flex-col">
-                <label className="text-xs text-gray-500 md:mb-1">
-                  Invitation Code
-                </label>
+                <label className="text-xs md:mb-1">Invitation Code</label>
                 <input
                   value={formData.myInvitationCode || ""}
                   onChange={(e) =>
@@ -310,13 +327,13 @@ function AllUsers() {
                       myInvitationCode: e.target.value,
                     })
                   }
-                  className="border p-2 rounded hover:border-blue-400 transition duration-300"
+                  className="border border-slate-700 p-2 outline-none"
                 />
               </div>
 
               {/* Role */}
               <div className="flex flex-col">
-                <label className="text-xs text-gray-500 md:mb-1">Role</label>
+                <label className="text-xs md:mb-1">Role</label>
                 <input
                   value={formData.role || ""}
                   onChange={(e) =>
@@ -325,16 +342,14 @@ function AllUsers() {
                       role: e.target.value,
                     })
                   }
-                  className="border p-2 rounded hover:border-blue-400 transition duration-300"
+                  className="border border-slate-700 p-2 outline-none"
                   placeholder="user / admin / leader"
                 />
               </div>
 
               {/* VIP Level */}
               <div className="flex flex-col">
-                <label className="text-xs text-gray-500 md:mb-1">
-                  VIP Level
-                </label>
+                <label className="text-xs md:mb-1">VIP Level</label>
                 <input
                   value={formData.vipLevel || ""}
                   onChange={(e) =>
@@ -343,15 +358,13 @@ function AllUsers() {
                       vipLevel: e.target.value,
                     })
                   }
-                  className="border p-2 rounded hover:border-blue-400 transition duration-300"
+                  className="border border-slate-700 p-2 outline-none"
                 />
               </div>
 
               {/* password */}
               <div className="flex flex-col">
-                <label className="text-xs text-gray-500 md:mb-1">
-                  password
-                </label>
+                <label className="text-xs md:mb-1">password</label>
                 <input
                   value={formData.password || ""}
                   onChange={(e) =>
@@ -360,14 +373,13 @@ function AllUsers() {
                       password: e.target.value,
                     })
                   }
-                  className="border p-2 rounded hover:border-blue-400 transition duration-300"
+                  className="border border-slate-700 p-2 outline-none"
                 />
               </div>
+
               {/* withdrawal password */}
               <div className="flex flex-col">
-                <label className="text-xs text-gray-500 md:mb-1">
-                  withdrawal password
-                </label>
+                <label className="text-xs md:mb-1">withdrawal password</label>
                 <input
                   value={formData.withdrawalPassword || ""}
                   onChange={(e) =>
@@ -376,13 +388,13 @@ function AllUsers() {
                       withdrawalPassword: e.target.value,
                     })
                   }
-                  className="border p-2 rounded hover:border-blue-400 transition duration-300"
+                  className="border border-slate-700 p-2 outline-none"
                 />
               </div>
 
               {/* Note */}
               <div className="flex flex-col md:col-span-2">
-                <label className="text-xs text-gray-500 md:mb-1">Note</label>
+                <label className="text-xs md:mb-1">Note</label>
                 <textarea
                   value={formData.note || ""}
                   onChange={(e) =>
@@ -391,27 +403,27 @@ function AllUsers() {
                       note: e.target.value,
                     })
                   }
-                  className="border p-2 rounded hover:border-blue-400 resize-none transition duration-300 outline-none"
-                  placeholder="Add internal note about user..."
+                  className="border border-slate-700 p-2 resize-none outline-none"
+                  placeholder="Add note about user..."
                   rows={3}
                 />
               </div>
 
               {/* Active */}
               <div className="flex flex-col">
-                <label className="text-xs text-gray-500 md:mb-1">Status</label>
+                <label className="text-xs md:mb-1">Status</label>
                 <select
-                  value={formData.isActive}
+                  value={formData.isOnline}
                   onChange={(e) =>
                     setFormData({
                       ...formData,
-                      isActive: e.target.value === "true",
+                      isOnline: e.target.value === "true",
                     })
                   }
-                  className="border p-2 rounded cursor-pointer hover:border-blue-400 transition duration-300"
+                  className="border bg-slate-800 cursor-pointer border-slate-700 p-2 outline-none"
                 >
-                  <option value="true">Active</option>
-                  <option value="false">Inactive</option>
+                  <option value="true">Online</option>
+                  <option value="false">Offline</option>
                 </select>
               </div>
             </div>
@@ -421,14 +433,14 @@ function AllUsers() {
               <button
                 type="button"
                 onClick={() => setSelectedUser(null)}
-                className="px-4 py-2 bg-gray-200 rounded cursor-pointer hover:bg-gray-300 transition duration-300"
+                className="px-4 py-2 bg-slate-900 cursor-pointer hover:bg-slate-900/40 transition duration-300"
               >
                 Cancel
               </button>
 
               <button
                 type="submit"
-                className="px-4 py-2 bg-blue-600 text-white rounded cursor-pointer hover:bg-blue-700 transition duration-300"
+                className="px-4 py-2 bg-blue-600 text-white cursor-pointer hover:bg-blue-700 transition duration-300"
               >
                 Save Changes
               </button>

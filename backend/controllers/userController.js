@@ -155,7 +155,7 @@ const updateUserDetailsByLeader = async (req, res) => {
       invitationCode,
       role,
       vipLevel,
-      isActive,
+      isOnline,
       note,
       password,
       withdrawalPassword,
@@ -184,7 +184,7 @@ const updateUserDetailsByLeader = async (req, res) => {
     if (role !== undefined) user.role = role;
     if (note !== undefined) user.note = note;
     if (vipLevel !== undefined) user.vipLevel = vipLevel;
-    if (isActive !== undefined) user.isActive = isActive;
+    if (isOnline !== undefined) user.isOnline = isOnline;
     if (password !== undefined) user.password = password;
     if (withdrawalPassword !== undefined)
       user.withdrawalPassword = withdrawalPassword;
@@ -242,17 +242,23 @@ const updateUser = async (req, res) => {
   }
 };
 
-// DELETE USER
+// DELETE USER by leader
 const deleteUser = async (req, res) => {
   try {
     await User.findByIdAndDelete(req.params.id);
 
+    const users = await User.find().sort({ createdAt: -1 });
+
     res.json({
       success: true,
       message: "User deleted successfully",
+      users,
     });
   } catch (error) {
-    res.status(500).json({ success: false, message: error.message });
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
   }
 };
 

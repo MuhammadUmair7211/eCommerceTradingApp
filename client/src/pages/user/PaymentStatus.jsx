@@ -153,7 +153,7 @@ function PaymentStatus() {
 
         {/* Info */}
         <div className="text-xs text-gray-500 mb-5 space-y-1">
-          <p>• Send only USDT (TRC20)</p>
+          <p>• Send only USDT (ERC20) — Ethereum Network</p>
           <p>• Upload clear screenshot</p>
           <p>• Verification will be done manually</p>
         </div>

@@ -27,7 +27,7 @@ function SubNavbar() {
   ];
 
   return (
-    <div className="mx-4 mt-4 border border-slate-700 bg-slate-800">
+    <div className="m-2 mt-2 border border-slate-700 bg-slate-800">
       {/* Navigation */}
       <div className="flex flex-wrap gap-3 border-b border-slate-700 p-4">
         {menu.map((item) => (

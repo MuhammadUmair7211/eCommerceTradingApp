@@ -82,7 +82,7 @@ const getLoginAdminDetails = async (req, res) => {
     const [admin, users, payments, withdrawals] = await Promise.all([
       Admin.findById(adminId).populate("teamMembers"),
 
-      User.find({ adminId }).sort({ createdAt: -1 }),
+      User.find({ adminId }).sort({ isOnline: -1 }),
 
       Payment.find({ adminId })
         .populate("user")

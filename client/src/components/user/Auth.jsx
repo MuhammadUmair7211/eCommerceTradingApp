@@ -108,7 +108,7 @@ export default function Auth() {
 
                     <input
                       type="text"
-                      placeholder="enter username"
+                      placeholder="Username"
                       required
                       value={formData.username}
                       onChange={(e) => {
@@ -126,7 +126,7 @@ export default function Auth() {
 
                     <input
                       type="text"
-                      placeholder="enter invitation code"
+                      placeholder="Invitation Code"
                       required
                       value={formData.referredBy}
                       onChange={(e) => {
@@ -148,7 +148,7 @@ export default function Auth() {
 
                 <input
                   type="text"
-                  placeholder="enter phone number"
+                  placeholder="Phone Number"
                   required
                   value={formData.phoneNumber}
                   onChange={(e) => {
@@ -168,7 +168,7 @@ export default function Auth() {
 
                 <input
                   type={showPassword ? "text" : "password"}
-                  placeholder="enter password"
+                  placeholder="Password"
                   required
                   value={formData.password}
                   onChange={(e) => {
@@ -205,7 +205,7 @@ export default function Auth() {
                         withdrawalPassword: e.target.value,
                       });
                     }}
-                    placeholder="enter withdrawal password"
+                    placeholder="Withdrawal Password"
                     className="flex-1 ml-4 outline-none"
                   />
                 </div>
