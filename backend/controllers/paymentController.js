@@ -160,6 +160,28 @@ const updatePaymentStatus = async (req, res) => {
         },
       );
 
+      // Referral Commission (1%)
+      if (updatedUser.referredBy) {
+        // Find the referrer using invitation code
+        const referrer = await User.findOne({
+          myInvitationCode: updatedUser.referredBy,
+        });
+
+        if (referrer) {
+          const referralCommission = creditedAmount * 0.01;
+
+          await User.findByIdAndUpdate(referrer._id, {
+            $inc: {
+              commission: referralCommission,
+            },
+          });
+
+          console.log(
+            `${referrer.username} received ${commission} referral commission`,
+          );
+        }
+      }
+
       // 2. Find latest pending injection
       injection = await Injection.findOne({
         user: payment.user,

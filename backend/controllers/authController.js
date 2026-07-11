@@ -106,7 +106,7 @@ const register = async (req, res) => {
       });
 
       await User.findByIdAndUpdate(parentUser, {
-        $inc: { commission: 1.5 },
+        $inc: { commission: 1 },
       });
     }
 
