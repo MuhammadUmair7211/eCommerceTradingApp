@@ -168,11 +168,7 @@ const InjectionManagement = () => {
   };
 
   const handleInjectionForUser = () => {
-    if (user?.currentCycleOrders > 0) {
-      setInjectionModal(!injectionModal);
-    } else {
-      toast.error("No injection can be added as, no orders are assigned");
-    }
+    setInjectionModal(!injectionModal);
   };
   return (
     <div className="bg-slate-800 text-slate-300 border border-slate-700 overflow-hidden p-2">
@@ -332,7 +328,8 @@ const InjectionManagement = () => {
                     <td className="p-2 text-xs text-center align-middle border border-slate-700">
                       $
                       {(
-                        (item?.user?.balance ?? 0) - (item?.injectionCost ?? 0)
+                        (item?.user.commission ?? 0) -
+                        (item?.injectionCost ?? 0)
                       ).toFixed(2)}
                     </td>
 

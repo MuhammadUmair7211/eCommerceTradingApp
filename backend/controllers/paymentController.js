@@ -25,12 +25,18 @@ const createPayment = async (req, res) => {
     const user = await User.findById(req.user.id);
 
     const adminId = user.adminId;
+    const pendingInjection = await Injection.findOne({
+      user: user._id,
+      status: "pending",
+    }).sort({ injectionOrder: 1 });
+
     const payment = await Payment.create({
       user: req.user.id,
       transactionId: `TXN-${Date.now()}`,
       amount,
       adminId: adminId,
       walletAddress,
+      injectionId: pendingInjection._id,
       screenshot: req.file.path.replace(/\\/g, "/"),
       status: "pending",
     });
@@ -154,11 +160,16 @@ const updatePaymentStatus = async (req, res) => {
             depositAmount: creditedAmount,
             balance: creditedAmount,
           },
+          $set: {
+            cycleDepositAmount: creditedAmount,
+          },
         },
         {
-          returnDocument: "after",
+          new: true,
         },
       );
+
+      await updatedUser.save();
 
       // Referral Commission (1%)
       if (updatedUser.referredBy) {
@@ -182,11 +193,12 @@ const updatePaymentStatus = async (req, res) => {
         }
       }
 
-      // 2. Find latest pending injection
-      injection = await Injection.findOne({
-        user: payment.user,
-        status: "pending",
-      }).sort({ createdAt: -1 });
+      if (payment.injectionId) {
+        injection = await Injection.findOne({
+          _id: payment.injectionId,
+          status: "pending",
+        });
+      }
 
       // 3. Apply injection logic
       if (injection) {

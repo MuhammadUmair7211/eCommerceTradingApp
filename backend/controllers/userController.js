@@ -323,7 +323,6 @@ const updateBalanceByAdmin = async (req, res) => {
 
     // Update balance
     user.depositAmount += depositAmount;
-    user.balance += depositAmount;
     user.cycleDepositAmount = user.depositAmount;
     await user.save();
 

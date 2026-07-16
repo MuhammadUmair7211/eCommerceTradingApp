@@ -40,7 +40,7 @@ const getUserInjectionById = async (req, res) => {
     const injections = await Injection.find({
       user: id,
     })
-      .sort({ createdAt: -1 })
+      .sort({ injectionOrder: 1 })
       .populate("user")
       .populate("createdBy");
 

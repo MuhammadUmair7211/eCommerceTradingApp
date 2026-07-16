@@ -199,22 +199,6 @@ function AllUsers() {
                 />
               </div>
 
-              {/* Balance */}
-              <div className="flex flex-col">
-                <label className="text-xs md:mb-1">Balance</label>
-                <input
-                  type="number"
-                  value={formData.balance}
-                  onChange={(e) =>
-                    setFormData({
-                      ...formData,
-                      balance: e.target.value,
-                    })
-                  }
-                  className="border border-slate-700 p-2 outline-none"
-                />
-              </div>
-
               {/* deposit */}
               <div className="flex flex-col">
                 <label className="text-xs md:mb-1">Total Deposit</label>

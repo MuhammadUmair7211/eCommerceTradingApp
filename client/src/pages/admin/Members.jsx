@@ -124,7 +124,6 @@ export default function Members() {
           },
         },
       );
-      console.log(data);
       toast.success(data.message || "Orders cleared successfully");
       fetchAdminData();
     } catch (error) {
@@ -273,8 +272,6 @@ export default function Members() {
                 </tr>
               ) : (
                 filteredMembers?.map((member) => {
-                  console.log(member);
-
                   return (
                     <tr
                       key={member._id}
@@ -303,8 +300,8 @@ export default function Members() {
                           {"$" + member?.difference?.toFixed(2) || 0}
                         </p>
                         <p>
-                          Commission Earned :{" "}
-                          {member?.commission?.toFixed(2) || 0}%
+                          Commission Earned : $
+                          {member?.commission?.toFixed(2) || 0}
                         </p>
                       </td>
 

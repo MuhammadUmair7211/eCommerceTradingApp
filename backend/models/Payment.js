@@ -15,6 +15,11 @@ const paymentSchema = new mongoose.Schema(
       required: true,
       unique: true,
     },
+    injectionId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Injection",
+      default: null,
+    },
 
     amount: {
       type: Number,

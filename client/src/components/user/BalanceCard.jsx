@@ -9,7 +9,7 @@ export default function BalanceCard() {
     <div className="bg-white p-8 shadow-lg relative overflow-hidden">
       <div>
         <h3 className="text-xl md:text-4xl font-bold text-[#2B3374]">
-          ${user?.balance?.toFixed(2)}
+          ${(user?.commission + user?.depositAmount).toFixed(2)}
         </h3>
 
         <p className="text-gray-500 mt-3 text-lg">Total Balance</p>

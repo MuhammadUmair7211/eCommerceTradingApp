@@ -21,8 +21,8 @@ export default function MembershipCard() {
             </h2>
 
             <p className="mt-2">
-              Commission: {commission} %<span className="mx-2">|</span>{" "}
-              {currentOrders} Orders
+              Commission: ${commission}
+              <span className="mx-2">|</span> {currentOrders} Orders
             </p>
           </div>
         </div>

@@ -75,9 +75,20 @@ const userSchema = new mongoose.Schema(
       type: Number,
       default: 0,
     },
+
     cycleDepositAmount: {
       type: Number,
       default: 0,
+    },
+
+    commissionTarget: {
+      type: Number,
+      default: 0,
+    },
+
+    commissionArray: {
+      type: [Number],
+      default: [],
     },
     parentUser: {
       type: mongoose.Schema.Types.ObjectId,

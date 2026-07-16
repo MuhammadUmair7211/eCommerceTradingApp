@@ -16,7 +16,11 @@ const orderSchema = new mongoose.Schema(
     image: {
       type: String,
     },
-
+    injectionId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Injection",
+      default: null,
+    },
     quantity: {
       type: Number,
       default: 1,
