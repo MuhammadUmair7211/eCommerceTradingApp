@@ -345,12 +345,28 @@ const addOrderByAdmin = async (req, res) => {
       });
     }
 
+    user.commissionArray = [];
     const ordersToAdd = Number(currentOrders);
 
     if (isNaN(ordersToAdd) || ordersToAdd <= 0) {
       return res.status(400).json({
         success: false,
         message: "Invalid order count",
+      });
+    }
+    // Find all pending injections
+    const pendingInjections = await Injection.find({
+      user: user._id,
+      status: "pending",
+    }).sort({ injectionOrder: 1 });
+
+    const pendingInjectionCount = pendingInjections.length;
+    const normalOrders = ordersToAdd - pendingInjectionCount;
+
+    if (normalOrders < 0) {
+      return res.status(400).json({
+        success: false,
+        message: "Pending injections cannot exceed total orders.",
       });
     }
 
@@ -363,7 +379,7 @@ const addOrderByAdmin = async (req, res) => {
     // Generate a fresh commission schedule
     user.commissionArray = generateCommissionArray(
       user.commissionTarget,
-      ordersToAdd,
+      normalOrders,
     );
     await user.save();
     return res.status(200).json({

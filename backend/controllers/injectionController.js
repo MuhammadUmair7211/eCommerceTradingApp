@@ -1,4 +1,27 @@
 const Injection = require("../models/Injection");
+const User = require("../models/User");
+const generateCommissionArray = (totalCommission, totalOrders) => {
+  if (totalOrders <= 0 || totalCommission <= 0) return [];
+
+  const weights = Array.from(
+    { length: totalOrders },
+    () => Math.random() + 0.1,
+  );
+
+  const weightSum = weights.reduce((a, b) => a + b, 0);
+
+  let commissions = weights.map((weight) =>
+    Number(((weight / weightSum) * totalCommission).toFixed(4)),
+  );
+
+  const currentTotal = commissions.reduce((a, b) => a + b, 0);
+
+  const difference = Number((totalCommission - currentTotal).toFixed(4));
+
+  commissions[commissions.length - 1] += difference;
+
+  return commissions;
+};
 
 // create injection
 const createInjection = async (req, res) => {
@@ -11,14 +34,43 @@ const createInjection = async (req, res) => {
       fixedCommission,
     } = req.body;
 
+    const user = await User.findById(userId);
+
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found",
+      });
+    }
     const injection = await Injection.create({
-      user: userId, // ✅ FIXED HERE
+      user: userId,
       injectionOrder,
       injectionCost,
       commissionRate,
       fixedCommission,
       status: "pending",
     });
+
+    // Count all pending injections
+    const pendingInjectionCount = await Injection.countDocuments({
+      user: user._id,
+      status: "pending",
+    });
+
+    // Remaining normal orders
+    const normalOrders = Math.max(
+      0,
+      user.currentCycleOrders - pendingInjectionCount,
+    );
+
+    // Regenerate commission array
+    user.commissionTarget = Number((user.cycleDepositAmount * 0.12).toFixed(2));
+    user.commissionArray = generateCommissionArray(
+      user.commissionTarget,
+      normalOrders,
+    );
+
+    await user.save();
 
     res.status(201).json({
       success: true,

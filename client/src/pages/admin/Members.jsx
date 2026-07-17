@@ -28,13 +28,11 @@ export default function Members() {
   const [editNotesModal, setEditNotesModal] = useState(false);
   const [addOrderModal, setAddOrderModal] = useState(false);
   const [balanceModal, setBalanceModal] = useState(false);
-  const itemsPerPage = 10;
   const [openProfileModal, setOpenProfileModal] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
   const [note, setNote] = useState("");
   const [totalOrders, setTotalOrders] = useState("");
   const [balance, setBalance] = useState("");
-
   const navigate = useNavigate();
 
   const filteredMembers = (adminUsers || []).filter((member) => {
@@ -52,9 +50,16 @@ export default function Members() {
     );
   });
 
+  const itemsPerPage = 5;
   const totalPages = Math.max(
     1,
     Math.ceil(filteredMembers.length / itemsPerPage),
+  );
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentMembers = filteredMembers.slice(
+    indexOfFirstItem,
+    indexOfLastItem,
   );
 
   const handleEditNotes = (member) => {
@@ -166,8 +171,8 @@ export default function Members() {
   };
 
   return (
-    <div>
-      <div className="bg-slate-800 text-slate-300 border border-slate-700 overflow-hidden p-2">
+    <div className="bg-slate-800 text-slate-300 border border-slate-700 overflow-hidden p-2">
+      <div className="">
         {/* HEADER */}
         <PageHeader
           heading="All Members List"
@@ -252,7 +257,7 @@ export default function Members() {
                     </div>
                   </td>
                 </tr>
-              ) : filteredMembers.length === 0 ? (
+              ) : currentMembers.length === 0 ? (
                 <tr>
                   <td colSpan={9} className="py-14">
                     <div className="flex flex-col items-center justify-center">
@@ -271,7 +276,7 @@ export default function Members() {
                   </td>
                 </tr>
               ) : (
-                filteredMembers?.map((member) => {
+                currentMembers?.map((member) => {
                   return (
                     <tr
                       key={member._id}
@@ -289,11 +294,15 @@ export default function Members() {
                       {/* ACCOUNT DETAILS */}
                       <td className="p-2 text-xs leading-7 border border-slate-700">
                         <p className="text-green-600 font-semibold">
-                          Account Balance : ${member?.balance?.toFixed(2) || 0}
+                          Account Balance: $
+                          {(
+                            (member?.depositAmount ?? 0) +
+                            (member?.commission ?? 0)
+                          ).toFixed(2)}
                         </p>
                         <p>
-                          Frozen Amount :{" "}
-                          {"$" + member?.frozenAmount?.toFixed(2) || 0}
+                          Deposit Amount :{" "}
+                          {"$" + member?.depositAmount?.toFixed(2) || 0}
                         </p>
                         <p className="text-red-500">
                           Difference Amount :{" "}

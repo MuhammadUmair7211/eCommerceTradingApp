@@ -4,10 +4,12 @@ import axios from "axios";
 import { toast } from "react-toastify";
 import { baseUrl } from "../../../config/config";
 import { Crown, FileText, Lock, Phone, User, Wallet } from "lucide-react";
+import Pagination from "../../components/admin/Pagination";
 const InjectionManagement = () => {
   const [user, setUser] = useState(null);
   const { id } = useParams();
   const [injectionModal, setInjectionModal] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
   const [injections, setInjections] = useState([]);
   const [formData, setFormData] = useState({
     injectionOrder: "",
@@ -170,6 +172,15 @@ const InjectionManagement = () => {
   const handleInjectionForUser = () => {
     setInjectionModal(!injectionModal);
   };
+
+  const itemsPerPage = 5;
+
+  const totalPages = Math.max(1, Math.ceil(injections.length / itemsPerPage));
+
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+
+  const currentInjections = injections.slice(indexOfFirstItem, indexOfLastItem);
   return (
     <div className="bg-slate-800 text-slate-300 border border-slate-700 overflow-hidden p-2">
       {/* header */}
@@ -294,15 +305,15 @@ const InjectionManagement = () => {
           </thead>
 
           <tbody>
-            {injections?.length > 0 ? (
-              injections?.map((item, index) => {
+            {currentInjections?.length > 0 ? (
+              currentInjections?.map((item, index) => {
                 return (
                   <tr
                     key={item._id}
                     className="border border-slate-700 align-middle text-center hover:bg-gray-900 duration-300"
                   >
                     <td className="p-2 text-xs leading-7 border border-slate-700">
-                      {index + 1}
+                      {indexOfFirstItem + index + 1}
                     </td>
 
                     <td className="p-2 text-xs leading-7 border border-slate-700">
@@ -578,6 +589,14 @@ const InjectionManagement = () => {
           </form>
         </div>
       )}
+
+      <Pagination
+        currentPage={currentPage}
+        totalPages={totalPages}
+        totalItems={injections.length}
+        itemsPerPage={itemsPerPage}
+        setCurrentPage={setCurrentPage}
+      />
     </div>
   );
 };
