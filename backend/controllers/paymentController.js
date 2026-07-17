@@ -36,7 +36,7 @@ const createPayment = async (req, res) => {
       amount,
       adminId: adminId,
       walletAddress,
-      injectionId: pendingInjection._id,
+      injectionId: pendingInjection?._id || null,
       screenshot: req.file.path.replace(/\\/g, "/"),
       status: "pending",
     });

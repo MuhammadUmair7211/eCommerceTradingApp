@@ -93,11 +93,9 @@ const UserCard = ({
 
               <h3 className="text-lg md:text-2xl font-bold text-green-400">
                 $
-                {(
-                  (user?.balance || 0) +
-                  (user?.commission || 0) +
-                  (user?.depositAmount || 0)
-                ).toFixed(2)}
+                {((user?.commission ?? 0) + (user?.depositAmount ?? 0)).toFixed(
+                  2,
+                )}
               </h3>
             </div>
 

@@ -6,14 +6,10 @@ import { membershipData } from "../../../config/membershipData";
 import { useNavigate } from "react-router-dom";
 import { Bell, Gift, MessageCircle, Wallet } from "lucide-react";
 import { useApp } from "../../context/AppContext";
-import { useEffect } from "react";
 export default function Dashboard() {
-  const { user, fetchUserProfile } = useApp();
+  const { user } = useApp();
   const navigate = useNavigate();
 
-  useEffect(() => {
-    fetchUserProfile();
-  }, []);
   return (
     <div className="min-h-screen max-w-7xl mx-auto w-full">
       {/* TOP SECTION */}
@@ -92,7 +88,10 @@ export default function Dashboard() {
               <div className="flex justify-between">
                 <span className="text-gray-500">Balance</span>
                 <span className="font-medium text-blue-600">
-                  ${user?.balance?.toFixed(2) || 0}
+                  $
+                  {(
+                    (user?.depositAmount ?? 0) + (user?.commission ?? 0)
+                  ).toFixed(2)}
                 </span>
               </div>
 

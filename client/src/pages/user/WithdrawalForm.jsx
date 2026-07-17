@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Wallet, Lock, Zap } from "lucide-react";
+import { Wallet, Zap } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { toast } from "react-toastify";
@@ -52,20 +52,33 @@ function WithdrawalForm() {
       <div className="w-full max-w-2xl bg-white shadow-lg p-4">
         <BackButton />
         {/* Title */}
-        <h1 className="text-2xl font-bold text-center flex items-center justify-center gap-2 mb-4">
+        <h1 className="md:text-2xl font-bold text-center flex items-center justify-center gap-2 mb-4">
           <Wallet />
           Withdraw Funds
         </h1>
 
-        <div className="mb-3">
-          <p className="text-sm text-green-600">
-            Available Balance:{" "}
-            <span className="font-semibold text-black">
-              ${user?.balance.toFixed(2)}
-            </span>
-          </p>
+        <div className="mb-2">
+          <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-slate-500">Available Balance</p>
+                <h2 className="text-3xl font-bold text-green-600 mt-1">
+                  $
+                  {(
+                    (user?.depositAmount ?? 0) + (user?.commission ?? 0)
+                  ).toFixed(2)}
+                </h2>
+              </div>
 
-          <p className="text-sm text-gray-500 mt-2">Quick Amounts</p>
+              <div className="p-3 rounded-full bg-green-100">
+                <Wallet className="w-6 h-6 text-green-600" />
+              </div>
+            </div>
+          </div>
+
+          <p className="mt-4 mb-2 text-sm font-semibold text-slate-600">
+            Quick Amounts
+          </p>
         </div>
 
         <div className="grid grid-cols-3 sm:grid-cols-4 gap-3 mb-5">
