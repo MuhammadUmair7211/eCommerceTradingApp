@@ -68,131 +68,127 @@ const AdminTable = () => {
   };
 
   return (
-    <>
-      <div className="bg-slate-800 text-slate-300 shadow-lg overflow-hidden border border-slate-700 mt-2 p-2">
-        {/* SEARCH */}
-        <div className="text-center my-4 px-4">
-          <input
-            type="search"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            placeholder="Search by admin id, name, phone"
-            className="max-w-5xl w-full bg-slate-900 text-slate-500 border border-slate-700 p-2 outline-none"
-          />
-        </div>
+    <div className="bg-slate-800 text-slate-300 shadow-lg overflow-hidden border border-slate-700 mt-2 p-2">
+      {/* SEARCH */}
+      <div className="text-center my-4 px-4">
+        <input
+          type="search"
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          placeholder="Search by admin id, name, phone"
+          className="max-w-5xl w-full bg-slate-900 text-slate-500 border border-slate-700 p-2 outline-none"
+        />
+      </div>
 
-        {/* HEADER */}
-        <div className="p-4 border border-slate-700">
-          <h2 className="font-bold text-lg text-white">Admin Members</h2>
-        </div>
+      {/* HEADER */}
+      <div className="p-4 border border-slate-700">
+        <h2 className="font-bold text-lg text-white">Admin Members</h2>
+      </div>
 
-        {/* TABLE */}
-        <div className="overflow-x-auto">
-          <table className="w-full border border-slate-700">
-            {/* HEAD */}
-            <thead className="bg-slate-900 border-b border-slate-700">
+      {/* TABLE */}
+      <div className="overflow-x-auto">
+        <table className="w-full border border-slate-700">
+          {/* HEAD */}
+          <thead className="bg-slate-900 border-b border-slate-700">
+            <tr>
+              {[
+                "Username",
+                "Phone Number",
+                "Referral Code",
+                "Team Size",
+                "Status",
+                "Actions",
+              ].map((head) => (
+                <th
+                  key={head}
+                  className="px-6 py-4 text-left font-semibold text-slate-300"
+                >
+                  {head}
+                </th>
+              ))}
+            </tr>
+          </thead>
+          {/* BODY */}
+          <tbody>
+            {loading ? (
               <tr>
-                {[
-                  "Username",
-                  "Phone Number",
-                  "Referral Code",
-                  "Team Size",
-                  "Status",
-                  "Actions",
-                ].map((head) => (
-                  <th
-                    key={head}
-                    className="px-6 py-4 text-left font-semibold text-slate-300"
-                  >
-                    {head}
-                  </th>
-                ))}
+                <td colSpan="6" className="text-center py-10 text-slate-500">
+                  Loading...
+                </td>
               </tr>
-            </thead>
-            {/* BODY */}
-            <tbody>
-              {loading ? (
-                <tr>
-                  <td colSpan="6" className="text-center py-10 text-slate-500">
-                    Loading...
-                  </td>
-                </tr>
-              ) : currentAdmins?.length > 0 ? (
-                currentAdmins.map((admin) => {
-                  return (
-                    <tr
-                      key={admin?._id}
-                      onClick={() => handleAdminNavigate(admin)}
-                      className="border-b border-slate-700 hover:bg-slate-700 cursor-pointer transition"
-                    >
-                      {/* USER */}
-                      <td className="px-6 py-4">
-                        <p className="font-medium text-white">
-                          {admin?.username}
-                        </p>
-                        <p className="text-xs text-slate-400">
-                          Profile: {admin?.profileCode}
-                        </p>
-                      </td>
+            ) : currentAdmins?.length > 0 ? (
+              currentAdmins.map((admin) => {
+                return (
+                  <tr
+                    key={admin?._id}
+                    onClick={() => handleAdminNavigate(admin)}
+                    className="border-b border-slate-700 hover:bg-slate-700 cursor-pointer transition"
+                  >
+                    {/* USER */}
+                    <td className="px-6 py-4">
+                      <p className="font-medium text-white">
+                        {admin?.username}
+                      </p>
+                      <p className="text-xs text-slate-400">
+                        Profile: {admin?.profileCode}
+                      </p>
+                    </td>
 
-                      {/* PHONE */}
-                      <td className="px-6 py-4 text-slate-300">
-                        {admin?.phoneNumber}
-                      </td>
+                    {/* PHONE */}
+                    <td className="px-6 py-4 text-slate-300">
+                      {admin?.phoneNumber}
+                    </td>
 
-                      {/* REF CODE */}
-                      <td className="px-6 py-4 font-mono text-slate-300">
-                        {admin?.referralCode}
-                      </td>
+                    {/* REF CODE */}
+                    <td className="px-6 py-4 font-mono text-slate-300">
+                      {admin?.referralCode}
+                    </td>
 
-                      {/* TEAM */}
-                      <td className="px-6 py-4 font-semibold text-slate-200">
-                        {admin?.teamMembers?.length || 0}
-                      </td>
+                    {/* TEAM */}
+                    <td className="px-6 py-4 font-semibold text-slate-200">
+                      {admin?.teamMembers?.length || 0}
+                    </td>
 
-                      {/* STATUS */}
-                      <td className="px-6 py-4">
-                        <div className="flex items-center gap-2">
-                          <span
-                            className={`w-2.5 h-2.5 rounded-full ${
-                              admin.isOnline ? "bg-green-400" : "bg-red-400"
-                            }`}
-                          />
+                    {/* STATUS */}
+                    <td className="px-6 py-4">
+                      <div className="flex items-center gap-2">
+                        <span
+                          className={`w-2.5 h-2.5 rounded-full ${
+                            admin.isOnline ? "bg-green-400" : "bg-red-400"
+                          }`}
+                        />
 
-                          <span
-                            className={`font-medium ${
-                              admin?.isOnline
-                                ? "text-green-400"
-                                : "text-red-400"
-                            }`}
-                          >
-                            {admin.isOnline ? "Online" : "Offline"}
-                          </span>
-                        </div>
-                      </td>
-
-                      {/* ACTION */}
-                      <td className="px-6 py-4">
-                        <button
-                          onClick={(e) => handleAdminDelete(e, admin._id)}
-                          className="p-2 bg-red-500/10 text-red-400 rounded-lg hover:bg-red-500/20 transition cursor-pointer hover:scale-110"
+                        <span
+                          className={`font-medium ${
+                            admin?.isOnline ? "text-green-400" : "text-red-400"
+                          }`}
                         >
-                          <Trash2 size={16} />
-                        </button>
-                      </td>
-                    </tr>
-                  );
-                })
-              ) : (
-                <tr>
-                  <td colSpan="6" className="text-center py-10 text-slate-500">
-                    No admins found
-                  </td>
-                </tr>
-              )}
-            </tbody>
-          </table>
-        </div>
+                          {admin.isOnline ? "Online" : "Offline"}
+                        </span>
+                      </div>
+                    </td>
+
+                    {/* ACTION */}
+                    <td className="px-6 py-4">
+                      <button
+                        onClick={(e) => handleAdminDelete(e, admin._id)}
+                        className="p-2 bg-red-500/10 text-red-400 rounded-lg hover:bg-red-500/20 transition cursor-pointer hover:scale-110"
+                      >
+                        <Trash2 size={16} />
+                      </button>
+                    </td>
+                  </tr>
+                );
+              })
+            ) : (
+              <tr>
+                <td colSpan="6" className="text-center py-10 text-slate-500">
+                  No admins found
+                </td>
+              </tr>
+            )}
+          </tbody>
+        </table>
       </div>
       {/* PAGINATION */}
       <Pagination
@@ -202,7 +198,7 @@ const AdminTable = () => {
         itemsPerPage={itemsPerPage}
         setCurrentPage={setCurrentPage}
       />
-    </>
+    </div>
   );
 };
 
