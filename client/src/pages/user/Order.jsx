@@ -112,7 +112,7 @@ const Orders = () => {
                     </div>
                     <div className="flex justify-between border-b border-gray-100 pb-1">
                       <span>Difference Amount</span>
-                      <span className="font-medium text-green-600">
+                      <span className="font-medium text-red-600">
                         ${order?.differenceAmount?.toFixed(2)}
                       </span>
                     </div>

@@ -5,12 +5,15 @@ import { toast } from "react-toastify";
 import { baseUrl } from "../../../config/config";
 import { Crown, FileText, Lock, Phone, User, Wallet } from "lucide-react";
 import Pagination from "../../components/admin/Pagination";
+import { useApp } from "../../context/AppContext";
 const InjectionManagement = () => {
+  const { adminInjections, setAdminInjections, fetchAdminData } = useApp();
+  console.log(adminInjections);
+
   const [user, setUser] = useState(null);
   const { id } = useParams();
   const [injectionModal, setInjectionModal] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
-  const [injections, setInjections] = useState([]);
   const [formData, setFormData] = useState({
     injectionOrder: "",
     commissionRate: "",
@@ -18,53 +21,37 @@ const InjectionManagement = () => {
     injectionCost: "",
   });
 
-  // get user info from params id
-  const fetchUserInfoInjectionPage = async () => {
-    try {
-      const { data } = await axios.get(`${baseUrl}/users/${id}`);
-
-      if (data.success) {
-        setUser(data.user);
-      }
-    } catch (error) {
-      console.log(error.message);
-    }
-  };
-
   // create injection
   const createInjection = async () => {
+    const token = localStorage.getItem("adminToken");
     try {
-      const { data } = await axios.post(`${baseUrl}/injections/create`, {
-        ...formData,
-        userId: id,
-      });
-
+      const { data } = await axios.post(
+        `${baseUrl}/injections/create`,
+        {
+          ...formData,
+          userId: id,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        },
+      );
+      console.log(data);
       if (data.success) {
         toast.success(data.message);
+        setAdminInjections((prev) => [data.injection, ...prev]);
         setFormData({
           injectionOrder: "",
           commissionRate: "",
           fixedCommission: "",
           injectionCost: "",
         });
-        fetchUserInjections();
       } else {
         toast.error(data.message);
       }
     } catch (error) {
       console.log(error.response?.data);
-      console.log(error.message);
-    }
-  };
-
-  // get user injection
-  const fetchUserInjections = async () => {
-    try {
-      const { data } = await axios.get(`${baseUrl}/injections/${id}`);
-      if (data.success) {
-        setInjections(data.injections);
-      }
-    } catch (error) {
       console.log(error.message);
     }
   };
@@ -79,12 +66,7 @@ const InjectionManagement = () => {
 
       if (data?.success) {
         toast.success(data.message);
-        fetchUserInjections();
-        setInjections((prev) =>
-          prev.map((inj) =>
-            inj._id === item._id ? { ...inj, status: "completed" } : inj,
-          ),
-        );
+        fetchAdminData();
       } else {
         toast.error(data?.message || "Failed to update");
       }
@@ -103,12 +85,7 @@ const InjectionManagement = () => {
 
       if (data?.success) {
         toast.success(data.message);
-        fetchUserInjections();
-        setInjections((prev) =>
-          prev.map((inj) =>
-            inj._id === item._id ? { ...inj, status: "rejected" } : inj,
-          ),
-        );
+        fetchAdminData();
       } else {
         toast.error(data?.message || "Failed to reject");
       }
@@ -131,7 +108,7 @@ const InjectionManagement = () => {
       );
       if (data?.success) {
         toast.success(data.message);
-        fetchUserInjections();
+        fetchAdminData();
       } else {
         toast.error(data?.message || "Delete failed");
       }
@@ -142,10 +119,20 @@ const InjectionManagement = () => {
   };
 
   useEffect(() => {
-    fetchUserInjections();
+    // get user info from params id
+    const fetchUserInfoInjectionPage = async () => {
+      try {
+        const { data } = await axios.get(`${baseUrl}/users/${id}`);
+
+        if (data.success) {
+          setUser(data.user);
+        }
+      } catch (error) {
+        console.log(error.message);
+      }
+    };
     fetchUserInfoInjectionPage();
-    handleInjectionTaskComplete();
-  }, []);
+  }, [id]);
 
   const headers = [
     "ID",
@@ -163,10 +150,10 @@ const InjectionManagement = () => {
     "action",
   ];
 
-  const handleFormSubmit = (e) => {
+  const handleFormSubmit = async (e) => {
     e.preventDefault();
     setInjectionModal(false);
-    createInjection();
+    await createInjection();
   };
 
   const handleInjectionForUser = () => {
@@ -175,12 +162,18 @@ const InjectionManagement = () => {
 
   const itemsPerPage = 5;
 
-  const totalPages = Math.max(1, Math.ceil(injections.length / itemsPerPage));
+  const totalPages = Math.max(
+    1,
+    Math.ceil(adminInjections.length / itemsPerPage),
+  );
 
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
 
-  const currentInjections = injections.slice(indexOfFirstItem, indexOfLastItem);
+  const currentInjections = adminInjections.slice(
+    indexOfFirstItem,
+    indexOfLastItem,
+  );
   return (
     <div className="bg-slate-800 text-slate-300 border border-slate-700 overflow-hidden p-2">
       {/* header */}
@@ -307,6 +300,8 @@ const InjectionManagement = () => {
           <tbody>
             {currentInjections?.length > 0 ? (
               currentInjections?.map((item, index) => {
+                console.log(item);
+
                 return (
                   <tr
                     key={item._id}
@@ -336,12 +331,8 @@ const InjectionManagement = () => {
                       ${item?.fixedCommission || 0}
                     </td>
 
-                    <td className="p-2 text-xs text-center align-middle border border-slate-700">
-                      $
-                      {(
-                        (item?.user.commission ?? 0) -
-                        (item?.injectionCost ?? 0)
-                      ).toFixed(2)}
+                    <td className="p-2 text-red-500 text-xs text-center align-middle border border-slate-700">
+                      ${(item?.injectionCost ?? 0).toFixed(2)}
                     </td>
 
                     <td className="p-2 text-xs leading-7 border border-slate-700">
@@ -443,6 +434,7 @@ const InjectionManagement = () => {
           </tbody>
         </table>
       </div>
+
       {injectionModal && (
         <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50 p-4">
           <form
@@ -593,7 +585,7 @@ const InjectionManagement = () => {
       <Pagination
         currentPage={currentPage}
         totalPages={totalPages}
-        totalItems={injections.length}
+        totalItems={adminInjections.length}
         itemsPerPage={itemsPerPage}
         setCurrentPage={setCurrentPage}
       />

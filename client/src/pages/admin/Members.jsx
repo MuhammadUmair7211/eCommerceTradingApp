@@ -21,7 +21,17 @@ import { baseUrl } from "../../../config/config";
 import { useApp } from "../../context/AppContext";
 
 export default function Members() {
-  const { adminUsers, loading, fetchAdminData } = useApp();
+  const { adminUsers, adminInjections, loading, fetchAdminData } = useApp();
+  const usersWithInjections = adminUsers.map((user) => {
+    const userInjections = adminInjections.filter(
+      (injection) => injection.user && injection.user._id === user._id,
+    );
+
+    return {
+      ...user,
+      injections: userInjections,
+    };
+  });
 
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
@@ -35,7 +45,7 @@ export default function Members() {
   const [balance, setBalance] = useState("");
   const navigate = useNavigate();
 
-  const filteredMembers = (adminUsers || []).filter((member) => {
+  const filteredMembers = (usersWithInjections || []).filter((member) => {
     const search = searchTerm.toLowerCase();
 
     return (
@@ -277,6 +287,8 @@ export default function Members() {
                 </tr>
               ) : (
                 currentMembers?.map((member) => {
+                  const differenceAmount =
+                    member?.injections[0]?.injectionCost || 0;
                   return (
                     <tr
                       key={member._id}
@@ -306,7 +318,7 @@ export default function Members() {
                         </p>
                         <p className="text-red-500">
                           Difference Amount :{" "}
-                          {"$" + member?.difference?.toFixed(2) || 0}
+                          {"$" + differenceAmount?.toFixed(2)}
                         </p>
                         <p>
                           Commission Earned : $

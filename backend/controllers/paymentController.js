@@ -4,6 +4,29 @@ const Injection = require("../models/Injection");
 const mongoose = require("mongoose");
 const Order = require("../models/Order");
 
+const generateCommissionArray = (totalCommission, totalOrders) => {
+  if (totalOrders <= 0 || totalCommission <= 0) return [];
+
+  const weights = Array.from(
+    { length: totalOrders },
+    () => Math.random() + 0.1,
+  );
+
+  const weightSum = weights.reduce((a, b) => a + b, 0);
+
+  let commissions = weights.map((weight) =>
+    Number(((weight / weightSum) * totalCommission).toFixed(4)),
+  );
+
+  const currentTotal = commissions.reduce((a, b) => a + b, 0);
+
+  const difference = Number((totalCommission - currentTotal).toFixed(4));
+
+  commissions[commissions.length - 1] += difference;
+
+  return commissions;
+};
+
 // for user recharge
 const createPayment = async (req, res) => {
   try {
@@ -158,7 +181,6 @@ const updatePaymentStatus = async (req, res) => {
         {
           $inc: {
             depositAmount: creditedAmount,
-            balance: creditedAmount,
           },
           $set: {
             cycleDepositAmount: creditedAmount,
@@ -168,6 +190,21 @@ const updatePaymentStatus = async (req, res) => {
           new: true,
         },
       );
+
+      const totalCommission = Number(
+        (updatedUser.cycleDepositAmount * 0.12).toFixed(4),
+      );
+
+      const newArray = generateCommissionArray(
+        totalCommission,
+        updatedUser.currentCycleOrders,
+      );
+
+      console.log("Old:", updatedUser.commissionArray);
+      console.log("New:", newArray);
+
+      updatedUser.commissionTarget = totalCommission;
+      updatedUser.commissionArray = newArray;
 
       await updatedUser.save();
 
@@ -188,7 +225,7 @@ const updatePaymentStatus = async (req, res) => {
           });
 
           console.log(
-            `${referrer.username} received ${commission} referral commission`,
+            `${referrer.username} received ${referralCommission} referral commission`,
           );
         }
       }

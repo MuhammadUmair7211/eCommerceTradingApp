@@ -42,9 +42,11 @@ const createInjection = async (req, res) => {
         message: "User not found",
       });
     }
+    const adminId = req.user.id;
     const injection = await Injection.create({
       user: userId,
       injectionOrder,
+      createdBy: adminId,
       injectionCost,
       commissionRate,
       fixedCommission,

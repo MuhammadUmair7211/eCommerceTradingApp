@@ -5,6 +5,7 @@ const Admin = require("../models/Admin");
 const Payment = require("../models/Payment");
 const Withdrawal = require("../models/Withdrawal");
 const UAParser = require("ua-parser-js");
+const Injection = require("../models/Injection");
 
 // admin login
 const adminLogin = async (req, res) => {
@@ -79,18 +80,25 @@ const getLoginAdminDetails = async (req, res) => {
   try {
     const adminId = req.user.id;
 
-    const [admin, users, payments, withdrawals] = await Promise.all([
-      Admin.findById(adminId).populate("teamMembers"),
+    const [admin, users, payments, injections, withdrawals] = await Promise.all(
+      [
+        Admin.findById(adminId).populate("teamMembers"),
 
-      User.find({ adminId }).sort({ isOnline: -1 }),
+        User.find({ adminId }).sort({ isOnline: -1 }),
 
-      Payment.find({ adminId })
-        .populate("user")
-        .populate("adminId")
-        .sort({ createdAt: -1 }),
+        Payment.find({ adminId })
+          .populate("user")
+          .populate("adminId")
+          .sort({ createdAt: -1 }),
 
-      Withdrawal.find({ adminId }).populate("userId").sort({ createdAt: -1 }),
-    ]);
+        Injection.find({ createdBy: adminId })
+          .populate("user")
+          .populate("createdBy")
+          .sort({ injectionOrder: 1 }),
+
+        Withdrawal.find({ adminId }).populate("userId").sort({ createdAt: -1 }),
+      ],
+    );
 
     const usersWithCounts = users.map((user) => {
       const rechargeCount = payments.filter(
@@ -127,6 +135,7 @@ const getLoginAdminDetails = async (req, res) => {
       users: usersWithCounts,
       payments,
       withdrawals,
+      injections,
     });
   } catch (error) {
     console.error(error);

@@ -34,6 +34,7 @@ const AppProvider = ({ children }) => {
   const [adminUsers, setAdminUsers] = useState([]);
   const [adminPayments, setAdminPayments] = useState([]);
   const [adminWithdrawals, setAdminWithdrawals] = useState([]);
+  const [adminInjections, setAdminInjections] = useState([]);
 
   const fetchUserProfile = async () => {
     const token = localStorage.getItem("token");
@@ -101,11 +102,11 @@ const AppProvider = ({ children }) => {
           Authorization: `Bearer ${token}`,
         },
       });
-
       setAdmin(data.admin);
       setAdminPayments(data.payments);
       setAdminWithdrawals(data.withdrawals);
       setAdminUsers(data.users);
+      setAdminInjections(data.injections);
     } catch (error) {
       console.error(
         "Error fetching admin:",
@@ -169,6 +170,8 @@ const AppProvider = ({ children }) => {
         adminUsers,
         adminPayments,
         adminWithdrawals,
+        adminInjections,
+        setAdminInjections,
       }}
     >
       {children}
