@@ -44,7 +44,7 @@ const requestWithdrawal = async (req, res) => {
       });
     }
 
-    if (user.balance < amountNum) {
+    if (user.depositAmount < amountNum) {
       return res.status(400).json({
         success: false,
         message: "Insufficient balance",
@@ -91,7 +91,7 @@ const requestWithdrawal = async (req, res) => {
       success: true,
       message: "Withdrawal request submitted successfully",
       withdrawal,
-      balance: user.balance,
+      depositAmount: user.depositAmount,
       frozenAmount: user.frozenAmount,
     });
   } catch (error) {
