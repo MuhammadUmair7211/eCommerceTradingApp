@@ -312,7 +312,7 @@ const InjectionManagement = () => {
                     </td>
 
                     <td className="p-2 text-xs leading-7 border border-slate-700">
-                      {item?.user.myInvitationCode}
+                      {item?.user?.myInvitationCode}
                     </td>
 
                     <td className="p-2 text-xs leading-7 border border-slate-700">
