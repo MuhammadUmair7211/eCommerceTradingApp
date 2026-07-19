@@ -189,7 +189,6 @@ const InjectionManagement = () => {
           Add Injection
         </button>
       </div>
-
       {/* Information Card */}
       <div className="mt-2 border border-slate-700 bg-slate-900/40 overflow-hidden">
         {/* Description */}
@@ -280,7 +279,6 @@ const InjectionManagement = () => {
           </div>
         </div>
       </div>
-
       {/* table */}
       <div className="overflow-x-auto mt-2">
         <table className="w-full min-w-450 cursor-pointer">
@@ -432,7 +430,6 @@ const InjectionManagement = () => {
           </tbody>
         </table>
       </div>
-
       {injectionModal && (
         <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50 p-4">
           <form
@@ -579,7 +576,7 @@ const InjectionManagement = () => {
           </form>
         </div>
       )}
-
+      ..
       <Pagination
         currentPage={currentPage}
         totalPages={totalPages}
