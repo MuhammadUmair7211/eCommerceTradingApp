@@ -300,8 +300,6 @@ const InjectionManagement = () => {
           <tbody>
             {currentInjections?.length > 0 ? (
               currentInjections?.map((item, index) => {
-                console.log(item);
-
                 return (
                   <tr
                     key={item._id}
@@ -316,7 +314,7 @@ const InjectionManagement = () => {
                     </td>
 
                     <td className="p-2 text-xs leading-7 border border-slate-700">
-                      {item.injectionOrder}
+                      {item?.injectionOrder}
                     </td>
 
                     <td className="p-2 text-xs text-yellow-500 font-bold leading-7 border border-slate-700">
@@ -348,7 +346,7 @@ const InjectionManagement = () => {
                     </td>
 
                     <td className="p-2 text-xs leading-7 border border-slate-700">
-                      TASK-{item._id}
+                      TASK-{item?._id}
                     </td>
 
                     <td className="p-2 text-xs leading-7 border border-slate-700">
