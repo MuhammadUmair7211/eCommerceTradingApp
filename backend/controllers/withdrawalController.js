@@ -195,7 +195,7 @@ const updateWithdrawalStatus = async (req, res) => {
 
     // If approved
     if (status === "approved") {
-      user.balance -= withdrawal.amount;
+      user.depositAmount -= withdrawal.amount;
       user.commission = 0;
 
       await user.save();
