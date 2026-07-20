@@ -44,90 +44,91 @@ const Orders = () => {
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-            {orders?.map((order) => (
-              <div
-                key={order?._id}
-                className="bg-white relative shadow-md overflow-hidden hover:shadow-lg transition cursor-pointer"
-              >
-                <div className="relative flex justify-center bg-gray-50 p-3 overflow-hidden rounded-lg">
-                  <img
-                    src={order?.image}
-                    alt={order.title}
-                    className="w-28 h-28 object-contain transition-transform duration-300 hover:scale-110"
-                  />
-                </div>
-
-                <div className="p-3">
-                  <div className="flex justify-between items-start">
-                    <h2 className="font-semibold text-sm text-gray-800 line-clamp-2 min-h-10">
-                      {order?.title}
-                    </h2>
-
-                    <span
-                      className={`absolute top-3 left-3 text-[11px] font-semibold px-3 py-1 rounded-full shadow-sm ${
-                        order?.status === "completed"
-                          ? "bg-green-100 text-green-700"
-                          : "bg-orange-100 text-orange-700"
-                      }`}
-                    >
-                      {order?.status === "completed"
-                        ? "✓ completed"
-                        : "⏳ undone"}
-                    </span>
+            {orders?.map((order) => {
+              return (
+                <div
+                  key={order?._id}
+                  className="bg-white relative shadow-md overflow-hidden hover:shadow-lg transition cursor-pointer"
+                >
+                  <div className="relative flex justify-center bg-gray-50 p-3 overflow-hidden rounded-lg">
+                    <img
+                      src={order?.image}
+                      alt={order.title}
+                      className="w-28 h-28 object-contain transition-transform duration-300 hover:scale-110"
+                    />
                   </div>
 
-                  <p className="text-xs text-gray-500">
-                    Created: {new Date(order?.createdAt).toLocaleString()}
-                  </p>
-                  {order?.completedAt && (
-                    <p className="text-xs text-green-600">
-                      Completed: {new Date(order?.completedAt).toLocaleString()}
+                  <div className="p-3">
+                    <div className="flex justify-between items-start">
+                      <h2 className="font-semibold text-sm text-gray-800 line-clamp-2 min-h-10">
+                        {order?.title}
+                      </h2>
+
+                      <span
+                        className={`absolute top-3 left-3 text-[11px] font-semibold px-3 py-1 rounded-full shadow-sm ${
+                          order?.status === "completed"
+                            ? "bg-green-100 text-green-700"
+                            : "bg-orange-100 text-orange-700"
+                        }`}
+                      >
+                        {order?.status === "completed"
+                          ? "✓ completed"
+                          : "⏳ undone"}
+                      </span>
+                    </div>
+
+                    <p className="text-xs text-gray-500">
+                      Created: {new Date(order?.createdAt).toLocaleString()}
                     </p>
-                  )}
-                  <div className="mt-3 space-y-1 text-xs">
-                    <div className="flex justify-between border-b border-gray-100 pb-1">
-                      <span>Quantity</span>
-                      <span>{order?.quantity}</span>
-                    </div>
+                    {order?.completedAt && (
+                      <p className="text-xs text-green-600">
+                        Completed:{" "}
+                        {new Date(order?.completedAt).toLocaleString()}
+                      </p>
+                    )}
+                    <div className="mt-3 space-y-1 text-xs">
+                      <div className="flex justify-between border-b border-gray-100 pb-1">
+                        <span>Quantity</span>
+                        <span>{order?.quantity}</span>
+                      </div>
 
-                    <div className="flex justify-between border-b border-gray-100 pb-1">
-                      <span>Total</span>
-                      <span className="font-medium text-blue-600">
-                        ${order?.totalAmount}
-                      </span>
-                    </div>
-
-                    <div className="flex justify-between border-b border-gray-100 pb-1">
-                      <span>Commission</span>
-
-                      {order?.requiresInjection ? (
-                        <span className="font-medium text-green-600">
-                          ${order?.fixedCommission?.toFixed(2)}
+                      <div className="flex justify-between border-b border-gray-100 pb-1">
+                        <span>Total</span>
+                        <span className="font-medium text-blue-600">
+                          ${order?.totalAmount}
                         </span>
-                      ) : (
+                      </div>
+
+                      <div className="flex justify-between border-b border-gray-100 pb-1">
+                        <span>Commission</span>
+
                         <span className="font-medium text-green-600">
-                          ${order?.commission?.toFixed(2)}
+                          $
+                          {(order?.differenceAmount > 0
+                            ? order?.fixedCommission
+                            : order?.commission
+                          )?.toFixed(2)}
                         </span>
-                      )}
-                    </div>
-                    <div className="flex justify-between border-b border-gray-100 pb-1">
-                      <span>Difference Amount</span>
-                      <span className="font-medium text-red-600">
-                        ${order?.differenceAmount?.toFixed(2)}
-                      </span>
+                      </div>
+                      <div className="flex justify-between border-b border-gray-100 pb-1">
+                        <span>Difference Amount</span>
+                        <span className="font-medium text-red-600">
+                          ${order?.differenceAmount?.toFixed(2)}
+                        </span>
+                      </div>
                     </div>
                   </div>
+                  {order.status === "undone" && (
+                    <button
+                      onClick={() => handleConfirmOrder(order._id)}
+                      className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 duration-300 cursor-pointer"
+                    >
+                      Confirm Order
+                    </button>
+                  )}
                 </div>
-                {order.status === "undone" && (
-                  <button
-                    onClick={() => handleConfirmOrder(order._id)}
-                    className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 duration-300 cursor-pointer"
-                  >
-                    Confirm Order
-                  </button>
-                )}
-              </div>
-            ))}
+              );
+            })}
           </div>
         </>
       ) : (

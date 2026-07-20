@@ -373,6 +373,13 @@ const addOrderByAdmin = async (req, res) => {
     user.currentCycleOrders = ordersToAdd;
     user.completedCycleOrders = 0;
     user.totalOrders += ordersToAdd;
+    console.log({
+      depositAmount: user.depositAmount,
+      cycleDepositAmount: user.cycleDepositAmount,
+      ordersToAdd,
+      normalOrders,
+    });
+
     // Commission for THIS cycle only
     user.commissionTarget = Number((user.cycleDepositAmount * 0.12).toFixed(2));
 

@@ -175,36 +175,32 @@ const updatePaymentStatus = async (req, res) => {
     if (status === "approved") {
       const creditedAmount = Number(payment.amount);
 
-      // Credit user's balance
-      updatedUser = await User.findByIdAndUpdate(
-        payment.user,
-        {
-          $inc: {
-            depositAmount: creditedAmount,
-          },
-          $set: {
-            cycleDepositAmount: creditedAmount,
-          },
-        },
-        {
-          new: true,
-        },
-      );
+      const updatedUser = await User.findById(payment.user);
 
+      updatedUser.depositAmount += creditedAmount;
+      updatedUser.cycleDepositAmount = creditedAmount;
+
+      // Pay remaining commission from previous cycle
+      if (updatedUser.commissionArray.length > 0) {
+        const remainingCommissionTotal = updatedUser.commissionArray.reduce(
+          (sum, item) => sum + item,
+          0,
+        );
+
+        updatedUser.commission += remainingCommissionTotal;
+        updatedUser.commissionArray = [];
+      }
+
+      // Generate commission for the new cycle
       const totalCommission = Number(
         (updatedUser.cycleDepositAmount * 0.12).toFixed(4),
       );
 
-      const newArray = generateCommissionArray(
+      updatedUser.commissionTarget = totalCommission;
+      updatedUser.commissionArray = generateCommissionArray(
         totalCommission,
         updatedUser.currentCycleOrders,
       );
-
-      console.log("Old:", updatedUser.commissionArray);
-      console.log("New:", newArray);
-
-      updatedUser.commissionTarget = totalCommission;
-      updatedUser.commissionArray = newArray;
 
       await updatedUser.save();
 
