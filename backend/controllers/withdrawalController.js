@@ -43,8 +43,9 @@ const requestWithdrawal = async (req, res) => {
         message: "Invalid withdrawal password",
       });
     }
+    const availableBalance = user.depositAmount + user.commission;
 
-    if (user.depositAmount < amountNum) {
+    if (amountNum > availableBalance) {
       return res.status(400).json({
         success: false,
         message: "Insufficient balance",
@@ -168,11 +169,19 @@ const getAllWithdrawals = async (req, res) => {
   }
 };
 
-// for update leader
+// Update withdrawal status by leader
 const updateWithdrawalStatus = async (req, res) => {
   try {
     const { id } = req.params;
     const { status } = req.body;
+
+    // Only allow valid statuses
+    if (!["approved", "rejected"].includes(status)) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid status",
+      });
+    }
 
     const withdrawal = await Withdrawal.findById(id);
 
@@ -183,27 +192,62 @@ const updateWithdrawalStatus = async (req, res) => {
       });
     }
 
+    // Prevent processing the same withdrawal twice
+    if (withdrawal.status !== "pending") {
+      return res.status(400).json({
+        success: false,
+        message: "Withdrawal has already been processed",
+      });
+    }
+
     const user = await User.findById(withdrawal.userId);
+
     if (!user) {
       return res.status(404).json({
         success: false,
         message: "User not found",
       });
     }
-    withdrawal.status = status;
-    await withdrawal.save();
 
-    // If approved
+    // If approved, deduct the user's funds
     if (status === "approved") {
-      user.depositAmount -= withdrawal.amount;
-      user.commission = 0;
+      const availableBalance = user.depositAmount + user.commission;
+
+      // Re-check balance before approving
+      if (withdrawal.amount > availableBalance) {
+        return res.status(400).json({
+          success: false,
+          message: "User no longer has sufficient balance",
+        });
+      }
+
+      let remaining = withdrawal.amount;
+
+      // Deduct from commission first
+      if (user.commission >= remaining) {
+        user.commission -= remaining;
+      } else {
+        remaining -= user.commission;
+        user.commission = 0;
+
+        // Deduct remaining from deposit
+        user.depositAmount -= remaining;
+      }
+
+      // Keep balance in sync
+      user.balance = user.depositAmount + user.commission;
 
       await user.save();
     }
-    return res.json({
+
+    // Update withdrawal status
+    withdrawal.status = status;
+    await withdrawal.save();
+
+    return res.status(200).json({
       success: true,
-      message: "status updated successfully",
-      payment: withdrawal,
+      message: `Withdrawal ${status} successfully`,
+      withdrawal,
     });
   } catch (error) {
     return res.status(500).json({
