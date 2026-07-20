@@ -78,6 +78,7 @@ const createInjection = async (req, res) => {
       success: true,
       message: "injection created successfully",
       injection,
+      user,
     });
   } catch (error) {
     res.status(500).json({

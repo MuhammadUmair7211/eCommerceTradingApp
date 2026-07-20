@@ -7,11 +7,13 @@ import { Crown, FileText, Lock, Phone, User, Wallet } from "lucide-react";
 import Pagination from "../../components/admin/Pagination";
 import { useApp } from "../../context/AppContext";
 const InjectionManagement = () => {
-  const { adminInjections, setAdminInjections, fetchAdminData } = useApp();
-  console.log(adminInjections);
-
-  const [user, setUser] = useState(null);
   const { id } = useParams();
+  const [currentInjections, setCurrentInjections] = useState([]);
+  const { adminUsers } = useApp();
+  const userWithInjection = adminUsers?.find(
+    (adminUser) => adminUser._id === id,
+  );
+
   const [injectionModal, setInjectionModal] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [formData, setFormData] = useState({
@@ -37,10 +39,9 @@ const InjectionManagement = () => {
           },
         },
       );
-      console.log(data);
       if (data.success) {
         toast.success(data.message);
-        setAdminInjections((prev) => [data.injection, ...prev]);
+        setCurrentInjections((prev) => [data.injection, ...prev]);
         setFormData({
           injectionOrder: "",
           commissionRate: "",
@@ -66,7 +67,7 @@ const InjectionManagement = () => {
 
       if (data?.success) {
         toast.success(data.message);
-        fetchAdminData();
+        fetchUserInjectionsById();
       } else {
         toast.error(data?.message || "Failed to update");
       }
@@ -81,11 +82,9 @@ const InjectionManagement = () => {
       const { data } = await axios.put(
         `${baseUrl}/injections/reject/${item._id}`,
       );
-      console.log(data);
-
       if (data?.success) {
         toast.success(data.message);
-        fetchAdminData();
+        fetchUserInjectionsById();
       } else {
         toast.error(data?.message || "Failed to reject");
       }
@@ -106,9 +105,10 @@ const InjectionManagement = () => {
       const { data } = await axios.delete(
         `${baseUrl}/injections/delete-injection/${item._id}`,
       );
+
       if (data?.success) {
         toast.success(data.message);
-        fetchAdminData();
+        fetchUserInjectionsById();
       } else {
         toast.error(data?.message || "Delete failed");
       }
@@ -118,20 +118,19 @@ const InjectionManagement = () => {
     }
   };
 
-  useEffect(() => {
-    // get user info from params id
-    const fetchUserInfoInjectionPage = async () => {
-      try {
-        const { data } = await axios.get(`${baseUrl}/users/${id}`);
-
-        if (data.success) {
-          setUser(data.user);
-        }
-      } catch (error) {
-        console.log(error.message);
+  const fetchUserInjectionsById = async () => {
+    try {
+      const { data } = await axios.get(`${baseUrl}/injections/${id}`);
+      if (data.success) {
+        setCurrentInjections(data.injections);
       }
-    };
-    fetchUserInfoInjectionPage();
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    fetchUserInjectionsById();
   }, [id]);
 
   const headers = [
@@ -164,22 +163,23 @@ const InjectionManagement = () => {
 
   const totalPages = Math.max(
     1,
-    Math.ceil(adminInjections.length / itemsPerPage),
+    Math.ceil(currentInjections?.length / itemsPerPage),
   );
 
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
 
-  const currentInjections = adminInjections.slice(
+  const allInjectionsOfUser = currentInjections?.slice(
     indexOfFirstItem,
     indexOfLastItem,
   );
+
   return (
     <div className="bg-slate-800 text-slate-300 border border-slate-700 overflow-hidden p-2">
       {/* header */}
       <div className="border border-slate-700 flex flex-wrap items-center justify-between p-2">
         <h2 className="font-semibold text-lg">
-          UID: {user?.myInvitationCode} Vaccination Plan
+          UID: {userWithInjection?.myInvitationCode} Vaccination Plan
         </h2>
 
         <button
@@ -208,7 +208,7 @@ const InjectionManagement = () => {
           <div className="border border-slate-700 bg-slate-800/50 p-4">
             <div className="flex items-center gap-3">
               <div className="flex h-12 w-12 items-center justify-center rounded-full bg-blue-600 text-lg font-bold text-white">
-                {user?.username?.[0]?.toUpperCase() || "N"}
+                {userWithInjection?.username?.[0]?.toUpperCase() || "N"}
               </div>
 
               <div>
@@ -217,7 +217,7 @@ const InjectionManagement = () => {
                   Username
                 </p>
                 <p className="mt-1 font-semibold text-white">
-                  {user?.username || "N/A"}
+                  {userWithInjection?.username || "N/A"}
                 </p>
               </div>
             </div>
@@ -230,7 +230,7 @@ const InjectionManagement = () => {
               Phone Number
             </p>
             <p className="mt-2 font-semibold text-white">
-              {user?.phoneNumber || "N/A"}
+              {userWithInjection?.phoneNumber || "N/A"}
             </p>
           </div>
 
@@ -241,7 +241,7 @@ const InjectionManagement = () => {
               VIP Level
             </p>
             <p className="mt-2 font-semibold text-yellow-400">
-              {user?.vipLevel || "N/A"}
+              {userWithInjection?.vipLevel || "N/A"}
             </p>
           </div>
 
@@ -252,7 +252,11 @@ const InjectionManagement = () => {
               Balance
             </p>
             <p className="mt-2 text-lg font-bold text-emerald-400">
-              ${(user?.balance ?? 0).toFixed(2)}
+              $
+              {(
+                (userWithInjection?.depositAmount ?? 0) +
+                (userWithInjection?.commission ?? 0)
+              ).toFixed(2)}
             </p>
           </div>
 
@@ -263,7 +267,7 @@ const InjectionManagement = () => {
               Frozen Amount
             </p>
             <p className="mt-2 text-lg font-bold text-red-400">
-              ${(user?.frozenAmount ?? 0).toFixed(2)}
+              ${(userWithInjection?.frozenAmount ?? 0).toFixed(2)}
             </p>
           </div>
 
@@ -274,7 +278,7 @@ const InjectionManagement = () => {
               Remarks
             </p>
             <p className="mt-2 font-medium text-slate-200">
-              {user?.note || "No remarks"}
+              {userWithInjection?.note || "No remarks"}
             </p>
           </div>
         </div>
@@ -296,8 +300,8 @@ const InjectionManagement = () => {
           </thead>
 
           <tbody>
-            {currentInjections?.length > 0 ? (
-              currentInjections?.map((item, index) => {
+            {allInjectionsOfUser?.length > 0 ? (
+              allInjectionsOfUser?.map((item, index) => {
                 return (
                   <tr
                     key={item._id}
@@ -308,7 +312,7 @@ const InjectionManagement = () => {
                     </td>
 
                     <td className="p-2 text-xs leading-7 border border-slate-700">
-                      {item?.user?.myInvitationCode}
+                      {userWithInjection?.myInvitationCode}
                     </td>
 
                     <td className="p-2 text-xs leading-7 border border-slate-700">
@@ -580,7 +584,7 @@ const InjectionManagement = () => {
       <Pagination
         currentPage={currentPage}
         totalPages={totalPages}
-        totalItems={adminInjections.length}
+        totalItems={currentInjections?.length}
         itemsPerPage={itemsPerPage}
         setCurrentPage={setCurrentPage}
       />

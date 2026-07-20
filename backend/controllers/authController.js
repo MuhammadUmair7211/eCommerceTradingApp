@@ -104,10 +104,6 @@ const register = async (req, res) => {
           teamMembers: newUser._id,
         },
       });
-
-      await User.findByIdAndUpdate(parentUser, {
-        $inc: { commission: 1 },
-      });
     }
 
     // IP FIX
