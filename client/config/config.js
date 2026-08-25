@@ -1,2 +1,2 @@
-export const baseUrl = "https://api.mercadolibreonline.shop/api";
-export const imageUrl = "https://api.mercadolibreonline.shop";
+export const baseUrl = "https://api.mercadolibreonline.mo/api";
+export const imageUrl = "https://api.mercadolibreonline.mo";
