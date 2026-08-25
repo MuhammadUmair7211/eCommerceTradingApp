@@ -19,8 +19,8 @@ app.use(
   cors({
     origin: [
       "http://localhost:5173",
-      "https://mercadolibreonline.shop",
-      "https://www.mercadolibreonline.shop",
+      "https://api.mcshop99.com",
+      "https://www.mcshop99.com",
     ],
     credentials: true,
   }),
